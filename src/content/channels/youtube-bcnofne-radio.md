@@ -1,6 +1,6 @@
 ---
 title: BCNOFNe Radio（YouTube）
-summary: BCNOFNe の"いま"を届ける、新しい公式ラジオチャンネル。Crypto Ark を掲げて、制作の裏側やこれからの航海のことを、ぼくの声で少しずつ話していくばい。
+summary: AI RADIO の放送を、YouTube でも聴けるチャンネル。毎朝の「おはようAYNばい」から夜のトークまで、Podcast と同じ回をこっちでも流しよるばい。
 url: https://www.youtube.com/@BCNOFNeRadio
 handle: "@BCNOFNeRadio"
 category: YouTube
@@ -10,5 +10,6 @@ image: ../../assets/sns/art-bcnofne-radio.png
 status: active
 ---
 
-BCNOFNe（ボクのフネ）の母艦みたいなチャンネル。
-Sail Beyond, Create the Future ——その日その日の航海を、ここから届けていくばい。
+Apple Podcasts で配信しよる AI RADIO を、YouTube にもそのまま展開しとるチャンネル。
+音だけでも、ながら見でも、好きなところで聴いてほしか。
+
