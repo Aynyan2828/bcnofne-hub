@@ -3,6 +3,12 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.6.1] - 2026-07-03
+
+### Changed
+- 背景コラージュをもっと見せる調整（マスター指示）: 白ベール 62-72%→46-56%、
+  Hero紺グラデ 58-72%→42-58%。可読性はPC/実画面で確認。
+
 ## [0.6.0] - 2026-07-03
 
 ### Changed
