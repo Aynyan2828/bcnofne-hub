@@ -5,7 +5,7 @@ interface Props {
   description: string;
   ogImage?: string; // base込みの絶対 or ルート相対パス
 }
-const { title, description, ogImage = 'og/og-default.png' } = Astro.props;
+const { title, description, ogImage = 'og/og-default.jpg' } = Astro.props;
 
 // 絶対URL化（OGP は絶対URL必須）
 const canonical = new URL(Astro.url.pathname, Astro.site).href;

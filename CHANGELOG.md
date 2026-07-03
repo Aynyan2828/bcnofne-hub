@@ -3,6 +3,19 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.14.0] - 2026-07-03
+
+### Added
+- Prompt166 Phase3: お問い合わせフォーム(Contact.astro)を index に配線・公開。
+  送信先=bcnofne-edge /contact(→Discord ops通知)、honeypotでbot対策。
+- Prompt166 Phase2: 動的OGPカードをビルド時生成(satori→sharp)。/og/<slug>.png を静的出力。
+  手書きフォント(Yomogi/Yusei Magic)＋AYN円形ポートレート。default/apps/listen/music/sns の5枚。
+  Cloudflare Workerのフォント上限を回避するためビルド時(Node)生成。
+
+### Changed
+- OGP既定画像を軽量化: 水彩1枚 og-default.png(1.5MB) → og-default.jpg(約200KB, JPEG q85)。
+  一部SNSの画像サイズ上限/表示遅延に配慮。SEO.astro の既定を .jpg に変更。
+
 ## [0.13.0] - 2026-07-03
 
 ### Changed
