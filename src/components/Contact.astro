@@ -1,0 +1,134 @@
+---
+// お問い合わせフォーム。送信は bcnofne-edge の /contact（→Discord ops通知）。
+// 秘密情報はサイトに持たない。honeypot(website)でbot対策。
+const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
+---
+<section id="contact" class="section section--mist">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Contact</span>
+      <h2>おたより・お問い合わせ</h2>
+      <p>感想でも依頼でも、気軽に送ってほしか。ぼくに届くばい。</p>
+    </div>
+
+    <form class="contactform" data-contact data-endpoint={EDGE} novalidate>
+      <div class="contactform__row">
+        <label class="contactform__field">
+          <span>お名前（任意）</span>
+          <input type="text" name="name" maxlength="100" autocomplete="name" />
+        </label>
+        <label class="contactform__field">
+          <span>メール（任意・返信用）</span>
+          <input type="email" name="email" maxlength="200" autocomplete="email" />
+        </label>
+      </div>
+      <label class="contactform__field">
+        <span>本文 <em>*</em></span>
+        <textarea name="message" rows="5" maxlength="2000" required></textarea>
+      </label>
+      <!-- honeypot: 人間には非表示。botが埋めると破棄される -->
+      <div class="contactform__hp" aria-hidden="true">
+        <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+      </div>
+      <div class="contactform__foot">
+        <button type="submit" class="btn" data-submit>送信する</button>
+        <p class="contactform__status" data-status role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  const form = document.querySelector('[data-contact]');
+  if (form) {
+    const EP = form.getAttribute('data-endpoint');
+    const statusEl = form.querySelector('[data-status]');
+    const btn = form.querySelector('[data-submit]');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const payload = {
+        name: fd.get('name') || '',
+        email: fd.get('email') || '',
+        message: (fd.get('message') || '').toString().trim(),
+        website: fd.get('website') || '',
+      };
+      if (payload.message.length < 2) {
+        statusEl.textContent = '本文を入力してほしか。';
+        statusEl.className = 'contactform__status is-err';
+        return;
+      }
+      btn.disabled = true;
+      statusEl.textContent = '送信中…';
+      statusEl.className = 'contactform__status';
+      try {
+        const res = await fetch(EP + '/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.ok) {
+          form.reset();
+          statusEl.textContent = 'ありがとう、ちゃんと届いたばい。';
+          statusEl.className = 'contactform__status is-ok';
+        } else {
+          const msg = data.error === 'bad_email' ? 'メールの形式を確認してほしか。'
+            : data.error === 'rate_limited' ? '少し時間をおいて試してほしか。'
+            : '送信に失敗したばい。時間をおいて試してね。';
+          statusEl.textContent = msg;
+          statusEl.className = 'contactform__status is-err';
+        }
+      } catch (_) {
+        statusEl.textContent = '送信に失敗したばい。通信環境を確認してね。';
+        statusEl.className = 'contactform__status is-err';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .contactform {
+    max-width: 620px;
+    margin-inline: auto;
+    background: var(--c-card);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    padding: clamp(1.2rem, 3.5vw, 2rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .contactform__row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .contactform__field { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.86rem; color: var(--c-ink-soft); }
+  .contactform__field em { color: var(--c-pink); font-style: normal; }
+  .contactform__field input,
+  .contactform__field textarea {
+    font-family: inherit;
+    font-size: 0.98rem;
+    color: var(--c-ink);
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--c-line);
+    border-radius: 12px;
+    background: var(--c-cream);
+    resize: vertical;
+  }
+  .contactform__field input:focus,
+  .contactform__field textarea:focus {
+    outline: none;
+    border-color: var(--c-blue);
+    box-shadow: 0 0 0 3px rgba(106, 169, 224, 0.2);
+  }
+  .contactform__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .contactform__foot { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .contactform__status { margin: 0; font-size: 0.88rem; }
+  .contactform__status.is-ok { color: var(--c-blue-deep); }
+  .contactform__status.is-err { color: #c0567a; }
+
+  @media (max-width: 560px) {
+    .contactform__row { grid-template-columns: 1fr; }
+  }
+</style>
