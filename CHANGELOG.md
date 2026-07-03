@@ -3,6 +3,20 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.7.0] - 2026-07-03
+
+### Added
+- 音楽配信セクションを全アルバム表示に拡張（5枚・新しい順）:
+  灯りの霧航(最新・M49paRV8QZE) / 海の灯りの子守唄 / 夜凪ノ子守唄 /
+  きょうも、しゅっぱつ。 / 明日へ向かうコンパス。全カードにジャケット画像(600px webp)。
+  HyperFollowリンクは全件WebFetchで実在確認済み。
+- コンパスのジャケットは公式HyperFollowから取得（マスター承認済み）。
+  他はPhotosの配信時取込分＋マスター提供EPアートを使用。
+
+### Changed
+- 旧「最新アルバム」カード(hyperfollow-latest.md)を廃止し、アルバム別カードに分割。
+- Spotifyアーティストカードは画像なしの導線として最後尾に移動。
+
 ## [0.6.1] - 2026-07-03
 
 ### Changed
