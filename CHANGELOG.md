@@ -37,4 +37,6 @@ All notable changes to this project.
 - レスポンシブ（モバイル最優先）・アクセシビリティ（skip link / alt / focus-visible /
   prefers-reduced-motion）対応。
 - ローカルで `npm run build` 成功・プレビュー表示確認済み。
-- 未実施（マスター確認後）: GitHubリポジトリ作成・push・Pages有効化・DNS設定。
+- 2026-07-03 公開作業: リポ `Aynyan2828/bcnofne-hub` 作成・push、GitHub Pages 有効化
+  （Source=GitHub Actions）、カスタムドメイン `bcnofne.com` 設定、デプロイ成功。
+- 未実施: DNS設定（マスター作業。A/AAAA/CNAMEレコード）→ 反映後に Enforce HTTPS。
