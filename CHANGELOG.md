@@ -3,6 +3,14 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.9.1] - 2026-07-03
+
+### Added
+- 抜けていたアルバム「朝へ、きみを乗せて。」(おでかけEP 3枚目)のカードを追加。
+  Spotifyディスコグラフィで配信済みを確認(6枚全部そろった)。
+  リンクはSpotifyアルバム(3uO5Vqtv0Lr2xuielmgICM)を使用。※HyperFollowリンクが
+  ローカル未記録のため。判明したら他カード同様HyperFollowへ差し替え可。
+
 ## [0.9.0] - 2026-07-03
 
 ### Added
