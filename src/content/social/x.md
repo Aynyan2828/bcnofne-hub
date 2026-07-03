@@ -6,5 +6,6 @@ handle: "@Aynyann"
 category: SNS
 cta: Xを見る
 order: 10
+image: ../../assets/scenes/pier-lighthouse.jpg
 status: active
 ---

@@ -80,6 +80,7 @@ const social = (await getCollection('social')).filter(visible).sort(byOrder);
               url={ch.data.url}
               cta={ch.data.cta}
               handle={ch.data.handle}
+              image={ch.data.image}
             />
           ))}
         </div>
@@ -111,6 +112,7 @@ const social = (await getCollection('social')).filter(visible).sort(byOrder);
             url={m.data.url}
             cta={m.data.cta}
             badge={m.data.service}
+            image={m.data.image}
           />
         ))}
       </div>
@@ -133,6 +135,7 @@ const social = (await getCollection('social')).filter(visible).sort(byOrder);
             url={s.data.url}
             cta={s.data.cta}
             handle={s.data.handle}
+            image={s.data.image}
           />
         ))}
       </div>

@@ -3,6 +3,15 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.3.0] - 2026-07-03
+
+### Added
+- 全カードに横長サムネイル画像（`image` frontmatter）を追加。マスター提供の
+  夜の水彩AYNシーン10枚＋「灯りの霧航」EPジャケを channels / music / social の
+  11カードに割り当て（iCloud写真経由で受領、`src/assets/scenes/`）。
+- Card コンポーネントに 16:9 サムネイル表示（hoverでゆっくりズーム）。
+- スキーマ全コレクションに `image` フィールド（任意）を追加。
+
 ## [0.2.0] - 2026-07-03
 
 ### Added

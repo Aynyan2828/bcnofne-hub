@@ -6,5 +6,6 @@ handle: aynyann
 category: まとめ
 cta: リンク集を開く
 order: 5
+image: ../../assets/scenes/mirror-water.jpg
 status: active
 ---

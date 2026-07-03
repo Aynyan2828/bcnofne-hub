@@ -6,5 +6,6 @@ handle: aynyan28
 category: SNS
 cta: Instagramを見る
 order: 30
+image: ../../assets/scenes/window-lantern.jpg
 status: active
 ---

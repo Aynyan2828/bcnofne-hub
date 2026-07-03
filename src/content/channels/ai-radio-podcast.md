@@ -5,6 +5,7 @@ url: https://podcasts.apple.com/podcast/id1896926840
 category: Podcast
 cta: Podcast を聴く
 order: 20
+image: ../../assets/scenes/night-helm.jpg
 status: active
 ---
 

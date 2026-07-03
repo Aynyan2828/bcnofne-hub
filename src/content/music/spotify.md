@@ -6,6 +6,7 @@ service: Spotify
 category: 音楽
 cta: Spotify で聴く
 order: 20
+image: ../../assets/scenes/ep-akari-no-mukou.jpg
 status: active
 ---
 

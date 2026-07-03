@@ -21,34 +21,41 @@ const apps = defineCollection({
       price: z.string().default('無料'),
       platform: z.string().default('iOS'),
       icon: image().optional(),
+      image: image().optional(), // カード上部のサムネイル（横長推奨）
     }),
 });
 
 // チャンネル（YouTube / AI RADIO）
 const channels = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/channels' }),
-  schema: z.object({
-    ...cardBase,
-    handle: z.string().optional(),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      ...cardBase,
+      handle: z.string().optional(),
+      image: image().optional(),
+    }),
 });
 
 // 音楽配信（各DSP）
 const music = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/music' }),
-  schema: z.object({
-    ...cardBase,
-    service: z.string().optional(),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      ...cardBase,
+      service: z.string().optional(),
+      image: image().optional(),
+    }),
 });
 
 // SNS リンク
 const social = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/social' }),
-  schema: z.object({
-    ...cardBase,
-    handle: z.string().optional(),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      ...cardBase,
+      handle: z.string().optional(),
+      image: image().optional(),
+    }),
 });
 
 export const collections = { apps, channels, music, social };
