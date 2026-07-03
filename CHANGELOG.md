@@ -3,6 +3,16 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.10.0] - 2026-07-03
+
+### Added
+- 訪問者カウンター「きみは N 人目の航海者ばい」を Hero 直後に追加(VoyagerCounter.astro)。
+  - バックエンド: Cloudflare Worker `bcnofne-voyager` + KV(初訪問だけ番号を払い出し)。
+    エンドポイント https://bcnofne-voyager.aynbcnofne.workers.dev。コード=~/bcnofne/bcnofne-counter。
+  - 初訪問はカウントアップ演出+紫グロー、2回目以降はlocalStorageの自分の番号を表示。
+  - API不通時は番号を出さず挨拶だけにフォールバック(CLSゼロ・高さ固定)。
+  - 絵文字ルールに配慮し錨はSVG。CORSはbcnofne.com/localhostのみ許可。
+
 ## [0.9.2] - 2026-07-03
 
 ### Changed
