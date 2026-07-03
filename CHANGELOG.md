@@ -3,6 +3,14 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.12.0] - 2026-07-03
+
+### Added
+- Prompt166 Phase1 サイト表示: 「聴く・眠る」に最新YouTube動画(/latest)の1行リンク(LatestVideo)、
+  カウンターを国別あいさつ対応(/greeting)＝日本語/英語で文面切替。
+- Prompt166 Phase4: ブランド短縮リンク go.bcnofne.com/<slug>（Cloudflare Workers
+  カスタムドメイン + SLUGS map、未知slugはトップへ302）。yt/x/note/github/app/radio 等を定義。
+
 ## [0.11.0] - 2026-07-03
 
 ### Changed

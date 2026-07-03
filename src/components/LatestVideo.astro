@@ -1,0 +1,70 @@
+---
+// 最新のYouTube動画を bcnofne-edge の /latest から取得して表示。
+// 取得失敗時は静かに非表示（装飾扱い・CLS配慮で中央の1行のみ）。
+const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
+---
+<div class="latestwrap">
+  <a class="latest" data-latest data-endpoint={EDGE} href="#" hidden>
+    <span class="latest__badge">最新の一本</span>
+    <span class="latest__title" data-latest-title></span>
+    <svg class="latest__arrow" aria-hidden="true" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </a>
+</div>
+
+<script>
+  const a = document.querySelector('[data-latest]');
+  if (a) {
+    const titleEl = a.querySelector('[data-latest-title]');
+    const EP = a.getAttribute('data-endpoint');
+    (async () => {
+      try {
+        const d = await fetch(EP + '/latest').then((r) => r.json());
+        const v = d && d.video;
+        if (v && v.url && v.title) {
+          titleEl.textContent = v.title;
+          a.href = v.url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.hidden = false;
+        }
+      } catch (_) { /* 失敗時は非表示のまま */ }
+    })();
+  }
+</script>
+
+<style>
+  .latestwrap { text-align: center; margin-bottom: clamp(1rem, 3vw, 1.6rem); }
+  .latest {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: min(90vw, 560px);
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: var(--c-card);
+    border: 1px solid var(--c-line);
+    box-shadow: var(--shadow-soft);
+    color: var(--c-ink-soft);
+    font-size: 0.88rem;
+    text-decoration: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+  .latest:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--c-blue); text-decoration: none; }
+  .latest__badge {
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--grad-accent);
+    padding: 0.15em 0.6em;
+    border-radius: 999px;
+  }
+  .latest__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--c-ink);
+    font-weight: 600;
+  }
+  .latest__arrow { flex-shrink: 0; color: var(--c-blue-deep); }
+</style>

@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import VoyagerCounter from '../components/VoyagerCounter.astro';
+import LatestVideo from '../components/LatestVideo.astro';
 import Section from '../components/Section.astro';
 import Card from '../components/Card.astro';
 import About from '../components/About.astro';
@@ -80,6 +81,7 @@ const social = (await getCollection('social')).filter(visible).sort(byOrder);
       avatar={aynNight}
       avatarAlt="おやすみのAYN"
     >
+      <LatestVideo />
       <div class="feature feature--reverse">
         <div class="grid">
           {channels.map((ch) => (

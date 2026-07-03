@@ -1,9 +1,8 @@
 ---
-// Crypto Ocean 航海者カウンター。
-// バックエンドは bcnofne-edge Worker（/counter）。
-const COUNTER_ENDPOINT = 'https://bcnofne-edge.aynbcnofne.workers.dev';
+// Crypto Ocean 航海者カウンター＋国別あいさつ（bcnofne-edge の /counter と /greeting）。
+const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
 ---
-<aside class="voyager" data-voyager data-endpoint={COUNTER_ENDPOINT} aria-live="polite">
+<aside class="voyager" data-voyager data-endpoint={EDGE} aria-live="polite">
   <span class="voyager__anchor" aria-hidden="true">
     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="5" r="2.2"/>
@@ -13,9 +12,9 @@ const COUNTER_ENDPOINT = 'https://bcnofne-edge.aynbcnofne.workers.dev';
     </svg>
   </span>
   <p class="voyager__text">
-    ようこそ、Crypto Ocean へ。きみは
+    <span data-pre>ようこそ、Crypto Ocean へ。きみは </span>
     <span class="voyager__no" data-count>—</span>
-    人目の航海者ばい。
+    <span data-post> 人目の航海者ばい。</span>
   </p>
 </aside>
 
@@ -23,37 +22,49 @@ const COUNTER_ENDPOINT = 'https://bcnofne-edge.aynbcnofne.workers.dev';
   const el = document.querySelector('[data-voyager]');
   if (el) {
     const numEl = el.querySelector('[data-count]');
+    const preEl = el.querySelector('[data-pre]');
+    const postEl = el.querySelector('[data-post]');
     const EP = el.getAttribute('data-endpoint');
     const KEY = 'bcnofne_voyager_no';
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const countUp = (n) => {
-      if (reduce) { numEl.textContent = n.toLocaleString('ja-JP'); return; }
+      if (reduce) { numEl.textContent = n.toLocaleString('en-US'); return; }
       const dur = 900, t0 = performance.now(), from = Math.max(0, n - 30);
       const tick = (t) => {
         const p = Math.min(1, (t - t0) / dur);
         const v = Math.round(from + (n - from) * (1 - Math.pow(1 - p, 3)));
-        numEl.textContent = v.toLocaleString('ja-JP');
+        numEl.textContent = v.toLocaleString('en-US');
         if (p < 1) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
     };
 
+    // 国別あいさつ（/greeting の lang で日本語/英語を出し分け）
+    const applyLang = async () => {
+      try {
+        const g = await fetch(EP + '/greeting').then((r) => r.json());
+        if (g && g.lang === 'en') {
+          preEl.textContent = 'Welcome aboard the Crypto Ocean. You are voyager No. ';
+          postEl.textContent = '.';
+        }
+      } catch (_) { /* 失敗時は既定の日本語のまま */ }
+    };
+
     const fallback = () => {
-      // 取得失敗時: 番号入りの文をやめ、同じ高さのまま挨拶だけ残す
       const t = el.querySelector('.voyager__text');
       if (t) t.textContent = 'ようこそ、Crypto Ocean へ。';
     };
 
     (async () => {
+      applyLang();
       try {
         const stored = localStorage.getItem(KEY);
         if (stored && /^\d+$/.test(stored)) {
           countUp(parseInt(stored, 10));
           return;
         }
-        const res = await fetch(EP + '/counter');
-        const data = await res.json();
+        const data = await fetch(EP + '/counter').then((r) => r.json());
         if (!data || typeof data.ordinal !== 'number') throw new Error('bad');
         localStorage.setItem(KEY, String(data.ordinal));
         el.classList.add('voyager--welcome');
@@ -72,17 +83,13 @@ const COUNTER_ENDPOINT = 'https://bcnofne-edge.aynbcnofne.workers.dev';
     justify-content: center;
     gap: 0.55rem;
     padding: 0.7rem 1rem;
-    min-height: 3rem; /* CLS防止: 高さを固定 */
+    min-height: 3rem;
     color: var(--c-ink-soft);
     font-size: 0.92rem;
     background: linear-gradient(180deg, rgba(234, 241, 251, 0.5), rgba(251, 252, 255, 0.2));
     text-align: center;
   }
-  .voyager__anchor {
-    display: inline-flex;
-    color: var(--c-blue-deep);
-    flex-shrink: 0;
-  }
+  .voyager__anchor { display: inline-flex; color: var(--c-blue-deep); flex-shrink: 0; }
   .voyager__no {
     font-family: var(--font-display);
     font-weight: 700;
@@ -91,11 +98,7 @@ const COUNTER_ENDPOINT = 'https://bcnofne-edge.aynbcnofne.workers.dev';
     font-variant-numeric: tabular-nums;
     padding: 0 0.15em;
   }
-  /* 初訪問のときだけ番号を光らせる */
-  .voyager--welcome .voyager__no {
-    color: var(--c-purple);
-    animation: voyagerGlow 2.4s ease-out;
-  }
+  .voyager--welcome .voyager__no { color: var(--c-purple); animation: voyagerGlow 2.4s ease-out; }
   @keyframes voyagerGlow {
     0% { text-shadow: 0 0 0 rgba(139, 123, 216, 0); }
     30% { text-shadow: 0 0 14px rgba(139, 123, 216, 0.7); }
