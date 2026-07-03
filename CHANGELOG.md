@@ -3,6 +3,12 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.15.0] - 2026-07-03
+
+### Added
+- 「聴く・眠る」に新チャンネル **BCNOFNe Radio（@BCNOFNeRadio）** のカードを追加。
+  アイコンはYouTubeアバターから取得(art-bcnofne-radio.png)。order 15(Sleep Radioの次)。
+
 ## [0.14.0] - 2026-07-03
 
 ### Added
