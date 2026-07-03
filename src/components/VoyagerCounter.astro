@@ -1,7 +1,7 @@
 ---
 // Crypto Ocean 航海者カウンター。
-// エンドポイントは Cloudflare Worker（デプロイ後にURLを差し替える）。
-const COUNTER_ENDPOINT = 'https://bcnofne-voyager.aynbcnofne.workers.dev';
+// バックエンドは bcnofne-edge Worker（/counter）。
+const COUNTER_ENDPOINT = 'https://bcnofne-edge.aynbcnofne.workers.dev';
 ---
 <aside class="voyager" data-voyager data-endpoint={COUNTER_ENDPOINT} aria-live="polite">
   <span class="voyager__anchor" aria-hidden="true">
@@ -52,12 +52,12 @@ const COUNTER_ENDPOINT = 'https://bcnofne-voyager.aynbcnofne.workers.dev';
           countUp(parseInt(stored, 10));
           return;
         }
-        const res = await fetch(EP + '/hit', { method: 'POST' });
+        const res = await fetch(EP + '/counter');
         const data = await res.json();
-        if (!data || typeof data.no !== 'number') throw new Error('bad');
-        localStorage.setItem(KEY, String(data.no));
+        if (!data || typeof data.ordinal !== 'number') throw new Error('bad');
+        localStorage.setItem(KEY, String(data.ordinal));
         el.classList.add('voyager--welcome');
-        countUp(data.no);
+        countUp(data.ordinal);
       } catch (_) {
         fallback();
       }

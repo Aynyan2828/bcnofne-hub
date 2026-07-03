@@ -3,6 +3,13 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.11.0] - 2026-07-03
+
+### Changed
+- 航海者カウンターのバックエンドを bcnofne-voyager → 統合Worker bcnofne-edge の
+  `/counter` に切替（Prompt166 Phase1）。同一IP12h重複抑制はサーバ側でも実施。
+- 旧 bcnofne-voyager Worker は削除（bcnofne-edge に統合）。
+
 ## [0.10.0] - 2026-07-03
 
 ### Added
