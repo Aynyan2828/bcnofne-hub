@@ -1,16 +1,26 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
 interface Props {
   id: string;
   eyebrow?: string;
   title: string;
   lead?: string;
   mist?: boolean;
+  avatar?: ImageMetadata; // 見出しに添える丸いAYN
+  avatarAlt?: string;
 }
-const { id, eyebrow, title, lead, mist = false } = Astro.props;
+const { id, eyebrow, title, lead, mist = false, avatar, avatarAlt } = Astro.props;
 ---
 <section id={id} class:list={['section', { 'section--mist': mist }]}>
   <div class="container">
     <div class="section-head">
+      {avatar && (
+        <div class="section-avatar">
+          <Image src={avatar} alt={avatarAlt ?? `${title}のAYN`} width={112} height={112} loading="lazy" />
+        </div>
+      )}
       {eyebrow && <span class="eyebrow">{eyebrow}</span>}
       <h2>{title}</h2>
       {lead && <p>{lead}</p>}
@@ -18,3 +28,21 @@ const { id, eyebrow, title, lead, mist = false } = Astro.props;
     <slot />
   </div>
 </section>
+
+<style>
+  .section-avatar {
+    width: clamp(76px, 14vw, 104px);
+    aspect-ratio: 1;
+    margin: 0 auto 0.9rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-soft);
+    background: var(--c-mist);
+  }
+  .section-avatar :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

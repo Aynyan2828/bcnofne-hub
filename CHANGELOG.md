@@ -3,6 +3,18 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.2.0] - 2026-07-03
+
+### Added
+- 各セクション見出しに丸いAYN表情アイコンを追加（Apps=ok / 聴く・眠る=night /
+  Music=excited / SNS=smile。BaitoPayApp のAYN表情立ち絵を流用）。
+- 大きな水彩シーンをセクションに配置: Apps=朝の「Welcome aboard」、
+  聴く・眠る=夜の「おやすみー！」。カード＋シーンの横並びレイアウト（`.feature`）。
+- Section コンポーネントに `avatar` prop、global.css に `.feature` 応答レイアウトを追加。
+
+### Changed
+- テキスト主体だったカード群に水彩ビジュアルを添え、AYNの世界観を前面に。
+
 ## [0.1.0] - 2026-07-03
 
 ### Added

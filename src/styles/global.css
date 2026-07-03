@@ -100,6 +100,38 @@ h1, h2, h3 { line-height: 1.35; margin: 0; font-weight: 700; }
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 }
 
+/* 大きな水彩シーン + カードの横並びレイアウト */
+.feature {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) 1fr;
+  gap: clamp(1.4rem, 4vw, 2.4rem);
+  align-items: start;
+}
+.feature--reverse { grid-template-columns: 1fr minmax(0, 320px); }
+.feature__art {
+  position: sticky;
+  top: 1.5rem;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--c-line);
+  line-height: 0;
+}
+.feature--reverse .feature__art { order: 2; }
+.feature__art img { width: 100%; height: auto; }
+.feature .grid {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 560px) {
+  .feature .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+}
+@media (max-width: 760px) {
+  .feature,
+  .feature--reverse { grid-template-columns: 1fr; }
+  .feature__art { position: static; max-width: 360px; margin-inline: auto; }
+  .feature--reverse .feature__art { order: 0; }
+}
+
 /* Button */
 .btn {
   display: inline-flex;

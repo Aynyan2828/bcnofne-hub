@@ -1,11 +1,20 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import Section from '../components/Section.astro';
 import Card from '../components/Card.astro';
 import About from '../components/About.astro';
 import Footer from '../components/Footer.astro';
+
+// 見出しの丸AYN・大きな水彩シーン
+import aynOk from '../assets/ayn/ayn-ok.png';
+import aynNight from '../assets/ayn/ayn-night.png';
+import aynExcited from '../assets/ayn/ayn-excited.png';
+import aynSmile from '../assets/ayn/ayn-smile.png';
+import sceneMorning from '../assets/ayn-morning.png';
+import sceneNight from '../assets/ayn-night.png';
 
 const visible = (e: { data: { status: string; order: number } }) =>
   e.data.status !== 'hidden' && e.data.status !== 'draft';
@@ -25,18 +34,31 @@ const social = (await getCollection('social')).filter(visible).sort(byOrder);
       eyebrow="Apps"
       title="つくったアプリ"
       lead="ぼくが機関室から手伝いよる、iOSアプリたち。ぜんぶ無料で始められるばい。"
+      avatar={aynOk}
+      avatarAlt="サムズアップするAYN"
     >
-      <div class="grid">
-        {apps.map((app) => (
-          <Card
-            title={app.data.title}
-            summary={app.data.summary}
-            url={app.data.url}
-            cta={app.data.cta}
-            badge={app.data.price}
-            icon={app.data.icon}
+      <div class="feature">
+        <div class="feature__art">
+          <Image
+            src={sceneMorning}
+            alt="甲板で手を振るAYN。『Welcome aboard Crypto Ark BCNOFNe!』の水彩イラスト。"
+            widths={[320, 480, 640]}
+            sizes="(max-width: 760px) 80vw, 320px"
+            loading="lazy"
           />
-        ))}
+        </div>
+        <div class="grid">
+          {apps.map((app) => (
+            <Card
+              title={app.data.title}
+              summary={app.data.summary}
+              url={app.data.url}
+              cta={app.data.cta}
+              badge={app.data.price}
+              icon={app.data.icon}
+            />
+          ))}
+        </div>
       </div>
     </Section>
 
@@ -46,17 +68,30 @@ const social = (await getCollection('social')).filter(visible).sort(byOrder);
       title="聴く・眠る"
       lead="眠れん夜のBGMから、朝のトークラジオまで。ぼんやり流してほしか。"
       mist={true}
+      avatar={aynNight}
+      avatarAlt="おやすみのAYN"
     >
-      <div class="grid">
-        {channels.map((ch) => (
-          <Card
-            title={ch.data.title}
-            summary={ch.data.summary}
-            url={ch.data.url}
-            cta={ch.data.cta}
-            handle={ch.data.handle}
+      <div class="feature feature--reverse">
+        <div class="grid">
+          {channels.map((ch) => (
+            <Card
+              title={ch.data.title}
+              summary={ch.data.summary}
+              url={ch.data.url}
+              cta={ch.data.cta}
+              handle={ch.data.handle}
+            />
+          ))}
+        </div>
+        <div class="feature__art">
+          <Image
+            src={sceneNight}
+            alt="星空の下で『おやすみー！』と手を伸ばすAYNの水彩イラスト。"
+            widths={[320, 480, 640]}
+            sizes="(max-width: 760px) 80vw, 320px"
+            loading="lazy"
           />
-        ))}
+        </div>
       </div>
     </Section>
 
@@ -65,6 +100,8 @@ const social = (await getCollection('social')).filter(visible).sort(byOrder);
       eyebrow="Music"
       title="音楽配信"
       lead="Apple Music・Spotify ほか、好きなところで聴けるばい。"
+      avatar={aynExcited}
+      avatarAlt="うれしそうなAYN"
     >
       <div class="grid">
         {music.map((m) => (
@@ -85,6 +122,8 @@ const social = (await getCollection('social')).filter(visible).sort(byOrder);
       title="SNS・リンク"
       lead="日々の航海日誌はこっち。気が向いたら覗いてほしか。"
       mist={true}
+      avatar={aynSmile}
+      avatarAlt="ほほえむAYN"
     >
       <div class="grid">
         {social.map((s) => (
