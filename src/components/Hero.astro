@@ -1,69 +1,10 @@
 ---
 import { Image } from 'astro:assets';
 import keyVisual from '../assets/ayn-keyvisual.png';
-
-// ==== YouTube動画制作アセットのコラージュ（20枚・webp軽量版） ====
-import c01 from '../assets/collage/cur-01-scene.webp';
-import c02 from '../assets/collage/cur-02-Sail_On_Beneath_the_Star.webp';
-import c03 from '../assets/collage/cur-03-scene.webp';
-import c04 from '../assets/collage/cur-04-Tide_Breathing_Out.webp';
-import c05 from '../assets/collage/cur-05-scene.webp';
-import c06 from '../assets/collage/cur-06-Silver_Mudflat.webp';
-import c07 from '../assets/collage/cur-07-scene.webp';
-import c08 from '../assets/collage/cur-08-Harbour_Lantern.webp';
-import c09 from '../assets/collage/cur-09-scene.webp';
-import c10 from '../assets/collage/cur-10-Lanterns_on_the_Ariake.webp';
-import c11 from '../assets/collage/p2-01-scene.webp';
-import c12 from '../assets/collage/p2-02-The_Tide_Lays_Down.webp';
-import c13 from '../assets/collage/p2-03-_.webp';
-import c14 from '../assets/collage/p2-04-The_Lighthouse_Turns.webp';
-import c15 from '../assets/collage/p2-05-scene.webp';
-import c16 from '../assets/collage/p2-06-Starfield_Anchorage.webp';
-import c17 from '../assets/collage/p2-07-scene.webp';
-import c18 from '../assets/collage/p2-08-The_Harbor_Holds.webp';
-import c19 from '../assets/collage/p2-09-scene.webp';
-import c20 from '../assets/collage/p2-10-Where_the_Moon_Lies_Stil.webp';
-
-// 配置は固定シード(28)で生成した値の直書き。微調整はここを直接編集する。
-// x/y=%, rot=deg, w=幅%, z=重なり順。mobile:false の項目はモバイル非表示。
-const COLLAGE = [
-  { img: c01, x: -2.9, y: -4.2, rot: 3.5, w: 18, z: 1, mobile: true },
-  { img: c02, x: -1.7, y: 28.5, rot: -13.3, w: 15, z: 2, mobile: false },
-  { img: c03, x: 56.3, y: -2.6, rot: -14.6, w: 22, z: 3, mobile: true },
-  { img: c04, x: 45.8, y: 74.1, rot: -5.0, w: 18, z: 2, mobile: true },
-  { img: c05, x: 85.9, y: -4.2, rot: 14.5, w: 22, z: 3, mobile: true },
-  { img: c06, x: 61.0, y: 46.9, rot: 10.5, w: 26, z: 1, mobile: false },
-  { img: c07, x: 58.0, y: 70.4, rot: -13.3, w: 22, z: 3, mobile: true },
-  { img: c08, x: 17.3, y: 0.5, rot: -3.0, w: 18, z: 1, mobile: false },
-  { img: c09, x: 79.8, y: 22.6, rot: 16.3, w: 18, z: 1, mobile: true },
-  { img: c10, x: -1.7, y: 82.5, rot: -17.5, w: 26, z: 3, mobile: true },
-  { img: c11, x: 22.3, y: 22.6, rot: 0.7, w: 22, z: 3, mobile: true },
-  { img: c12, x: 42.9, y: 56.5, rot: -14.2, w: 18, z: 3, mobile: false },
-  { img: c13, x: 18.2, y: 44.9, rot: 16.7, w: 22, z: 3, mobile: true },
-  { img: c14, x: 37.2, y: 24.8, rot: -12.0, w: 22, z: 1, mobile: false },
-  { img: c15, x: 56.3, y: 29.7, rot: 11.0, w: 22, z: 1, mobile: false },
-  { img: c16, x: -2.3, y: 54.7, rot: -11.2, w: 26, z: 1, mobile: true },
-  { img: c17, x: 82.1, y: 75.3, rot: -12.5, w: 18, z: 1, mobile: true },
-  { img: c18, x: 82.7, y: 47.4, rot: 13.2, w: 22, z: 2, mobile: false },
-  { img: c19, x: 39.9, y: 5.8, rot: -13.3, w: 18, z: 1, mobile: false },
-  { img: c20, x: 21.5, y: 75.2, rot: 11.9, w: 15, z: 3, mobile: true },
-];
+// コラージュはページ全体共通の CollageBackdrop.astro に統一。
+// Hero は半透明の紺グラデ（スクリム兼用）で背後の写真をうっすら見せる。
 ---
 <header class="hero" id="top">
-  <!-- コラージュ背景（装飾・スクリーンリーダーからは不可視） -->
-  <div class="hero__collage" aria-hidden="true">
-    {COLLAGE.map((it) => (
-      <div
-        class:list={['collage__item', { 'collage__item--desktop': !it.mobile }]}
-        style={`left:${it.x}%; top:${it.y}%; width:${it.w}%; z-index:${it.z}; --rot:${it.rot}deg;`}
-      >
-        <Image src={it.img} alt="" width={560} height={315} loading="lazy" />
-      </div>
-    ))}
-  </div>
-  <!-- スクリム（読みやすさ最優先の半透明レイヤー） -->
-  <div class="hero__scrim" aria-hidden="true"></div>
-
   <div class="container hero__inner">
     <div class="hero__copy">
       <p class="hero__eyebrow">BCNOFNe〜ボクのフネ〜</p>
@@ -96,62 +37,26 @@ const COLLAGE = [
 <style>
   .hero {
     position: relative;
-    isolation: isolate; /* 内部のz-indexを閉じ込める */
-    background: var(--grad-hero);
     color: #fff;
-    overflow: hidden; /* 端で切れた写真がはみ出さない＝横スクロール防止 */
+    overflow: hidden;
     padding-block: clamp(3rem, 9vw, 6rem);
-  }
-
-  /* ==== コラージュ層（最背面） ==== */
-  .hero__collage {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0; /* 子のz(1-3)をこの層内に閉じ込める */
-  }
-  .collage__item {
-    position: absolute;
-    transform: rotate(var(--rot));
-    /* プリント写真風: 白フチ + 影 */
-    background: #fff;
-    padding: 0.45%;
-    border-radius: 6px;
-    box-shadow: 0 8px 22px -6px rgba(10, 15, 45, 0.55);
-    line-height: 0;
-  }
-  .collage__item :global(img) {
-    width: 100%;
-    height: auto;
-    border-radius: 3px;
-  }
-
-  /* ==== スクリム（水彩系グラデ 65% + 軽いブラー） ==== */
-  .hero__scrim {
-    position: absolute;
-    inset: 0;
-    z-index: 1; /* コラージュの上 */
+    /* 半透明の紺グラデ＝背後のコラージュ写真がうっすら透ける */
     background: linear-gradient(
       160deg,
       rgba(42, 53, 102, 0.72) 0%,
-      rgba(58, 74, 134, 0.62) 45%,
-      rgba(95, 111, 184, 0.58) 75%,
-      rgba(139, 123, 216, 0.55) 100%
+      rgba(58, 74, 134, 0.66) 40%,
+      rgba(95, 111, 184, 0.6) 72%,
+      rgba(159, 182, 230, 0.55) 100%
     );
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
   }
-
   .hero__inner {
     position: relative;
-    z-index: 2; /* スクリムより前面 */
     display: grid;
     grid-template-columns: 1.15fr 0.85fr;
     align-items: center;
     gap: clamp(1.5rem, 5vw, 3rem);
   }
-
-  /* 本文はすりガラスパネルでさらに浮かせる（AA確保） */
+  /* 本文すりガラスパネル（AA確保） */
   .hero__copy {
     background: rgba(26, 34, 72, 0.5);
     backdrop-filter: blur(10px);
@@ -194,15 +99,5 @@ const COLLAGE = [
     .hero__lead { margin-inline: auto; }
     .hero__cta { justify-content: center; }
     .hero__art { order: -1; }
-    /* モバイル: 枚数を減らす(12枚)・回転を弱める */
-    .collage__item--desktop { display: none; }
-    .collage__item {
-      transform: rotate(calc(var(--rot) * 0.55));
-      min-width: 26%;
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .collage__item { transition: transform 0.3s ease; }
   }
 </style>

@@ -39,11 +39,14 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+html { background: var(--c-cream); }
+
 body {
   margin: 0;
   font-family: var(--font-sans);
   color: var(--c-ink);
-  background: var(--c-cream);
+  /* 背景は透明: 最背面の固定コラージュ(CollageBackdrop)を透かす */
+  background: transparent;
   line-height: 1.75;
   letter-spacing: 0.01em;
   overflow-x: hidden;
@@ -90,8 +93,10 @@ h1, h2, h3 { line-height: 1.35; margin: 0; font-weight: 700; }
   font-size: 0.98rem;
 }
 
-/* うっすら水彩の帯背景（交互） */
-.section--mist { background: linear-gradient(180deg, var(--c-mist) 0%, var(--c-cream) 100%); }
+/* うっすら水彩の帯背景（交互・半透明で背後のコラージュを透かす） */
+.section--mist {
+  background: linear-gradient(180deg, rgba(234, 241, 251, 0.55) 0%, rgba(251, 252, 255, 0.25) 100%);
+}
 
 /* Card grid */
 .grid {

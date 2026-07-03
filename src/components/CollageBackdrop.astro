@@ -1,0 +1,102 @@
+---
+// ページ全体の背景コラージュ（YouTube動画制作アセット）
+// 固定レイヤー＝スクロールしても「机に散らばった写真」が背後に居続ける
+import { Image } from 'astro:assets';
+import c01 from '../assets/collage/cur-01-scene.webp';
+import c02 from '../assets/collage/cur-02-Sail_On_Beneath_the_Star.webp';
+import c03 from '../assets/collage/cur-03-scene.webp';
+import c04 from '../assets/collage/cur-04-Tide_Breathing_Out.webp';
+import c05 from '../assets/collage/cur-05-scene.webp';
+import c06 from '../assets/collage/cur-06-Silver_Mudflat.webp';
+import c07 from '../assets/collage/cur-07-scene.webp';
+import c08 from '../assets/collage/cur-08-Harbour_Lantern.webp';
+import c09 from '../assets/collage/cur-09-scene.webp';
+import c10 from '../assets/collage/cur-10-Lanterns_on_the_Ariake.webp';
+import c11 from '../assets/collage/p2-01-scene.webp';
+import c12 from '../assets/collage/p2-02-The_Tide_Lays_Down.webp';
+import c13 from '../assets/collage/p2-03-_.webp';
+import c14 from '../assets/collage/p2-04-The_Lighthouse_Turns.webp';
+import c15 from '../assets/collage/p2-05-scene.webp';
+import c16 from '../assets/collage/p2-06-Starfield_Anchorage.webp';
+import c17 from '../assets/collage/p2-07-scene.webp';
+import c18 from '../assets/collage/p2-08-The_Harbor_Holds.webp';
+
+// 座標直書き（ビルド毎に変わらない・ここを編集して微調整）
+// x/y=vw/vh基準%, rot=deg, w=幅vw, z=重なり, mobile:falseはモバイル非表示
+const ITEMS = [
+  { img: c01, x: -4, y: -5, rot: -8.5, w: 20, z: 1, mobile: true },
+  { img: c02, x: 15, y: 2, rot: 12.0, w: 15, z: 2, mobile: false },
+  { img: c03, x: 34, y: -6, rot: -15.5, w: 22, z: 1, mobile: true },
+  { img: c04, x: 58, y: 0, rot: 6.5, w: 16, z: 2, mobile: false },
+  { img: c05, x: 78, y: -4, rot: 15.0, w: 24, z: 1, mobile: true },
+  { img: c06, x: -6, y: 26, rot: 14.0, w: 24, z: 1, mobile: true },
+  { img: c07, x: 18, y: 32, rot: -4.0, w: 15, z: 2, mobile: false },
+  { img: c08, x: 38, y: 28, rot: 9.5, w: 18, z: 1, mobile: false },
+  { img: c09, x: 60, y: 34, rot: -13.0, w: 20, z: 2, mobile: true },
+  { img: c10, x: 84, y: 28, rot: 7.0, w: 20, z: 1, mobile: true },
+  { img: c11, x: -3, y: 58, rot: -16.0, w: 18, z: 2, mobile: true },
+  { img: c12, x: 16, y: 64, rot: 5.0, w: 22, z: 1, mobile: false },
+  { img: c13, x: 42, y: 60, rot: 17.0, w: 16, z: 1, mobile: true },
+  { img: c14, x: 62, y: 66, rot: -7.5, w: 22, z: 2, mobile: false },
+  { img: c15, x: 85, y: 58, rot: 11.5, w: 18, z: 1, mobile: true },
+  { img: c16, x: 6, y: 84, rot: 9.0, w: 20, z: 1, mobile: true },
+  { img: c17, x: 36, y: 88, rot: -12.5, w: 18, z: 2, mobile: false },
+  { img: c18, x: 68, y: 86, rot: 14.5, w: 22, z: 1, mobile: true },
+];
+---
+<div class="pagecollage" aria-hidden="true">
+  {ITEMS.map((it) => (
+    <div
+      class:list={['pagecollage__item', { 'pagecollage__item--desktop': !it.mobile }]}
+      style={`left:${it.x}vw; top:${it.y}vh; width:${it.w}vw; z-index:${it.z}; --rot:${it.rot}deg;`}
+    >
+      <Image src={it.img} alt="" width={560} height={315} loading="lazy" />
+    </div>
+  ))}
+</div>
+
+<style>
+  .pagecollage {
+    position: fixed;
+    inset: 0;
+    z-index: -1; /* 全コンテンツの背面 */
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .pagecollage__item {
+    position: absolute;
+    transform: rotate(var(--rot));
+    background: #fff;
+    padding: 0.4vw;
+    border-radius: 6px;
+    box-shadow: 0 8px 22px -8px rgba(31, 37, 64, 0.35);
+    line-height: 0;
+  }
+  .pagecollage__item :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: 3px;
+  }
+  /* 白ベール: 写真をうっすら見せつつ本文コントラストを確保
+     （backdrop-filterは全画面だと重いので不透明度のみ） */
+  .pagecollage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 4; /* 写真(z1-2)より上 */
+    background: linear-gradient(
+      180deg,
+      rgba(247, 250, 255, 0.62) 0%,
+      rgba(251, 252, 255, 0.72) 40%,
+      rgba(247, 250, 255, 0.66) 100%
+    );
+  }
+
+  @media (max-width: 720px) {
+    .pagecollage__item--desktop { display: none; }
+    .pagecollage__item {
+      transform: rotate(calc(var(--rot) * 0.55));
+      min-width: 34vw;
+    }
+  }
+</style>
