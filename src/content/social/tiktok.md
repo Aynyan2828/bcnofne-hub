@@ -6,6 +6,5 @@ handle: "@aynyan2828"
 category: SNS
 cta: TikTokを見る
 order: 20
-image: ../../assets/scenes/gondola-lantern.jpg
 status: active
 ---

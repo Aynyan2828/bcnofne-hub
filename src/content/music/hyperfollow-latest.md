@@ -6,7 +6,6 @@ service: HyperFollow（全配信）
 category: 音楽
 cta: 配信で聴く
 order: 10
-image: ../../assets/scenes/moonlit-sea.jpg
 status: active
 ---
 

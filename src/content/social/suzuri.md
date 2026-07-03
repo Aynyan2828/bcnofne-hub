@@ -6,6 +6,6 @@ handle: BCNOFNe
 category: グッズ
 cta: グッズを見る
 order: 60
-image: ../../assets/scenes/deck-hammock.jpg
+image: ../../assets/sns/art-suzuri.png
 status: active
 ---

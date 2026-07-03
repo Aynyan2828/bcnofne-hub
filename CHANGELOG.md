@@ -3,6 +3,19 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.4.0] - 2026-07-03
+
+### Added
+- マスター描き下ろしの SNSロゴ入りAYN水彩アートをカードに採用:
+  YouTube / LINE / Bluesky / SUZURI（差し替え）、note / GitHub（カード新規追加）。
+- OGP画像を「Crypto Ark: BCNOFNe」横長バナーに差し替え（1200×630）。
+- favicon を船×月の丸エンブレムに差し替え（favicon.png 192px、apple-touch-icon 180px）。
+- Card サムネイルの縦横比を画像から自動判定（正方形アートは切り抜かず全体表示）。
+
+### Changed
+- v0.3.0 の夜シーンサムネイルは全カードから一旦撤去（別用途で後日指示予定、
+  `src/assets/scenes/` に温存）。
+
 ## [0.3.0] - 2026-07-03
 
 ### Added

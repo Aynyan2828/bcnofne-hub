@@ -5,6 +5,6 @@ url: https://lin.ee/V2sme7z
 category: SNS
 cta: 友だち追加
 order: 50
-image: ../../assets/scenes/cozy-sleep.jpg
+image: ../../assets/sns/art-line.png
 status: active
 ---

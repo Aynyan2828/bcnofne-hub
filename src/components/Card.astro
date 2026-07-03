@@ -14,11 +14,15 @@ interface Props {
 }
 const { title, summary, url, cta = '開く', handle, badge, icon, image } = Astro.props;
 const external = /^https?:\/\//.test(url);
+// サムネイルの縦横比: 正方形アートは切らずにそのまま、横長は16:9まで
+const thumbRatio = image
+  ? Math.max(1, Math.min(16 / 9, image.width / image.height))
+  : null;
 ---
 <article class="card">
   <a class="card__link" href={url} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
     {image && (
-      <div class="card__thumb">
+      <div class="card__thumb" style={`aspect-ratio: ${thumbRatio};`}>
         <Image
           src={image}
           alt=""
@@ -73,7 +77,6 @@ const external = /^https?:\/\//.test(url);
     text-decoration: none;
   }
   .card__thumb {
-    aspect-ratio: 16 / 9;
     overflow: hidden;
     line-height: 0;
     background: var(--c-mist);

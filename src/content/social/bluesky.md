@@ -6,6 +6,6 @@ handle: aynyan.bsky.social
 category: SNS
 cta: Blueskyを見る
 order: 40
-image: ../../assets/scenes/balcony-nightsky.jpg
+image: ../../assets/sns/art-bluesky.png
 status: active
 ---

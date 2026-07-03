@@ -6,7 +6,7 @@ handle: "@AYNSleepRadio"
 category: YouTube
 cta: チャンネルを見る
 order: 10
-image: ../../assets/scenes/night-deck-stargazing.jpg
+image: ../../assets/sns/art-youtube.png
 status: active
 ---
 
