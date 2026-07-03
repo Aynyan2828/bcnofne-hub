@@ -13,8 +13,9 @@ import aynOk from '../assets/ayn/ayn-ok.png';
 import aynNight from '../assets/ayn/ayn-night.png';
 import aynExcited from '../assets/ayn/ayn-excited.png';
 import aynSmile from '../assets/ayn/ayn-smile.png';
-import sceneMorning from '../assets/ayn-morning.png';
 import sceneNight from '../assets/ayn-night.png';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const visible = (e: { data: { status: string; order: number } }) =>
   e.data.status !== 'hidden' && e.data.status !== 'draft';
@@ -38,14 +39,20 @@ const social = (await getCollection('social')).filter(visible).sort(byOrder);
       avatarAlt="サムズアップするAYN"
     >
       <div class="feature">
-        <div class="feature__art">
-          <Image
-            src={sceneMorning}
-            alt="甲板で手を振るAYN。『Welcome aboard Crypto Ark BCNOFNe!』の水彩イラスト。"
-            widths={[320, 480, 640]}
-            sizes="(max-width: 760px) 80vw, 320px"
-            loading="lazy"
-          />
+        <div class="feature__art feature__art--video">
+          <video
+            src={`${base}/media/fuyo_promo.mp4`}
+            poster={`${base}/media/fuyo_promo_poster.webp`}
+            width="720"
+            height="1280"
+            autoplay
+            muted
+            loop
+            playsinline
+            controls
+            preload="metadata"
+            aria-label="扶養メーターの紹介動画。AYNがアプリの使い方を案内する縦型プロモ。"
+          ></video>
         </div>
         <div class="grid">
           {apps.map((app) => (

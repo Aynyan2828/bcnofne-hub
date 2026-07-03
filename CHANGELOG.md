@@ -3,6 +3,16 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.9.0] - 2026-07-03
+
+### Added
+- Appsセクション(扶養メーターの隣)に扶養メーターの縦型プロモ動画を埋め込み。
+  - ソース: ayn-promo-video の out/fuyo_meter_9x16.mp4(1080x1920/34s/24MB)を
+    Web用に 720x1280・CRF28・faststart 再エンコード → public/media/fuyo_promo.mp4(3.99MB)。
+  - ポスター画像(webp 60KB)付き。autoplay muted loop playsinline controls preload=metadata。
+    音声はナレ入りのためミュート自動再生、コントロールで音声ON可。
+  - 従来の朝シーン(ayn-morning)は撤去。
+
 ## [0.8.0] - 2026-07-03
 
 ### Added

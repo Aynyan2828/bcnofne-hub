@@ -124,6 +124,15 @@ h1, h2, h3 { line-height: 1.35; margin: 0; font-weight: 700; }
 }
 .feature--reverse .feature__art { order: 2; }
 .feature__art img { width: 100%; height: auto; }
+/* 動画版: 縦型プロモをそのまま埋め込む */
+.feature__art--video { background: #0d1330; }
+.feature__art--video video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+}
 .feature .grid {
   grid-template-columns: 1fr;
 }
