@@ -21,9 +21,12 @@
   --grad-accent: linear-gradient(120deg, var(--c-blue) 0%, var(--c-purple) 55%, var(--c-pink) 100%);
 
   /* Typography */
-  --font-sans: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP",
-    system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  /* 手書き風：本文=Yomogi(ゆる丸手書き) / 見出し=Yusei Magic(マーカー風)。
+     読み込み前は端末の丸ゴシックにフォールバック */
+  --font-sans: "Yomogi", "Hiragino Maru Gothic ProN", "Hiragino Kaku Gothic ProN",
+    "Noto Sans JP", system-ui, -apple-system, sans-serif;
+  --font-display: "Yusei Magic", "Yomogi", "Hiragino Maru Gothic ProN",
+    "Noto Sans JP", sans-serif;
 
   /* Layout */
   --maxw: 1080px;
@@ -57,7 +60,8 @@ img { max-width: 100%; height: auto; display: block; }
 a { color: var(--c-blue-deep); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-h1, h2, h3 { line-height: 1.35; margin: 0; font-weight: 700; }
+/* Yusei Magic/Yomogi は単一ウェイト。太字指定は擬似ボールドで潰れるため通常太さに */
+h1, h2, h3 { line-height: 1.4; margin: 0; font-weight: 400; }
 
 .container {
   width: 100%;

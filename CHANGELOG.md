@@ -3,6 +3,12 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.13.0] - 2026-07-03
+
+### Changed
+- サイトフォントを手書き風に変更: 本文=Yomogi(ゆる丸手書き) / 見出し=Yusei Magic(マーカー風)。
+  Google Fonts。単一ウェイトのため見出しは font-weight 400 に調整(擬似ボールド回避)。
+
 ## [0.12.0] - 2026-07-03
 
 ### Added
