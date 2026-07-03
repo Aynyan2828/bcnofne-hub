@@ -1,0 +1,27 @@
+# build output
+dist/
+.output/
+
+# astro
+.astro/
+
+# dependencies
+node_modules/
+
+# env / secrets（このサイトは公開静的物。秘密情報は一切置かない）
+.env
+.env.*
+!.env.example
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# macOS
+.DS_Store
+
+# editor
+.vscode/
+.idea/

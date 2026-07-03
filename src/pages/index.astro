@@ -1,0 +1,105 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Section from '../components/Section.astro';
+import Card from '../components/Card.astro';
+import About from '../components/About.astro';
+import Footer from '../components/Footer.astro';
+
+const visible = (e: { data: { status: string; order: number } }) =>
+  e.data.status !== 'hidden' && e.data.status !== 'draft';
+const byOrder = (a: { data: { order: number } }, b: { data: { order: number } }) =>
+  a.data.order - b.data.order;
+
+const apps = (await getCollection('apps')).filter(visible).sort(byOrder);
+const channels = (await getCollection('channels')).filter(visible).sort(byOrder);
+const music = (await getCollection('music')).filter(visible).sort(byOrder);
+const social = (await getCollection('social')).filter(visible).sort(byOrder);
+---
+<BaseLayout>
+  <Hero />
+  <main id="main">
+    <Section
+      id="apps"
+      eyebrow="Apps"
+      title="つくったアプリ"
+      lead="ぼくが機関室から手伝いよる、iOSアプリたち。ぜんぶ無料で始められるばい。"
+    >
+      <div class="grid">
+        {apps.map((app) => (
+          <Card
+            title={app.data.title}
+            summary={app.data.summary}
+            url={app.data.url}
+            cta={app.data.cta}
+            badge={app.data.price}
+            icon={app.data.icon}
+          />
+        ))}
+      </div>
+    </Section>
+
+    <Section
+      id="listen"
+      eyebrow="Radio & YouTube"
+      title="聴く・眠る"
+      lead="眠れん夜のBGMから、朝のトークラジオまで。ぼんやり流してほしか。"
+      mist={true}
+    >
+      <div class="grid">
+        {channels.map((ch) => (
+          <Card
+            title={ch.data.title}
+            summary={ch.data.summary}
+            url={ch.data.url}
+            cta={ch.data.cta}
+            handle={ch.data.handle}
+          />
+        ))}
+      </div>
+    </Section>
+
+    <Section
+      id="music"
+      eyebrow="Music"
+      title="音楽配信"
+      lead="Apple Music・Spotify ほか、好きなところで聴けるばい。"
+    >
+      <div class="grid">
+        {music.map((m) => (
+          <Card
+            title={m.data.title}
+            summary={m.data.summary}
+            url={m.data.url}
+            cta={m.data.cta}
+            badge={m.data.service}
+          />
+        ))}
+      </div>
+    </Section>
+
+    <Section
+      id="sns"
+      eyebrow="Social"
+      title="SNS・リンク"
+      lead="日々の航海日誌はこっち。気が向いたら覗いてほしか。"
+      mist={true}
+    >
+      <div class="grid">
+        {social.map((s) => (
+          <Card
+            title={s.data.title}
+            summary={s.data.summary}
+            url={s.data.url}
+            cta={s.data.cta}
+            handle={s.data.handle}
+          />
+        ))}
+      </div>
+    </Section>
+
+    <About />
+  </main>
+  <Footer />
+</BaseLayout>

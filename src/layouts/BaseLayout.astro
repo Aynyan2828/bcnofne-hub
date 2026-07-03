@@ -1,0 +1,44 @@
+---
+import '../styles/global.css';
+import SEO from '../components/SEO.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'BCNOFNe〜ボクのフネ〜｜機関士AI AYN の公式ハブ',
+  description = '機関士AI AYN と一緒に、Crypto Ocean を航海するBCNOFNe の公式ハブ。iOSアプリ・睡眠BGM・AI RADIO・音楽配信・SNS をここに集めたばい。',
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
+    <SEO title={title} description={description} />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">本文へスキップ</a>
+    <slot />
+    <style>
+      .skip-link {
+        position: absolute;
+        left: 1rem;
+        top: -3rem;
+        background: #fff;
+        color: var(--c-ink);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        z-index: 100;
+        transition: top 0.2s ease;
+      }
+      .skip-link:focus { top: 1rem; }
+    </style>
+  </body>
+</html>

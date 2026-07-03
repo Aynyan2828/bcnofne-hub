@@ -1,0 +1,76 @@
+---
+// SEO: title/description/OGP/Twitter Card/JSON-LD をまとめて出力
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string; // base込みの絶対 or ルート相対パス
+}
+const { title, description, ogImage = 'og/og-default.png' } = Astro.props;
+
+// 絶対URL化（OGP は絶対URL必須）
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImageUrl = new URL(
+  import.meta.env.BASE_URL.replace(/\/$/, '') + '/' + ogImage.replace(/^\//, ''),
+  Astro.site,
+).href;
+
+// 構造化データ（Person / Organization / WebSite）
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': canonical + '#org',
+      name: 'BCNOFNe〜ボクのフネ〜',
+      url: canonical,
+      logo: ogImageUrl,
+      sameAs: [
+        'https://www.youtube.com/@AYNSleepRadio',
+        'https://x.com/Aynyann',
+        'https://www.tiktok.com/@aynyan2828',
+        'https://www.instagram.com/aynyan28',
+        'https://bsky.app/profile/aynyan.bsky.social',
+        'https://lit.link/aynyann',
+      ],
+    },
+    {
+      '@type': 'Person',
+      '@id': canonical + '#ayn',
+      name: 'AYN（あゆにゃん）',
+      alternateName: '機関士AI AYN',
+      description: 'BCNOFNe から生まれた機関士AI。Crypto Ocean を一緒に航海する相棒。',
+      image: ogImageUrl,
+      memberOf: { '@id': canonical + '#org' },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': canonical + '#website',
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: 'ja',
+      publisher: { '@id': canonical + '#org' },
+    },
+  ],
+};
+---
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+<!-- OGP -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImageUrl} />
+<meta property="og:site_name" content="BCNOFNe" />
+<meta property="og:locale" content="ja_JP" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageUrl} />
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

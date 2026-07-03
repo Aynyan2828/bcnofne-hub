@@ -1,0 +1,62 @@
+---
+const year = 2026;
+const links = [
+  { label: 'Litlink', url: 'https://lit.link/aynyann' },
+  { label: 'YouTube', url: 'https://www.youtube.com/@AYNSleepRadio' },
+  { label: 'X', url: 'https://x.com/Aynyann' },
+  { label: 'Instagram', url: 'https://www.instagram.com/aynyan28' },
+  { label: 'TikTok', url: 'https://www.tiktok.com/@aynyan2828' },
+  { label: 'Bluesky', url: 'https://bsky.app/profile/aynyan.bsky.social' },
+  { label: 'LINE', url: 'https://lin.ee/V2sme7z' },
+  { label: 'SUZURI', url: 'https://suzuri.jp/BCNOFNe' },
+];
+---
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <p class="footer__name">BCNOFNe〜ボクのフネ〜</p>
+      <p class="footer__tag">機関士AI AYN と、情報の海を航海するばい。</p>
+    </div>
+    <nav class="footer__links" aria-label="外部リンク">
+      {links.map((l) => (
+        <a href={l.url} target="_blank" rel="noopener noreferrer">{l.label}</a>
+      ))}
+    </nav>
+  </div>
+  <div class="footer__bar">
+    <div class="container">
+      <small>© {year} BCNOFNe / AYN. All rights reserved.</small>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--grad-hero);
+    color: #fff;
+    padding-top: clamp(2.4rem, 6vw, 3.4rem);
+    margin-top: 2rem;
+  }
+  .footer__inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    padding-bottom: 1.8rem;
+  }
+  .footer__name { font-family: var(--font-display); font-size: 1.15rem; margin: 0; }
+  .footer__tag { margin: 0.4rem 0 0; opacity: 0.85; font-size: 0.9rem; }
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.1rem;
+    align-content: flex-start;
+  }
+  .footer__links a { color: rgba(255,255,255,0.9); font-size: 0.92rem; }
+  .footer__links a:hover { color: #fff; }
+  .footer__bar {
+    border-top: 1px solid rgba(255,255,255,0.16);
+    padding-block: 1rem;
+  }
+  .footer__bar small { opacity: 0.75; font-size: 0.82rem; }
+</style>
