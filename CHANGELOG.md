@@ -3,6 +3,19 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.5.0] - 2026-07-03
+
+### Added
+- Heroトップ背景を「YouTube動画制作アセットを斜めに散りばめたコラージュ」に刷新。
+  - 素材: ayn-sleep-radio の動画用メインビジュアル20枚（現行10+直近アーカイブ10、
+    HDD assets_images 由来）を幅560px webp化（計451KB、ファーストビュー予算内）。
+  - 配置: 固定シード生成の座標を COLLAGE 配列に直書き（再シャッフル無し・微調整可）。
+    ランダム回転±18°・大中小ミックス・白フチ+影の「プリント写真」風。
+  - 読みやすさ: 水彩系グラデスクリム(55〜72%)+blur、本文はすりガラスパネルで
+    コントラスト確保。z-index階層(コラージュ0/スクリム1/本文2)+isolation。
+  - モバイル: 12枚に減量・回転55%に緩和・overflow hiddenで横スクロール無し。
+  - a11y/性能: aria-hidden・alt空・lazyload・CLSゼロ(絶対配置+寸法指定)。
+
 ## [0.4.0] - 2026-07-03
 
 ### Added
