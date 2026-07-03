@@ -6,5 +6,6 @@ handle: aynyann
 category: まとめ
 cta: リンク集を開く
 order: 5
+image: ../../assets/sns/art-litlink.png
 status: active
 ---

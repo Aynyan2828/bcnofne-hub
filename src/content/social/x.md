@@ -6,5 +6,6 @@ handle: "@Aynyann"
 category: SNS
 cta: Xを見る
 order: 10
+image: ../../assets/sns/art-x.png
 status: active
 ---

@@ -6,5 +6,6 @@ handle: "@aynyan2828"
 category: SNS
 cta: TikTokを見る
 order: 20
+image: ../../assets/sns/art-tiktok.png
 status: active
 ---

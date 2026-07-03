@@ -3,6 +3,14 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.8.0] - 2026-07-03
+
+### Added
+- マスター描き下ろしのロゴ入りAYNアート5枚を各カードに採用:
+  TikTok / Instagram / X / Litlink（SNSカードの夜シーンを差し替え）、
+  AI RADIO（Apple Podcasts）カードにAI RADIOバナーアート（ずんだもん入り）。
+  → SNS系カードは全てサービス専用の描き下ろしで統一。
+
 ## [0.7.0] - 2026-07-03
 
 ### Added
