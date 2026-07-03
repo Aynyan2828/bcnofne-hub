@@ -3,6 +3,17 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.9.2] - 2026-07-03
+
+### Changed
+- 「朝へ、きみを乗せて。」のリンクをSpotify直リンク→HyperFollow(nHzSSjhrGud)に差し替え
+  （マスター提供・実在確認済み）。全アルバムカードがHyperFollowで統一。
+
+### Fixed
+- HTTPS化完了。GitHub Pagesの証明書発行が1時間以上stuck(https_certificate=null)だったため、
+  カスタムドメインを一旦外して再設定→authorization_pending→approved。Enforce HTTPS ON。
+  https://bcnofne.com が有効に。
+
 ## [0.9.1] - 2026-07-03
 
 ### Added
