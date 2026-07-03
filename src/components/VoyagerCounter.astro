@@ -29,13 +29,17 @@ const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const countUp = (n) => {
-      if (reduce) { numEl.textContent = n.toLocaleString('en-US'); return; }
+      const finalTxt = n.toLocaleString('en-US');
+      // 保険: アニメが動かん環境(非可視タブ等)でも最終値は必ず出す
+      const guard = setTimeout(() => { numEl.textContent = finalTxt; }, 1100);
+      if (reduce) { clearTimeout(guard); numEl.textContent = finalTxt; return; }
       const dur = 900, t0 = performance.now(), from = Math.max(0, n - 30);
       const tick = (t) => {
         const p = Math.min(1, (t - t0) / dur);
         const v = Math.round(from + (n - from) * (1 - Math.pow(1 - p, 3)));
         numEl.textContent = v.toLocaleString('en-US');
         if (p < 1) requestAnimationFrame(tick);
+        else clearTimeout(guard);
       };
       requestAnimationFrame(tick);
     };
