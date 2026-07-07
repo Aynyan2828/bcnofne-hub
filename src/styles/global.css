@@ -127,7 +127,8 @@ h1, h2, h3 { line-height: 1.4; margin: 0; font-weight: 400; }
   line-height: 0;
 }
 .feature--reverse .feature__art { order: 2; }
-.feature__art img { width: 100%; height: auto; }
+.feature__art img,
+.feature__art video { width: 100%; height: auto; display: block; }
 /* 動画版: 縦型プロモをそのまま埋め込む（複数本は縦に並べ、細い区切りを見せる） */
 .feature__art--video {
   background: #0d1330;
