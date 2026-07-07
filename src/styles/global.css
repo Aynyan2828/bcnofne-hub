@@ -128,8 +128,13 @@ h1, h2, h3 { line-height: 1.4; margin: 0; font-weight: 400; }
 }
 .feature--reverse .feature__art { order: 2; }
 .feature__art img { width: 100%; height: auto; }
-/* 動画版: 縦型プロモをそのまま埋め込む */
-.feature__art--video { background: #0d1330; }
+/* 動画版: 縦型プロモをそのまま埋め込む（複数本は縦に並べ、細い区切りを見せる） */
+.feature__art--video {
+  background: #0d1330;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
 .feature__art--video video {
   display: block;
   width: 100%;

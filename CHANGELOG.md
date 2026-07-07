@@ -3,6 +3,14 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.16.0] - 2026-07-07
+
+### Added
+- 「つくったアプリ」に新アプリ **ShiftWake（シフト自動アラーム / iOS）** のカードを追加。
+  App Store: /jp/app/id6785128543・基本無料・icon=app-shiftwake-icon.png・order 20。
+- ShiftWake の縦型プロモ動画を Apps セクションに追加（`media/shiftwake_promo.mp4` 720x1280/約3.6MB・
+  poster=shiftwake_promo_poster.jpg）。プロモ動画枠を複数本対応（縦積み＋3px区切り）に。
+
 ## [0.15.0] - 2026-07-03
 
 ### Added

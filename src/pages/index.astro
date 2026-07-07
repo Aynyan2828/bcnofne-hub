@@ -45,6 +45,19 @@ const social = (await getCollection('social')).filter(visible).sort(byOrder);
       <div class="feature">
         <div class="feature__art feature__art--video">
           <video
+            src={`${base}/media/shiftwake_promo.mp4`}
+            poster={`${base}/media/shiftwake_promo_poster.jpg`}
+            width="720"
+            height="1280"
+            autoplay
+            muted
+            loop
+            playsinline
+            controls
+            preload="metadata"
+            aria-label="ShiftWake の紹介動画。AYNがシフト自動アラームの使い方を案内する縦型プロモ。"
+          ></video>
+          <video
             src={`${base}/media/fuyo_promo.mp4`}
             poster={`${base}/media/fuyo_promo_poster.webp`}
             width="720"
