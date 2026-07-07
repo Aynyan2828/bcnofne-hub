@@ -16,7 +16,6 @@ import aynOk from '../assets/ayn/ayn-ok.png';
 import aynNight from '../assets/ayn/ayn-night.png';
 import aynExcited from '../assets/ayn/ayn-excited.png';
 import aynSmile from '../assets/ayn/ayn-smile.png';
-import sceneNight from '../assets/ayn-night.png';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -110,13 +109,18 @@ const social = (await getCollection('social')).filter(visible).sort(byOrder);
           ))}
         </div>
         <div class="feature__art">
-          <Image
-            src={sceneNight}
-            alt="星空の下で『おやすみー！』と手を伸ばすAYNの水彩イラスト。"
-            widths={[320, 480, 640]}
-            sizes="(max-width: 760px) 80vw, 320px"
-            loading="lazy"
-          />
+          <video
+            src={`${base}/media/scene_night_loop.mp4`}
+            poster={`${base}/media/scene_night_poster.jpg`}
+            width="720"
+            height="1080"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-label="星空の下で『おやすみー！』と手を伸ばすAYNの水彩アニメーション。"
+          ></video>
         </div>
       </div>
     </Section>
