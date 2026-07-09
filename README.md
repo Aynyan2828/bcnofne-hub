@@ -35,6 +35,7 @@ Node 18+ が必要（開発機は Node 26 で確認済み）。
 | YouTube / AI RADIO のカード | `src/content/channels/*.md` |
 | 音楽配信のカード | `src/content/music/*.md` |
 | SNS リンクのカード | `src/content/social/*.md` |
+| ショートカット集ページ `/shortcuts` | 台帳は `bcnofne-edge/src/shortcuts.json`（正本）。QRは `scripts/gen_shortcut_qr.py` で生成 |
 | Hero（トップの見出し・キャッチ） | `src/components/Hero.astro` |
 | About AYN の文章 | `src/components/About.astro` |
 | フッターのリンク | `src/components/Footer.astro` |
@@ -71,6 +72,30 @@ Node 18+ が必要（開発機は Node 26 で確認済み）。
 
 スキーマ本体は `src/content.config.ts`。バリデーションが効くので、
 必須項目が抜けると `npm run build` がエラーで教えてくれる。
+
+---
+
+## ショートカット集ページ `/shortcuts`（Prompt178）
+
+「AYNにまかせんしゃい」の自作iPhoneショートカット配布ページ。
+**カードのデータはこのリポには持たない**。正本は Worker 側の台帳
+`bcnofne-edge/src/shortcuts.json` で、ページはビルド不要でクライアントから
+`https://bcnofne-edge.aynbcnofne.workers.dev/shortcuts` を取得して描画する。
+
+QRコード（PCの人がスマホで読む用）だけは静的画像なので、台帳から生成して
+`public/qr/<slug>.png` にコミットする：
+
+```bash
+# 台帳(bcnofne-edge/src/shortcuts.json)を読んで public/qr/<slug>.png を一括生成
+python3 scripts/gen_shortcut_qr.py          # 要: pip install "qrcode[pil]"
+```
+
+**新しいワザを足す手順**：
+1. `bcnofne-edge/src/shortcuts.json` に1エントリ追記 → `npx wrangler deploy`
+2. このリポで `python3 scripts/gen_shortcut_qr.py` → `git push`（自動デプロイ）
+3. Hermes登録簿は次回巡回で自動投稿（`shortcut-registry-notifier`）
+
+QRの中身は `go.bcnofne.com/<slug>`（iCloud直リンクにしない＝タップ/スキャンを計測に通すため）。
 
 ---
 

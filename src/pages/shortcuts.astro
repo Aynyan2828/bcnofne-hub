@@ -1,0 +1,221 @@
+---
+// AYNにまかせんしゃい — ショートカット集（Prompt178）
+// 台帳(registry)は bcnofne-edge の /shortcuts が正本。ここはそれを取得して一覧描画するだけ。
+// QR画像は public/qr/<slug>.png（scripts/gen_shortcut_qr.py で台帳から生成）。
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+import aynOk from '../assets/ayn/ayn-ok.png';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
+---
+<BaseLayout
+  title="AYNにまかせんしゃい — ショートカット集｜BCNOFNe"
+  description="AYNが作ったiPhoneショートカットの配布所。QRをスマホで読むか、iPhoneならリンクでそのまま導入。ズボラでよか、めんどいことはぼくが。"
+>
+  <main id="main">
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-avatar">
+            <Image src={aynOk} alt="サムズアップするAYN" width={112} height={112} loading="eager" />
+          </div>
+          <span class="eyebrow">Shortcuts</span>
+          <h1>AYNにまかせんしゃい</h1>
+          <p class="lead">ズボラでよか。めんどいことは、ぼくが。</p>
+          <p class="howto">
+            <span>PCの人はQRをスマホで読んでね。</span>
+            <span>iPhoneならリンクで直接どうぞ。</span>
+          </p>
+        </div>
+
+        <div class="sc-grid" data-sc-grid data-endpoint={EDGE} data-base={base}>
+          <!-- カードはクライアントで描画。取得失敗時は空のまま（CLSを出さない）。 -->
+        </div>
+        <p class="sc-empty" data-sc-empty hidden>いまショートカットを読み込めんかった。時間をおいて、もう一回のぞいてね。</p>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<template id="sc-card-tpl">
+  <article class="sc-card">
+    <div class="sc-card__head">
+      <h2 class="sc-card__title" data-title></h2>
+      <span class="sc-card__badge" data-safety hidden>端末内で完結・通信なし</span>
+    </div>
+    <p class="sc-card__cat" data-cat hidden></p>
+    <p class="sc-card__desc" data-desc></p>
+    <div class="sc-card__qr">
+      <img data-qr alt="" width="132" height="132" loading="lazy" />
+    </div>
+    <a class="sc-card__cta" data-go target="_blank" rel="noopener noreferrer">
+      iPhoneで追加する
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+    <p class="sc-card__uses" data-uses hidden></p>
+  </article>
+</template>
+
+<script>
+  const grid = document.querySelector('[data-sc-grid]');
+  const empty = document.querySelector('[data-sc-empty]');
+  const tpl = document.getElementById('sc-card-tpl');
+  if (grid && tpl) {
+    const EP = grid.getAttribute('data-endpoint');
+    const base = grid.getAttribute('data-base') || '';
+    (async () => {
+      try {
+        const d = await fetch(EP + '/shortcuts').then((r) => r.json());
+        const items = (d && Array.isArray(d.shortcuts)) ? d.shortcuts : [];
+        if (!items.length) { if (empty) empty.hidden = false; return; }
+        const frag = document.createDocumentFragment();
+        for (const it of items) {
+          const node = tpl.content.firstElementChild.cloneNode(true);
+          node.querySelector('[data-title]').textContent = it.title || it.slug;
+          node.querySelector('[data-desc]').textContent = it.description || '';
+          const cat = node.querySelector('[data-cat]');
+          if (it.category) { cat.textContent = it.category; cat.hidden = false; }
+          // 安全バッジは on-device のワザだけ
+          const safety = node.querySelector('[data-safety]');
+          if (it.safety === 'on-device') {
+            safety.hidden = false;
+            if (it.safety_note) safety.textContent = it.safety_note;
+          }
+          // QR画像（PCの人がスマホで読む用）。無ければ枠ごと隠す。
+          const qr = node.querySelector('[data-qr]');
+          const qrWrap = node.querySelector('.sc-card__qr');
+          qr.src = `${base}/qr/${encodeURIComponent(it.slug)}.png`;
+          qr.alt = `${it.title || it.slug} の導入QR`;
+          qr.addEventListener('error', () => { qrWrap.hidden = true; });
+          // スマホ用リンク（タップで導入・iOS）
+          const go = node.querySelector('[data-go]');
+          go.href = it.go_url || `https://go.bcnofne.com/${it.slug}`;
+          // 使用回数（スキャン数プロキシ）。0や未定義は出さない。
+          const uses = node.querySelector('[data-uses]');
+          if (typeof it.uses === 'number' && it.uses > 0) {
+            uses.textContent = `これまで ${it.uses.toLocaleString('ja-JP')} 回つかわれたばい`;
+            uses.hidden = false;
+          }
+          frag.appendChild(node);
+        }
+        grid.appendChild(frag);
+      } catch (_) {
+        if (empty) empty.hidden = false;
+      }
+    })();
+  }
+</script>
+
+<style>
+  .lead {
+    color: var(--c-ink-soft);
+    margin-top: 0.4rem;
+  }
+  .howto {
+    margin-top: 0.9rem;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.9rem;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: var(--c-ink-soft);
+  }
+  .howto span {
+    background: var(--c-mist);
+    border-radius: 999px;
+    padding: 0.25rem 0.85rem;
+  }
+
+  .sc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    gap: clamp(1rem, 3vw, 1.6rem);
+    /* 取得前は空。1枚分の最小高さは持たせず、描画後に自然に伸びる（読み込み中の空欄を避ける）。 */
+  }
+  .sc-empty {
+    text-align: center;
+    color: var(--c-ink-soft);
+    margin-top: 1.4rem;
+  }
+
+  .sc-card {
+    background: var(--c-card);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    padding: clamp(1.1rem, 3vw, 1.5rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+  .sc-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+    border-color: var(--c-blue);
+  }
+  .sc-card__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .sc-card__title {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    color: var(--c-ink);
+  }
+  .sc-card__badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--c-blue-deep);
+    background: var(--c-mist);
+    border: 1px solid var(--c-line);
+    border-radius: 999px;
+    padding: 0.18em 0.7em;
+  }
+  .sc-card__cat {
+    font-size: 0.76rem;
+    color: #fff;
+    background: var(--grad-accent);
+    border-radius: 999px;
+    padding: 0.16em 0.75em;
+    margin: 0.55rem 0 0;
+  }
+  .sc-card__desc {
+    color: var(--c-ink-soft);
+    font-size: 0.92rem;
+    margin: 0.7rem 0 0;
+  }
+  .sc-card__qr {
+    margin: 1rem 0 0.9rem;
+    padding: 0.5rem;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-radius: 12px;
+    line-height: 0;
+  }
+  .sc-card__qr img { width: 132px; height: 132px; }
+  .sc-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--grad-accent);
+    border-radius: 999px;
+    padding: 0.5rem 1.2rem;
+    text-decoration: none;
+    box-shadow: var(--shadow-soft);
+  }
+  .sc-card__cta:hover { text-decoration: none; transform: translateY(-1px); }
+  .sc-card__uses {
+    margin: 0.7rem 0 0;
+    font-size: 0.8rem;
+    color: var(--c-ink-soft);
+  }
+</style>

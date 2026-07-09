@@ -3,6 +3,16 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.17.0] - 2026-07-09
+
+### Added
+- Prompt178: 新規ページ `/shortcuts`（AYNにまかせんしゃい — ショートカット集）。
+  台帳 `bcnofne-edge/src/shortcuts.json` を正本に、Worker `/shortcuts` API を
+  クライアント取得してカード一覧描画（タイトル/説明/カテゴリ/安全バッジ/QR/使用回数）。
+  取得失敗時はカードを出さずCLSを避け、案内文のみ表示。
+- `scripts/gen_shortcut_qr.py` + `scripts/make_qr.py`: 台帳から `public/qr/<slug>.png` を一括生成。
+  QRの中身は `go.bcnofne.com/<slug>`（計測を通すためiCloud直リンクにしない）。`ocr` のQRを同梱。
+
 ## [0.16.0] - 2026-07-07
 
 ### Added
