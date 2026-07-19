@@ -6,7 +6,7 @@ handle: "@AYNWorkRadio"
 category: YouTube
 cta: チャンネルを見る
 order: 12
-image: ../../assets/sns/art-youtube.png
+image: ../../assets/sns/art-youtube-work.png
 status: active
 ---
 
