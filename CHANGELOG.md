@@ -3,6 +3,15 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.18.0] - 2026-07-19
+
+### Added
+- Prompt193 C-2: `src/content/channels/youtube-work-radio.md` を追加。作業用BGM
+  チャンネル「AYN Work Radio」（@AYNWorkRadio）への導線カード。Sleep Radio /
+  BCNOFNe Radio と並ぶ（order:12）。画像は既存 `assets/sns/art-youtube-work.png`
+  を流用。dev server（astro dev）で3チャンネルカードの並びとリンク
+  （`https://www.youtube.com/@AYNWorkRadio`）を確認済み。
+
 ## [0.17.0] - 2026-07-09
 
 ### Added
