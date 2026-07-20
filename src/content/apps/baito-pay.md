@@ -9,6 +9,8 @@ icon: ../../assets/app-baitopay-icon.png
 cta: App Store で見る
 order: 10
 status: active
+appId: fuyometer
+tagline: 扶養の壁を見える化
 ---
 
 扶養の壁を気にしながらバイトする人のための、シンプルな収入管理アプリ。

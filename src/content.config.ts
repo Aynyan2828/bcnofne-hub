@@ -10,6 +10,10 @@ const cardBase = {
   order: z.number().default(100),
   status: z.enum(['active', 'draft', 'hidden']).default('active'),
   cta: z.string().optional(), // ボタン文言（未指定なら既定文言）
+  // /apps.json 用。アプリ側 BCNOFNeLinksView(currentAppID:) と突き合わせる識別子。
+  appId: z.string().optional(),
+  // /apps.json 用の短い一言（未指定なら summary を使う）。
+  tagline: z.string().optional(),
 };
 
 // アプリ：アイコン画像つき

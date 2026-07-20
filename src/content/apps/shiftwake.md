@@ -9,6 +9,8 @@ icon: ../../assets/app-shiftwake-icon.png
 cta: App Store で見る
 order: 20
 status: active
+appId: shiftwake
+tagline: シフト勤務の目覚まし
 ---
 
 早番・遅番・夜勤で、毎回アラームを直すのはもう大変やろ。
