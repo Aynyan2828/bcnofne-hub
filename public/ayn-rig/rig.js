@@ -34,7 +34,7 @@ class AynRig {
   gust(strength = 1, dir = 0) {
     this.gustSeq = (this.gustSeq || 0) + 1;
     const d = dir || (this.gustSeq % 2 ? 1 : -1);
-    for (const L of this.layers) if (L.physics) L.vel += d * strength * L.physics.max_deg * 1.6 * (L.name === 'hair_front' ? 1.3 : 1);
+    for (const L of this.layers) if (L.physics) L.vel += d * strength * L.physics.max_deg * 1.6 * (L.physics.gust ?? (L.name === 'hair_front' ? 1.3 : 1));
   }
   /** 首傾げ(度)。正=向かって右に傾く。0 で戻る。表情の tilt に足される */
   tilt(deg) { this.tiltExtra = deg || 0; }
@@ -76,7 +76,7 @@ class AynRig {
                    + Math.sin(t * 0.23 + p.phase * 3) * 0.25;   // ゆっくりした「そよ風」の強弱
         const drive = wind * p.wind + (-tiltAcc * 0.004) + (st.speaking ? Math.sin(t * 3.1 + p.phase) * 0.25 : 0);
         // 表情の「流れ」(bias): 前髪だけ、ばねの中心をずらす
-        const bias = (L.name === 'hair_front' && this.expr) ? (this.expr.bangs || 0) : 0;
+        const bias = this.expr ? (this.expr.bangs || 0) * (p.expr_bias ?? (L.name === 'hair_front' ? 1 : 0)) : 0;
         const acc = -p.stiffness * (L.angle - bias) - p.damping * L.vel + drive * p.stiffness * 0.5;
         L.vel += acc * dt; L.angle += L.vel * dt;
         L.angle = Math.max(-p.max_deg, Math.min(p.max_deg, L.angle));
