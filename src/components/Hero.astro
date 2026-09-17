@@ -6,8 +6,11 @@ import keyVisual from '../assets/ayn-keyvisual.png';
 // アートは「動く AYN」(public/ayn-rig: ayn-jarvis の build_rig.py が出す 640px WebP 版)。
 // JS が無い / 動きを減らす設定 / 読み込み失敗 のときは従来のキービジュアル画像に戻る。
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const rigUrl = `${base}/ayn-rig/rig.json`;
-const rigJs = `${base}/ayn-rig/rig.js`;
+// ビルドごとに版数を付けて、古い rig.json/rig.js のキャッシュと新しいパーツ画像が混ざらんようにする
+// (混ざると temple_L/R みたいな新レイヤーが描かれず、髪が欠けて見える)
+const rigVer = Date.now().toString(36);
+const rigUrl = `${base}/ayn-rig/rig.json?v=${rigVer}`;
+const rigJs = `${base}/ayn-rig/rig.js?v=${rigVer}`;
 ---
 <header class="hero" id="top">
   <div class="container hero__inner">
