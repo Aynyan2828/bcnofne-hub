@@ -11,7 +11,8 @@ class AynRig {
     this.ready = false; this.layers = []; this.state = {};
   }
   async load() {
-    const rig = await (await fetch(this.url, { cache: 'no-store' })).json();
+    // file:// (iOS の WKWebView など)では fetch が使えんけん、rig.json.js が定義する window.AYN_RIG を優先
+    const rig = window.AYN_RIG || await (await fetch(this.url, { cache: 'no-store' })).json();
     this.rig = rig;
     const imgs = await Promise.all(rig.layers.map(l => new Promise((res, rej) => {
       const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error('layer: ' + l.file));
@@ -20,8 +21,16 @@ class AynRig {
     this.layers = rig.layers.map((l, i) => ({ ...l, img: imgs[i], angle: 0, vel: 0, alpha: l.switch ? 0 : 1 }))
       .sort((a, b) => a.z - b.z);
     this.ready = true; this.prevTilt = 0; this.prevTiltVel = 0;
+    this.expr = { name: 'neutral', layers: new Set(), tilt: 0 }; this.tiltExtra = 0;
     return this;
   }
+  /** 表情プリセット(rig.json の expressions)。無い名前は neutral。first: 首傾げの角度も付いてくる */
+  setExpression(name) {
+    const e = (this.rig.expressions || {})[name] || {};
+    this.expr = { name, layers: new Set(e.layers || []), tilt: e.tilt || 0 };
+  }
+  /** 首傾げ(度)。正=向かって右に傾く。0 で戻る。表情の tilt に足される */
+  tilt(deg) { this.tiltExtra = deg || 0; }
   // 表示変換: 顔を中心に、円窓に収まる倍率
   _view() {
     const c = this.canvas, r = this.rig, s = r.size, f = r.face;
@@ -41,7 +50,9 @@ class AynRig {
     const v = this._view();
     // 頭の傾き(ゆっくり揺れ + 喋る時の小さな相槌)
     const g = r.groups.head;
-    const tilt = Math.sin(t * 0.45) * g.tilt_deg * 0.55 + (st.speaking ? Math.sin(t * 2.3) * 0.8 : 0) + (st.level || 0) * 0.8;
+    const tiltGoal = (this.expr ? this.expr.tilt : 0) + (this.tiltExtra || 0);
+    this.tiltNow = (this.tiltNow || 0) + (tiltGoal - (this.tiltNow || 0)) * Math.min(1, dt * 4);   // ゆっくり傾く
+    const tilt = this.tiltNow + Math.sin(t * 0.45) * g.tilt_deg * 0.55 + (st.speaking ? Math.sin(t * 2.3) * 0.8 : 0) + (st.level || 0) * 0.8;
     const tiltVel = (tilt - this.prevTilt) / dt; const tiltAcc = (tiltVel - this.prevTiltVel) / dt;
     this.prevTilt = tilt; this.prevTiltVel = tiltVel;
     const breatheHead = Math.sin(t * 1.25) * g.breathe_px * (st.speaking ? 1.3 : 1);
@@ -60,6 +71,7 @@ class AynRig {
       }
       if (L.switch === 'blink') L.alpha += ((st.blink ? 1 : 0) - L.alpha) * 0.6;
       if (L.switch === 'mouth') L.alpha += (mouth - L.alpha) * 0.5;
+      if (L.switch === 'expr') L.alpha += ((this.expr && this.expr.layers.has(L.name) ? 1 : 0) - L.alpha) * Math.min(1, dt * 8);
     }
     // 描画
     ctx.setTransform(v.dpr, 0, 0, v.dpr, 0, 0);

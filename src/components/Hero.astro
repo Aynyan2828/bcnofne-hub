@@ -150,11 +150,12 @@ const rigJs = `${base}/ayn-rig/rig.js`;
       let speaking = false, env = null, envStart = 0, envDur = 0, level = 0, levelS = 0;
       let nextBlink = performance.now() + 1800, blinkUntil = 0, last = performance.now();
       const bubble = host.querySelector('.hero__bubble');
-      const lines = ['ようこそ、ボクのフネへ。', 'ゆっくり見ていってほしか。', 'アプリも音楽も、ぜんぶここばい。', '眠れん夜は、Sleep Radio やけんね。'];
+      const lines = [['ようこそ、ボクのフネへ。', 'happy'], ['ゆっくり見ていってほしか。', 'kubikashige'], ['アプリも音楽も、ぜんぶここばい。', 'wink'], ['眠れん夜は、Sleep Radio やけんね。', 'surprise']];
       let li = 0;
       const talk = () => {
-        const text = lines[li++ % lines.length];
+        const [text, expr] = lines[li++ % lines.length];
         const dur = 1.2 + text.length * 0.11;
+        rig.setExpression(expr); setTimeout(() => rig.setExpression('neutral'), dur * 1000 + 800);
         env = Array.from({ length: Math.round(dur * 25) }, (_, i) => 0.35 + 0.65 * Math.abs(Math.sin(i * 0.8 + Math.sin(i * 0.3))));
         envStart = performance.now(); envDur = dur * 1000; speaking = true;
         bubble.textContent = text; bubble.classList.add('is-on');

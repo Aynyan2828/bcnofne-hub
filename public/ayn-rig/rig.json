@@ -16,7 +16,7 @@
    346,
    435
   ],
-  "neck_y": 479
+  "neck_y": 511
  },
  "layers": [
   {
@@ -82,9 +82,44 @@
    "switch": "mouth"
   },
   {
+   "name": "eyes_happy",
+   "file": "eyes_happy.webp",
+   "z": 6,
+   "group": "head",
+   "switch": "expr"
+  },
+  {
+   "name": "eyes_wink",
+   "file": "eyes_wink.webp",
+   "z": 7,
+   "group": "head",
+   "switch": "expr"
+  },
+  {
+   "name": "eyes_up",
+   "file": "eyes_up.webp",
+   "z": 8,
+   "group": "head",
+   "switch": "expr"
+  },
+  {
+   "name": "face_sad",
+   "file": "face_sad.webp",
+   "z": 9,
+   "group": "head",
+   "switch": "expr"
+  },
+  {
+   "name": "face_surprise",
+   "file": "face_surprise.webp",
+   "z": 10,
+   "group": "head",
+   "switch": "expr"
+  },
+  {
    "name": "hair_front",
    "file": "hair_front.webp",
-   "z": 6,
+   "z": 20,
    "group": "head",
    "pivot": [
     321,
@@ -100,11 +135,47 @@
    }
   }
  ],
+ "expressions": {
+  "neutral": {},
+  "happy": {
+   "layers": [
+    "eyes_happy"
+   ]
+  },
+  "wink": {
+   "layers": [
+    "eyes_wink"
+   ]
+  },
+  "think": {
+   "layers": [
+    "eyes_up"
+   ],
+   "tilt": -6
+  },
+  "sad": {
+   "layers": [
+    "face_sad"
+   ],
+   "tilt": 4
+  },
+  "surprise": {
+   "layers": [
+    "face_surprise"
+   ]
+  },
+  "kubikashige": {
+   "layers": [
+    "eyes_happy"
+   ],
+   "tilt": 10
+  }
+ },
  "groups": {
   "head": {
    "pivot": [
     321,
-    479
+    511
    ],
    "tilt_deg": 4.0,
    "breathe_px": 6
