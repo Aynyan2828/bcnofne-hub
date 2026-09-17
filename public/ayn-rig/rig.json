@@ -117,6 +117,27 @@
    "switch": "expr"
   },
   {
+   "name": "face_shy",
+   "file": "face_shy.webp",
+   "z": 11,
+   "group": "head",
+   "switch": "expr"
+  },
+  {
+   "name": "face_angry",
+   "file": "face_angry.webp",
+   "z": 12,
+   "group": "head",
+   "switch": "expr"
+  },
+  {
+   "name": "face_sleepy",
+   "file": "face_sleepy.webp",
+   "z": 13,
+   "group": "head",
+   "switch": "expr"
+  },
+  {
    "name": "hair_front",
    "file": "hair_front.webp",
    "z": 20,
@@ -169,6 +190,23 @@
     "eyes_happy"
    ],
    "tilt": 10
+  },
+  "shy": {
+   "layers": [
+    "face_shy"
+   ],
+   "tilt": 3
+  },
+  "angry": {
+   "layers": [
+    "face_angry"
+   ]
+  },
+  "sleepy": {
+   "layers": [
+    "face_sleepy"
+   ],
+   "tilt": -5
   }
  },
  "groups": {
