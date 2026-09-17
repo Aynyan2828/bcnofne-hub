@@ -152,8 +152,8 @@
     "damping": 1.5,
     "max_deg": 14,
     "wind": 16.0,
-    "phase": 0.9,
-    "wind_freq": 0.55
+    "wind_freq": 0.55,
+    "phase": 0.9
    }
   }
  ],
