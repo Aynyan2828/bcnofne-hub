@@ -18,7 +18,7 @@ class AynRig {
       const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error('layer: ' + l.file));
       im.src = this.base + l.file + '?v=' + Date.now();
     })));
-    this.layers = rig.layers.map((l, i) => ({ ...l, img: imgs[i], angle: 0, vel: 0, alpha: l.switch ? 0 : 1 }))
+    this.layers = rig.layers.map((l, i) => ({ ...l, img: imgs[i], angle: 0, vel: 0, tip: 0, tipVel: 0, alpha: l.switch ? 0 : 1 }))
       .sort((a, b) => a.z - b.z);
     this.ready = true; this.prevTilt = 0; this.prevTiltVel = 0;
     this.expr = { name: 'neutral', layers: new Set(), tilt: 0, bangs: 0 }; this.tiltExtra = 0;
@@ -80,6 +80,15 @@ class AynRig {
         const acc = -p.stiffness * (L.angle - bias) - p.damping * L.vel + drive * p.stiffness * 0.5;
         L.vel += acc * dt; L.angle += L.vel * dt;
         L.angle = Math.max(-p.max_deg, Math.min(p.max_deg, L.angle));
+        // 毛先: 根元の角度に遅れて付いてくる(柔らかいばね)。根元より少し大きく振れ、細かくそよぐ
+        if (p.bend) {
+          const lag = p.tip_lag ?? 0.45, over = p.tip_over ?? 1.35;
+          const flutter = Math.sin(t * 2.7 + p.phase * 5) * 0.4 + Math.sin(t * 4.3 + p.phase * 7) * 0.2;
+          const goal = L.angle * over + flutter * (st.speaking ? 1.6 : 1) + wind * p.wind * 0.3;
+          const tacc = -p.stiffness * lag * (L.tip - goal) - p.damping * 0.8 * L.tipVel;
+          L.tipVel += tacc * dt; L.tip += L.tipVel * dt;
+          L.tip = Math.max(-p.max_deg * over, Math.min(p.max_deg * over, L.tip));
+        }
       }
       if (L.switch === 'blink') L.alpha += ((st.blink ? 1 : 0) - L.alpha) * 0.6;
       if (L.switch === 'mouth') L.alpha += (mouth - L.alpha) * 0.5;
@@ -100,6 +109,23 @@ class AynRig {
         ctx.translate(px, py + breatheHead); ctx.rotate(rad(tilt)); ctx.translate(-px, -py);
       } else {
         ctx.translate(0, breatheBody);
+      }
+      if (L.physics && L.pivot && L.physics.bend && L.bbox) {
+        // しなり: 支点より下を N 本の横帯に分け、帯ごとに角度を根元→毛先へ補間して回す(帯は少し重ねて隙間を隠す)
+        const [px, py] = L.pivot; const [, by0, , by1] = L.bbox;
+        const N = L.physics.strips || 12, y0 = Math.max(py, by0), y1 = Math.min(s, by1 + 2), h = (y1 - y0) / N;
+        if (by0 < y0) {  // 支点より上は根元の角度で 1 枚
+          ctx.save(); ctx.translate(px, py); ctx.rotate(rad(L.angle)); ctx.translate(-px, -py);
+          ctx.drawImage(L.img, 0, by0, s, y0 - by0 + 2, 0, by0, s, y0 - by0 + 2); ctx.restore();
+        }
+        for (let k = 0; k < N; k++) {
+          const u = Math.pow((k + 0.5) / N, 1.5);   // 根元は硬く、毛先ほどよく動く
+          const a = L.angle * (1 - u) + L.tip * u;
+          const sy = y0 + k * h, sh = h + 3;
+          ctx.save(); ctx.translate(px, py); ctx.rotate(rad(a)); ctx.translate(-px, -py);
+          ctx.drawImage(L.img, 0, sy, s, sh, 0, sy, s, sh); ctx.restore();
+        }
+        ctx.restore(); continue;
       }
       if (L.physics && L.pivot) {
         const [px, py] = L.pivot;
