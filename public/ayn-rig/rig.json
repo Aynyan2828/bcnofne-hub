@@ -151,7 +151,7 @@
     "stiffness": 9,
     "damping": 1.5,
     "max_deg": 14,
-    "wind": 3.0,
+    "wind": 16.0,
     "phase": 0.9,
     "wind_freq": 0.55
    }
