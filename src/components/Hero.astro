@@ -3,6 +3,11 @@ import { Image } from 'astro:assets';
 import keyVisual from '../assets/ayn-keyvisual.png';
 // コラージュはページ全体共通の CollageBackdrop.astro に統一。
 // Hero は半透明の紺グラデ（スクリム兼用）で背後の写真をうっすら見せる。
+// アートは「動く AYN」(public/ayn-rig: ayn-jarvis の build_rig.py が出す 640px WebP 版)。
+// JS が無い / 動きを減らす設定 / 読み込み失敗 のときは従来のキービジュアル画像に戻る。
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const rigUrl = `${base}/ayn-rig/rig.json`;
+const rigJs = `${base}/ayn-rig/rig.js`;
 ---
 <header class="hero" id="top">
   <div class="container hero__inner">
@@ -22,6 +27,10 @@ import keyVisual from '../assets/ayn-keyvisual.png';
       </div>
     </div>
     <div class="hero__art">
+      <div class="hero__rig" id="ayn-rig" data-rig={rigUrl} data-js={rigJs} title="タップすると喋るばい">
+        <canvas class="hero__canvas" aria-hidden="true"></canvas>
+        <span class="hero__bubble" aria-live="polite"></span>
+      </div>
       <Image
         src={keyVisual}
         alt="水彩で描かれた機関士AI AYN。青紫の髪に赤メガネ、夜空と流星の航海シーン。"
@@ -85,7 +94,32 @@ import keyVisual from '../assets/ayn-keyvisual.png';
     color: rgba(255, 255, 255, 0.95);
   }
   .hero__cta { display: flex; gap: 0.8rem; flex-wrap: wrap; }
-  .hero__art { justify-self: center; }
+  .hero__art { justify-self: center; position: relative; }
+  /* 動く AYN: 円窓。読み込めたら画像の上に重ねて、画像は隠す */
+  .hero__rig {
+    display: none;
+    position: relative;
+    width: min(72vw, 420px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 20px 60px -18px rgba(10, 15, 45, 0.6);
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    background:
+      radial-gradient(70% 70% at 50% 35%, rgba(214, 226, 255, 0.9), rgba(150, 170, 230, 0.8) 60%, rgba(74, 92, 160, 0.9));
+  }
+  .hero__rig.is-on { display: block; }
+  .hero__rig.is-on + .hero__img { display: none; }
+  .hero__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero__bubble {
+    position: absolute; left: 50%; bottom: 8%; transform: translateX(-50%) translateY(6px);
+    max-width: 86%; padding: 0.45rem 0.9rem; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92); color: #2a3566; font-size: 0.9rem; font-weight: 700;
+    white-space: nowrap; opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none;
+  }
+  .hero__bubble.is-on { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @media (prefers-reduced-motion: reduce) { .hero__rig { display: none !important; } .hero__rig + .hero__img { display: block !important; } }
   .hero__img {
     width: min(72vw, 420px);
     height: auto;
@@ -101,3 +135,41 @@ import keyVisual from '../assets/ayn-keyvisual.png';
     .hero__art { order: -1; }
   }
 </style>
+
+<script>
+  // 動く AYN（ayn-jarvis のリグ）。失敗したら静止画のまま。
+  (async () => {
+    const host = document.getElementById('ayn-rig');
+    if (!host || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    try {
+      await new Promise((res, rej) => { const s = document.createElement('script'); s.src = host.dataset.js; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+      const canvas = host.querySelector('canvas');
+      const rig = new window.AynRig(canvas, host.dataset.rig, { zoom: 1.0 });
+      await rig.load();
+      host.classList.add('is-on');
+      let speaking = false, env = null, envStart = 0, envDur = 0, level = 0, levelS = 0;
+      let nextBlink = performance.now() + 1800, blinkUntil = 0, last = performance.now();
+      const bubble = host.querySelector('.hero__bubble');
+      const lines = ['ようこそ、ボクのフネへ。', 'ゆっくり見ていってほしか。', 'アプリも音楽も、ぜんぶここばい。', '眠れん夜は、Sleep Radio やけんね。'];
+      let li = 0;
+      const talk = () => {
+        const text = lines[li++ % lines.length];
+        const dur = 1.2 + text.length * 0.11;
+        env = Array.from({ length: Math.round(dur * 25) }, (_, i) => 0.35 + 0.65 * Math.abs(Math.sin(i * 0.8 + Math.sin(i * 0.3))));
+        envStart = performance.now(); envDur = dur * 1000; speaking = true;
+        bubble.textContent = text; bubble.classList.add('is-on');
+        setTimeout(() => bubble.classList.remove('is-on'), dur * 1000 + 600);
+      };
+      host.addEventListener('click', talk);
+      setTimeout(talk, 1500);
+      const frame = (now) => {
+        if (env) { const i = Math.floor((now - envStart) / envDur * env.length); if (i < env.length) level = env[i]; else { env = null; speaking = false; level = 0; } }
+        levelS += (level - levelS) * 0.35;
+        if (now > nextBlink) { blinkUntil = now + 120; nextBlink = now + 2600 + Math.random() * 3400; }
+        rig.render((now - last) / 1000, { level: levelS, speaking, blink: now < blinkUntil, t: now / 1000 });
+        last = now; requestAnimationFrame(frame);
+      };
+      requestAnimationFrame(frame);
+    } catch (e) { console.warn('AYN rig fallback:', e); }
+  })();
+</script>
