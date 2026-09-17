@@ -150,8 +150,8 @@
     "type": "pendulum",
     "stiffness": 9,
     "damping": 1.5,
-    "max_deg": 14,
-    "wind": 16.0,
+    "max_deg": 10,
+    "wind": 12.0,
     "wind_freq": 0.55,
     "phase": 0.9
    }
