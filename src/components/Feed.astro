@@ -1,0 +1,108 @@
+---
+// 最新の航海日誌（統合フィード）。bcnofne-edge の /feed（YouTube×3 / AI RADIO / note / Bluesky）を
+// 取得して時系列で並べる。取得失敗時は静かに非表示（CLS配慮で枠はJSで開く）。
+const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
+const LIMIT = 8;
+---
+<div class="feedwrap" data-feed data-endpoint={EDGE} data-limit={LIMIT} hidden>
+  <div class="feed__head">
+    <span class="feed__badge">最新の航海日誌</span>
+    <span class="feed__sub">YouTube・AI RADIO・note・Bluesky の更新をまとめて</span>
+  </div>
+  <ul class="feed" data-feed-list></ul>
+  <a class="feed__rss" href={`${EDGE}/feed?format=rss`} target="_blank" rel="noopener noreferrer">RSSで購読する</a>
+</div>
+
+<script>
+  const wrap = document.querySelector('[data-feed]');
+  if (wrap) {
+    const list = wrap.querySelector('[data-feed-list]');
+    const EP = wrap.getAttribute('data-endpoint');
+    const LIMIT = parseInt(wrap.getAttribute('data-limit') || '8', 10);
+    const ICON = { youtube: '▶', podcast: '🎙', note: '✎', bluesky: '🦋' };
+    const fmtDate = (iso) => {
+      const d = new Date(iso || '');
+      if (isNaN(d.getTime())) return '';
+      return `${d.getMonth() + 1}/${d.getDate()}`;
+    };
+    (async () => {
+      try {
+        const d = await fetch(`${EP}/feed?limit=${LIMIT}`).then((r) => r.json());
+        const items = (d && d.items) || [];
+        if (!items.length) return;
+        for (const it of items) {
+          const li = document.createElement('li');
+          li.className = 'feed__item';
+          const a = document.createElement('a');
+          a.href = it.url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.className = 'feed__link';
+          const src = document.createElement('span');
+          src.className = `feed__src feed__src--${it.source}`;
+          src.textContent = `${ICON[it.source] || '•'} ${it.label}`;
+          const title = document.createElement('span');
+          title.className = 'feed__title';
+          title.textContent = it.title;
+          const date = document.createElement('span');
+          date.className = 'feed__date';
+          date.textContent = fmtDate(it.published);
+          a.append(src, title, date);
+          li.appendChild(a);
+          list.appendChild(li);
+        }
+        wrap.hidden = false;
+      } catch (_) { /* 失敗時は非表示のまま */ }
+    })();
+  }
+</script>
+
+<style is:global>
+  /* JS生成の<li>にはAstroのスコープ属性が付かんため is:global＋.feedwrap配下に限定 */
+  .feedwrap {
+    max-width: 720px;
+    margin: 0 auto clamp(1.2rem, 3vw, 2rem);
+    background: var(--c-card);
+    border: 1px solid var(--c-line);
+    border-radius: 16px;
+    box-shadow: var(--shadow-soft);
+    padding: 0.9rem 1rem 0.8rem;
+  }
+  .feedwrap .feed__head { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+  .feedwrap .feed__badge {
+    font-size: 0.72rem; font-weight: 700; color: #fff;
+    background: var(--grad-accent); padding: 0.15em 0.6em; border-radius: 999px;
+  }
+  .feedwrap .feed__sub { font-size: 0.78rem; color: var(--c-ink-soft); }
+  .feedwrap .feed { list-style: none; margin: 0; padding: 0; }
+  .feedwrap .feed__item + .feed__item { border-top: 1px dashed var(--c-line); }
+  .feedwrap .feed__link {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.45rem 0.2rem;
+    color: var(--c-ink);
+    text-decoration: none;
+    font-size: 0.88rem;
+    transition: background 0.15s ease;
+  }
+  .feedwrap .feed__link:hover { background: var(--c-mist); text-decoration: none; border-radius: 8px; }
+  .feedwrap .feed__src {
+    flex-shrink: 0; font-size: 0.7rem; font-weight: 700; white-space: nowrap;
+    padding: 0.1em 0.55em; border-radius: 999px; color: var(--c-blue-deep);
+    background: var(--c-mist); border: 1px solid var(--c-line);
+  }
+  .feedwrap .feed__src--youtube { color: #b3261e; background: #fdeeed; border-color: #f6d3d0; }
+  .feedwrap .feed__src--podcast { color: #7a4fb8; background: #f3eefb; border-color: #e2d7f5; }
+  .feedwrap .feed__src--note   { color: #2d8f6f; background: #eaf7f2; border-color: #cdebde; }
+  .feedwrap .feed__src--bluesky{ color: #1d6fd1; background: #eaf2fd; border-color: #cfe0f7; }
+  .feedwrap .feed__title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+  .feedwrap .feed__date { flex-shrink: 0; font-size: 0.75rem; color: var(--c-ink-soft); font-variant-numeric: tabular-nums; }
+  .feedwrap .feed__rss { display: inline-block; margin-top: 0.5rem; font-size: 0.75rem; color: var(--c-ink-soft); }
+  @media (max-width: 520px) {
+    .feedwrap .feed__link { grid-template-columns: auto 1fr; }
+    .feedwrap .feed__date { display: none; }
+    .feedwrap .feed__title { white-space: normal; font-size: 0.84rem; }
+  }
+</style>

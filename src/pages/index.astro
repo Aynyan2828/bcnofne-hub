@@ -9,6 +9,7 @@ import Section from '../components/Section.astro';
 import Card from '../components/Card.astro';
 import About from '../components/About.astro';
 import Contact from '../components/Contact.astro';
+import Feed from '../components/Feed.astro';
 import Footer from '../components/Footer.astro';
 
 // 見出しの丸AYN・大きな水彩シーン
@@ -156,6 +157,7 @@ const social = (await getCollection('social')).filter(visible).sort(byOrder);
       avatar={aynSmile}
       avatarAlt="ほほえむAYN"
     >
+      <Feed />
       <div class="grid">
         {social.map((s) => (
           <Card

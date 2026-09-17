@@ -3,6 +3,15 @@
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 
+## [0.19.0] - 2026-09-17
+
+### Added
+- Prompt166 Phase2: `src/components/Feed.astro` 「最新の航海日誌」を SNS セクション先頭に配線。
+  bcnofne-edge `/feed?limit=8`（YouTube×3ch / AI RADIO / note / Bluesky を時系列統合）を
+  取得して媒体バッジ＋タイトル＋日付で8件表示。末尾に「RSSで購読する」（`/feed?format=rss`）。
+  取得失敗時は枠ごと非表示（CLS配慮）。JS生成の要素にはAstroのスコープ属性が付かんため
+  `<style is:global>`＋`.feedwrap` 配下限定で当てとる（地雷）。
+
 ## [0.18.0] - 2026-07-19
 
 ### Added
