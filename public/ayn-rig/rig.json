@@ -3,20 +3,20 @@
  "size": 640,
  "source": "AYN watercolor bust-up (mks ayn_s2) + custom GPT diff variants",
  "face": {
-  "cx": 321,
+  "cx": 320,
   "eyes": [
-   229,
+   220,
    325,
-   413,
-   378
+   421,
+   380
   ],
   "mouth": [
-   305,
-   415,
-   346,
-   435
+   304,
+   413,
+   347,
+   426
   ],
-  "neck_y": 511
+  "neck_y": 502
  },
  "layers": [
   {
@@ -37,7 +37,7 @@
    "z": 2,
    "group": "head",
    "pivot": [
-    192,
+    191,
     200
    ],
    "physics": {
@@ -55,7 +55,7 @@
    "z": 3,
    "group": "head",
    "pivot": [
-    468,
+    467,
     236
    ],
    "physics": {
@@ -138,12 +138,18 @@
    "switch": "expr"
   },
   {
+   "name": "glasses",
+   "file": "glasses.webp",
+   "z": 19,
+   "group": "head"
+  },
+  {
    "name": "hair_front",
    "file": "hair_front.webp",
    "z": 20,
    "group": "head",
    "pivot": [
-    321,
+    320,
     249
    ],
    "physics": {
@@ -222,15 +228,15 @@
  "groups": {
   "head": {
    "pivot": [
-    321,
-    511
+    320,
+    502
    ],
    "tilt_deg": 4.0,
    "breathe_px": 6
   },
   "body": {
    "pivot": [
-    321,
+    320,
     640
    ],
    "breathe_px": 3
