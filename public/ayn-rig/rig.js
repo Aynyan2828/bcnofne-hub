@@ -21,13 +21,20 @@ class AynRig {
     this.layers = rig.layers.map((l, i) => ({ ...l, img: imgs[i], angle: 0, vel: 0, alpha: l.switch ? 0 : 1 }))
       .sort((a, b) => a.z - b.z);
     this.ready = true; this.prevTilt = 0; this.prevTiltVel = 0;
-    this.expr = { name: 'neutral', layers: new Set(), tilt: 0 }; this.tiltExtra = 0;
+    this.expr = { name: 'neutral', layers: new Set(), tilt: 0, bangs: 0 }; this.tiltExtra = 0;
     return this;
   }
-  /** 表情プリセット(rig.json の expressions)。無い名前は neutral。first: 首傾げの角度も付いてくる */
+  /** 表情プリセット(rig.json の expressions)。無い名前は neutral。tilt=首傾げ, bangs=前髪の流れ(度・正で向かって右) */
   setExpression(name) {
     const e = (this.rig.expressions || {})[name] || {};
-    this.expr = { name, layers: new Set(e.layers || []), tilt: e.tilt || 0 };
+    this.expr = { name, layers: new Set(e.layers || []), tilt: e.tilt || 0, bangs: e.bangs || 0 };
+    this.gust(0.6);   // 表情が変わる瞬間に髪がふわっと動く
+  }
+  /** 髪に突風(速度の衝撃)。喋り出し・表情変化で呼ぶ。dir=+1 右, -1 左, 0 交互 */
+  gust(strength = 1, dir = 0) {
+    this.gustSeq = (this.gustSeq || 0) + 1;
+    const d = dir || (this.gustSeq % 2 ? 1 : -1);
+    for (const L of this.layers) if (L.physics) L.vel += d * strength * L.physics.max_deg * 1.6 * (L.name === 'hair_front' ? 1.3 : 1);
   }
   /** 首傾げ(度)。正=向かって右に傾く。0 で戻る。表情の tilt に足される */
   tilt(deg) { this.tiltExtra = deg || 0; }
@@ -57,15 +64,20 @@ class AynRig {
     this.prevTilt = tilt; this.prevTiltVel = tiltVel;
     const breatheHead = Math.sin(t * 1.25) * g.breathe_px * (st.speaking ? 1.3 : 1);
     const breatheBody = Math.sin(t * 1.25 - 0.4) * r.groups.body.breathe_px;
+    if (st.speaking && !this.wasSpeaking) this.gust(0.8);
+    this.wasSpeaking = !!st.speaking;
     // スイッチ層の目標値
     const mouth = st.speaking ? Math.min(1, Math.max(0, ((st.level || 0) - 0.18) * 2.6)) : 0;
     for (const L of this.layers) {
       if (L.physics) {
         const p = L.physics;
-        const wind = Math.sin(t * 1.1 + p.phase) * 0.35 + Math.sin(t * 2.7 + p.phase * 2) * 0.15
+        const f = p.wind_freq || 1.1;   // 前髪は低めにして「ふわー」と左右に流れるように
+        const wind = Math.sin(t * f + p.phase) * 0.35 + Math.sin(t * f * 2.45 + p.phase * 2) * 0.15
                    + Math.sin(t * 0.23 + p.phase * 3) * 0.25;   // ゆっくりした「そよ風」の強弱
         const drive = wind * p.wind + (-tiltAcc * 0.004) + (st.speaking ? Math.sin(t * 3.1 + p.phase) * 0.25 : 0);
-        const acc = -p.stiffness * L.angle - p.damping * L.vel + drive * p.stiffness * 0.5;
+        // 表情の「流れ」(bias): 前髪だけ、ばねの中心をずらす
+        const bias = (L.name === 'hair_front' && this.expr) ? (this.expr.bangs || 0) : 0;
+        const acc = -p.stiffness * (L.angle - bias) - p.damping * L.vel + drive * p.stiffness * 0.5;
         L.vel += acc * dt; L.angle += L.vel * dt;
         L.angle = Math.max(-p.max_deg, Math.min(p.max_deg, L.angle));
       }

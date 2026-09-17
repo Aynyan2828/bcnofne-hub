@@ -148,11 +148,12 @@
    ],
    "physics": {
     "type": "pendulum",
-    "stiffness": 18,
-    "damping": 2.0,
-    "max_deg": 8,
-    "wind": 2.0,
-    "phase": 0.9
+    "stiffness": 9,
+    "damping": 1.5,
+    "max_deg": 14,
+    "wind": 3.0,
+    "phase": 0.9,
+    "wind_freq": 0.55
    }
   }
  ],
@@ -161,52 +162,61 @@
   "happy": {
    "layers": [
     "eyes_happy"
-   ]
+   ],
+   "bangs": 5
   },
   "wink": {
    "layers": [
     "eyes_wink"
-   ]
+   ],
+   "bangs": 7
   },
   "think": {
    "layers": [
     "eyes_up"
    ],
-   "tilt": -6
+   "tilt": -6,
+   "bangs": -6
   },
   "sad": {
    "layers": [
     "face_sad"
    ],
-   "tilt": 4
+   "tilt": 4,
+   "bangs": 4
   },
   "surprise": {
    "layers": [
     "face_surprise"
-   ]
+   ],
+   "bangs": 0
   },
   "kubikashige": {
    "layers": [
     "eyes_happy"
    ],
-   "tilt": 10
+   "tilt": 10,
+   "bangs": 8
   },
   "shy": {
    "layers": [
     "face_shy"
    ],
-   "tilt": 3
+   "tilt": 3,
+   "bangs": 5
   },
   "angry": {
    "layers": [
     "face_angry"
-   ]
+   ],
+   "bangs": -4
   },
   "sleepy": {
    "layers": [
     "face_sleepy"
    ],
-   "tilt": -5
+   "tilt": -5,
+   "bangs": -5
   }
  },
  "groups": {
