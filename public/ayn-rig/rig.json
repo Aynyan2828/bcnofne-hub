@@ -202,6 +202,54 @@
    "switch": "pose"
   },
   {
+   "name": "pose_turn_left_mouth",
+   "file": "pose_turn_left_mouth.webp",
+   "z": 41,
+   "group": "pose",
+   "switch": "pose_mouth",
+   "parent": "pose_turn_left"
+  },
+  {
+   "name": "pose_turn_left_eyes",
+   "file": "pose_turn_left_eyes.webp",
+   "z": 41,
+   "group": "pose",
+   "switch": "pose_blink",
+   "parent": "pose_turn_left"
+  },
+  {
+   "name": "pose_turn_right_mouth",
+   "file": "pose_turn_right_mouth.webp",
+   "z": 41,
+   "group": "pose",
+   "switch": "pose_mouth",
+   "parent": "pose_turn_right"
+  },
+  {
+   "name": "pose_turn_right_eyes",
+   "file": "pose_turn_right_eyes.webp",
+   "z": 41,
+   "group": "pose",
+   "switch": "pose_blink",
+   "parent": "pose_turn_right"
+  },
+  {
+   "name": "pose_look_back_mouth",
+   "file": "pose_look_back_mouth.webp",
+   "z": 41,
+   "group": "pose",
+   "switch": "pose_mouth",
+   "parent": "pose_look_back"
+  },
+  {
+   "name": "pose_look_back_eyes",
+   "file": "pose_look_back_eyes.webp",
+   "z": 41,
+   "group": "pose",
+   "switch": "pose_blink",
+   "parent": "pose_look_back"
+  },
+  {
    "name": "hair_front",
    "file": "hair_front.webp",
    "z": 20,

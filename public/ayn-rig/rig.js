@@ -94,6 +94,8 @@ class AynRig {
       if (L.switch === 'mouth') L.alpha += (mouth - L.alpha) * 0.5;
       if (L.switch === 'expr') L.alpha += ((this.expr && this.expr.layers.has(L.name) ? 1 : 0) - L.alpha) * Math.min(1, dt * 8);
       if (L.switch === 'pose') L.alpha += ((this.expr && this.expr.pose === L.name ? 1 : 0) - L.alpha) * Math.min(1, dt * 5);   // クロスフェード ~0.3s
+      if (L.switch === 'pose_blink') L.alpha = (this.expr && this.expr.pose === L.parent && st.blink) ? 1 : 0;
+      if (L.switch === 'pose_mouth') L.alpha += (((this.expr && this.expr.pose === L.parent) ? mouth : 0) - L.alpha) * 0.5;
     }
     // 描画
     ctx.setTransform(v.dpr, 0, 0, v.dpr, 0, 0);
@@ -102,10 +104,12 @@ class AynRig {
     ctx.translate(v.W / 2, v.H / 2); ctx.scale(v.k, v.k); ctx.translate(-v.cx, -v.cy);
     const rad = d => d * Math.PI / 180;
     const poseOn = this.layers.reduce((m, L) => L.switch === 'pose' ? Math.max(m, L.alpha) : m, 0);   // 0..1
+    // ポーズ絵の上に乗る口/目は、親ポーズのフェード量を掛ける
+    const poseAlpha = {}; for (const L of this.layers) if (L.switch === 'pose') poseAlpha[L.name] = L.alpha;
     for (const L of this.layers) {
       if (L.alpha <= 0.01) continue;
       ctx.save();
-      ctx.globalAlpha = Math.min(1, L.alpha) * (L.switch === 'pose' ? 1 : 1 - poseOn);   // ポーズ中は本体を消す
+      ctx.globalAlpha = Math.min(1, L.alpha) * (L.group === 'pose' ? (L.parent ? (poseAlpha[L.parent] || 0) : 1) : 1 - poseOn);   // ポーズ中は本体を消す
       if (ctx.globalAlpha <= 0.01) { ctx.restore(); continue; }
       if (L.group === 'pose') { ctx.translate(0, breatheHead); ctx.drawImage(L.img, 0, 0, s, s); ctx.restore(); continue; }
       if (L.group === 'head') {
