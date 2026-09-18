@@ -168,6 +168,13 @@
    "switch": "expr"
   },
   {
+   "name": "face_tehe",
+   "file": "face_tehe.webp",
+   "z": 14,
+   "group": "head",
+   "switch": "expr"
+  },
+  {
    "name": "glasses",
    "file": "glasses.webp",
    "z": 30,
@@ -400,6 +407,13 @@
    ],
    "tilt": -5,
    "bangs": -5
+  },
+  "tehe": {
+   "layers": [
+    "face_tehe"
+   ],
+   "tilt": 6,
+   "bangs": 6
   },
   "turn_left": {
    "pose": "pose_turn_left"
