@@ -380,7 +380,8 @@
     "eyes_up"
    ],
    "tilt": -6,
-   "bangs": -6
+   "bangs": -6,
+   "lean": 0.7
   },
   "sad": {
    "layers": [
@@ -393,7 +394,9 @@
    "layers": [
     "face_surprise"
    ],
-   "bangs": 0
+   "bangs": 0,
+   "lean": 1.8,
+   "breathe": 1.8
   },
   "kubikashige": {
    "layers": [
@@ -426,8 +429,8 @@
    "layers": [
     "face_tehe"
    ],
-   "tilt": 6,
-   "bangs": 6
+   "tilt": 13,
+   "bangs": 9
   },
   "turn_left": {
    "pose": "pose_turn_left"

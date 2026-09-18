@@ -44,8 +44,10 @@ class AynRig {
   /** 表情プリセット(rig.json の expressions)。無い名前は neutral。tilt=首傾げ, bangs=前髪の流れ(度・正で向かって右) */
   setExpression(name) {
     const e = (this.rig.expressions || {})[name] || {};
-    this.expr = { name, layers: new Set(e.layers || []), tilt: e.tilt || 0, bangs: e.bangs || 0, pose: (this.outfit && this.outfit !== 'default') ? null : (e.pose || null) };
-    this.gust(0.6);   // 表情が変わる瞬間に髪がふわっと動く
+    // lean=のけぞり(size の %。正で頭が上に浮いて少し小さく=後ろへ引く)、breathe=呼吸の倍率(驚きは速く大きく)(Prompt216-7)
+    this.expr = { name, layers: new Set(e.layers || []), tilt: e.tilt || 0, bangs: e.bangs || 0, lean: e.lean || 0, breathe: e.breathe || 1,
+      pose: (this.outfit && this.outfit !== 'default') ? null : (e.pose || null) };
+    this.gust(e.lean ? 1.0 : 0.6);   // 表情が変わる瞬間に髪がふわっと動く(のけぞる時は強め)
   }
   /** 髪に突風(速度の衝撃)。喋り出し・表情変化で呼ぶ。dir=+1 右, -1 左, 0 交互 */
   gust(strength = 1, dir = 0) {
@@ -79,8 +81,13 @@ class AynRig {
     const tilt = this.tiltNow + Math.sin(t * 0.45) * g.tilt_deg * 0.55 + (st.speaking ? Math.sin(t * 2.3) * 0.8 : 0) + (st.level || 0) * 0.8;
     const tiltVel = (tilt - this.prevTilt) / dt; const tiltAcc = (tiltVel - this.prevTiltVel) / dt;
     this.prevTilt = tilt; this.prevTiltVel = tiltVel;
-    const breatheHead = Math.sin(t * 1.25) * g.breathe_px * (st.speaking ? 1.3 : 1);
-    const breatheBody = Math.sin(t * 1.25 - 0.4) * r.groups.body.breathe_px;
+    // 呼吸: 表情の breathe 倍率(驚きは速く大きく)。のけぞり(lean)はゆっくり入ってゆっくり戻る
+    const bm = this.expr ? (this.expr.breathe || 1) : 1, bf = 1 + (bm - 1) * 0.6;
+    const breatheHead = Math.sin(t * 1.25 * bf) * g.breathe_px * (st.speaking ? 1.3 : 1) * bm;
+    const breatheBody = Math.sin(t * 1.25 * bf - 0.4) * r.groups.body.breathe_px * bm;
+    const leanGoal = this.expr ? (this.expr.lean || 0) : 0;
+    this.leanNow = (this.leanNow || 0) + (leanGoal - (this.leanNow || 0)) * Math.min(1, dt * 5);
+    const leanPx = this.leanNow / 100 * s, leanScale = 1 - this.leanNow * 0.012;
     if (st.speaking && !this.wasSpeaking) this.gust(0.8);
     this.wasSpeaking = !!st.speaking;
     // スイッチ層の目標値
@@ -132,9 +139,10 @@ class AynRig {
       if (L.group === 'pose') { ctx.translate(0, breatheHead); ctx.drawImage(L.img, 0, 0, s, s); ctx.restore(); continue; }
       if (L.group === 'head') {
         const [px, py] = g.pivot;
-        ctx.translate(px, py + breatheHead); ctx.rotate(rad(tilt)); ctx.translate(-px, -py);
+        // のけぞり: 首の支点ごと上へ浮かせて少し縮める(遠ざかる)。体も少しだけ付いてくる
+        ctx.translate(px, py + breatheHead - leanPx); ctx.rotate(rad(tilt)); ctx.scale(leanScale, leanScale); ctx.translate(-px, -py);
       } else {
-        ctx.translate(0, breatheBody);
+        ctx.translate(0, breatheBody - leanPx * 0.3);
       }
       if (L.physics && L.pivot && L.physics.bend && L.bbox) {
         // しなり: 支点より下を N 本の横帯に分け、帯ごとに角度を根元→毛先へ補間して回す(帯は少し重ねて隙間を隠す)
