@@ -27,7 +27,7 @@ class AynRig {
   /** 表情プリセット(rig.json の expressions)。無い名前は neutral。tilt=首傾げ, bangs=前髪の流れ(度・正で向かって右) */
   setExpression(name) {
     const e = (this.rig.expressions || {})[name] || {};
-    this.expr = { name, layers: new Set(e.layers || []), tilt: e.tilt || 0, bangs: e.bangs || 0 };
+    this.expr = { name, layers: new Set(e.layers || []), tilt: e.tilt || 0, bangs: e.bangs || 0, pose: e.pose || null };
     this.gust(0.6);   // 表情が変わる瞬間に髪がふわっと動く
   }
   /** 髪に突風(速度の衝撃)。喋り出し・表情変化で呼ぶ。dir=+1 右, -1 左, 0 交互 */
@@ -93,6 +93,7 @@ class AynRig {
       if (L.switch === 'blink') L.alpha += ((st.blink ? 1 : 0) - L.alpha) * 0.6;
       if (L.switch === 'mouth') L.alpha += (mouth - L.alpha) * 0.5;
       if (L.switch === 'expr') L.alpha += ((this.expr && this.expr.layers.has(L.name) ? 1 : 0) - L.alpha) * Math.min(1, dt * 8);
+      if (L.switch === 'pose') L.alpha += ((this.expr && this.expr.pose === L.name ? 1 : 0) - L.alpha) * Math.min(1, dt * 5);   // クロスフェード ~0.3s
     }
     // 描画
     ctx.setTransform(v.dpr, 0, 0, v.dpr, 0, 0);
@@ -100,10 +101,13 @@ class AynRig {
     ctx.save();
     ctx.translate(v.W / 2, v.H / 2); ctx.scale(v.k, v.k); ctx.translate(-v.cx, -v.cy);
     const rad = d => d * Math.PI / 180;
+    const poseOn = this.layers.reduce((m, L) => L.switch === 'pose' ? Math.max(m, L.alpha) : m, 0);   // 0..1
     for (const L of this.layers) {
       if (L.alpha <= 0.01) continue;
       ctx.save();
-      ctx.globalAlpha = Math.min(1, L.alpha);
+      ctx.globalAlpha = Math.min(1, L.alpha) * (L.switch === 'pose' ? 1 : 1 - poseOn);   // ポーズ中は本体を消す
+      if (ctx.globalAlpha <= 0.01) { ctx.restore(); continue; }
+      if (L.group === 'pose') { ctx.translate(0, breatheHead); ctx.drawImage(L.img, 0, 0, s, s); ctx.restore(); continue; }
       if (L.group === 'head') {
         const [px, py] = g.pivot;
         ctx.translate(px, py + breatheHead); ctx.rotate(rad(tilt)); ctx.translate(-px, -py);
