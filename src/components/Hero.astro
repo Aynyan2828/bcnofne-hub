@@ -149,6 +149,9 @@ const rigJs = `${base}/ayn-rig/rig.js?v=${rigVer}`;
       const canvas = host.querySelector('canvas');
       const rig = new window.AynRig(canvas, host.dataset.rig, { zoom: 1.0 });
       await rig.load();
+      // 夜(22〜6時・閲覧者のローカル時刻)はパジャマ(rig.json outfits・Prompt216-5)。無い rig.json なら default のまま
+      const autoOutfit = () => { if (!rig.setOutfit) return; const h = new Date().getHours(); rig.setOutfit(h >= 22 || h < 6 ? 'pajama' : 'default'); };
+      autoOutfit(); setInterval(autoOutfit, 60000);
       host.classList.add('is-on');
       let speaking = false, env = null, envStart = 0, envDur = 0, level = 0, levelS = 0;
       let nextBlink = performance.now() + 1800, blinkUntil = 0, last = performance.now();

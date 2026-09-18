@@ -32,6 +32,13 @@
    "group": "body"
   },
   {
+   "name": "body_pajama",
+   "file": "body_pajama.webp",
+   "z": 0,
+   "group": "body",
+   "outfit": "pajama"
+  },
+  {
    "name": "hair_shoulder",
    "file": "hair_shoulder.webp",
    "z": 0.5,
@@ -42,6 +49,13 @@
    "file": "head.webp",
    "z": 1,
    "group": "head"
+  },
+  {
+   "name": "head_nohat",
+   "file": "head_nohat.webp",
+   "z": 1,
+   "group": "head",
+   "outfit": "pajama"
   },
   {
    "name": "hair_L",
@@ -426,6 +440,19 @@
   },
   "look_back": {
    "pose": "pose_look_back"
+  }
+ },
+ "outfits": {
+  "default": {},
+  "pajama": {
+   "hide": [
+    "body",
+    "head"
+   ],
+   "layers": [
+    "body_pajama",
+    "head_nohat"
+   ]
   }
  },
  "groups": {

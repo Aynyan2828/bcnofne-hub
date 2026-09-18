@@ -18,16 +18,33 @@ class AynRig {
       const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error('layer: ' + l.file));
       im.src = this.base + l.file + '?v=' + Date.now();
     })));
-    this.layers = rig.layers.map((l, i) => ({ ...l, img: imgs[i], angle: 0, vel: 0, tip: 0, tipVel: 0, alpha: l.switch ? 0 : 1 }))
+    // 衣装(outfit): l.outfit が付いとる層は、その衣装の時だけ出る(oa=衣装アルファ)。既定の衣装は rig.json outfits.default
+    this.layers = rig.layers.map((l, i) => ({ ...l, img: imgs[i], angle: 0, vel: 0, tip: 0, tipVel: 0, alpha: l.switch ? 0 : 1, oa: l.outfit ? 0 : 1 }))
       .sort((a, b) => a.z - b.z);
     this.ready = true; this.prevTilt = 0; this.prevTiltVel = 0;
     this.expr = { name: 'neutral', layers: new Set(), tilt: 0, bangs: 0 }; this.tiltExtra = 0;
+    this.outfit = 'default';
+    if (this.opts.outfit) this.setOutfit(this.opts.outfit);
     return this;
+  }
+  /** 衣装を切り替える(rig.json の outfits にある名前。無ければ default)。本体の層をクロスフェードで差し替える(髪揺れ・表情はそのまま) */
+  setOutfit(name) {
+    const outfits = this.rig.outfits || {};
+    if (name !== 'default' && !outfits[name]) name = 'default';
+    if (this.outfit === name) return;
+    this.outfit = name;
+    if (name !== 'default' && this.expr && this.expr.pose) this.expr.pose = null;   // 衣装中はポーズ絵(昼の服)を使わん
+  }
+  /** この層が今の衣装で出るか(1/0)。outfit 付き層は一致した時だけ、無印の層は今の衣装の hide に無ければ出る */
+  _outfitTarget(L) {
+    if (L.outfit) return L.outfit === this.outfit ? 1 : 0;
+    const o = (this.rig.outfits || {})[this.outfit];
+    return o && o.hide && o.hide.includes(L.name) ? 0 : 1;
   }
   /** 表情プリセット(rig.json の expressions)。無い名前は neutral。tilt=首傾げ, bangs=前髪の流れ(度・正で向かって右) */
   setExpression(name) {
     const e = (this.rig.expressions || {})[name] || {};
-    this.expr = { name, layers: new Set(e.layers || []), tilt: e.tilt || 0, bangs: e.bangs || 0, pose: e.pose || null };
+    this.expr = { name, layers: new Set(e.layers || []), tilt: e.tilt || 0, bangs: e.bangs || 0, pose: (this.outfit && this.outfit !== 'default') ? null : (e.pose || null) };
     this.gust(0.6);   // 表情が変わる瞬間に髪がふわっと動く
   }
   /** 髪に突風(速度の衝撃)。喋り出し・表情変化で呼ぶ。dir=+1 右, -1 左, 0 交互 */
@@ -90,6 +107,7 @@ class AynRig {
           L.tip = Math.max(-p.max_deg * over, Math.min(p.max_deg * over, L.tip));
         }
       }
+      L.oa += (this._outfitTarget(L) - L.oa) * Math.min(1, dt * 5);   // 衣装のクロスフェード ~0.3s
       if (L.switch === 'blink') L.alpha += ((st.blink ? 1 : 0) - L.alpha) * 0.6;
       if (L.switch === 'mouth') L.alpha += (mouth - L.alpha) * 0.5;
       if (L.switch === 'expr') L.alpha += ((this.expr && this.expr.layers.has(L.name) ? 1 : 0) - L.alpha) * Math.min(1, dt * 8);
@@ -107,9 +125,9 @@ class AynRig {
     // ポーズ絵の上に乗る口/目は、親ポーズのフェード量を掛ける
     const poseAlpha = {}; for (const L of this.layers) if (L.switch === 'pose') poseAlpha[L.name] = L.alpha;
     for (const L of this.layers) {
-      if (L.alpha <= 0.01) continue;
+      if (L.alpha <= 0.01 || L.oa <= 0.01) continue;
       ctx.save();
-      ctx.globalAlpha = Math.min(1, L.alpha) * (L.group === 'pose' ? (L.parent ? (poseAlpha[L.parent] || 0) : 1) : 1 - poseOn);   // ポーズ中は本体を消す
+      ctx.globalAlpha = Math.min(1, L.alpha) * Math.min(1, L.oa) * (L.group === 'pose' ? (L.parent ? (poseAlpha[L.parent] || 0) : 1) : 1 - poseOn);   // ポーズ中は本体を消す
       if (ctx.globalAlpha <= 0.01) { ctx.restore(); continue; }
       if (L.group === 'pose') { ctx.translate(0, breatheHead); ctx.drawImage(L.img, 0, 0, s, s); ctx.restore(); continue; }
       if (L.group === 'head') {
