@@ -6,10 +6,12 @@ import CollageBackdrop from '../components/CollageBackdrop.astro';
 interface Props {
   title?: string;
   description?: string;
+  ogImage?: string;
 }
 const {
   title = 'BCNOFNe〜ボクのフネ〜｜機関士AI AYN の公式ハブ',
   description = '機関士AI AYN と一緒に、Crypto Ocean を航海するBCNOFNe の公式ハブ。iOSアプリ・睡眠BGM・AI RADIO・音楽配信・SNS をここに集めたばい。',
+  ogImage,
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -27,7 +29,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Yomogi&family=Yusei+Magic&display=swap" rel="stylesheet" />
-    <SEO title={title} description={description} />
+    <SEO title={title} description={description} {...(ogImage ? { ogImage } : {})} />
   </head>
   <body>
     <CollageBackdrop />

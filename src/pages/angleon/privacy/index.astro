@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Footer from '../../../components/Footer.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<BaseLayout title="Angleon 事前登録のプライバシーポリシー" description="Angleon の事前登録で受け取るメールアドレスの扱い。">
+  <main id="main" class="section">
+    <div class="container" style="max-width: 720px;">
+      <div class="section-head section-head--left" style="text-align:left">
+        <span class="eyebrow">Privacy</span>
+        <h2>Angleon 事前登録のプライバシーポリシー</h2>
+      </div>
+      <p>最終更新：2026-09-22 ／ 運営者：BCNOFNe（aynyan）</p>
+      <h3>受け取る情報</h3>
+      <p>事前登録フォームで入力されたメールアドレス、登録日時、登録元（ページ）。名前や電話番号は受け取らん。</p>
+      <h3>使う目的</h3>
+      <p>Angleon の公開のお知らせ、先行ベータ（TestFlight）の案内、それに関する連絡のみ。</p>
+      <h3>保存と共有</h3>
+      <p>Cloudflare（Workers KV・日本／米国リージョン）に暗号化して保存する。第三者に売らん・渡さん。メール送信には Resend を使う（送信の代行のみ）。</p>
+      <h3>配信停止・削除</h3>
+      <p>届いたメールの末尾にある「配信停止」リンクを押すと、その場で削除される。<a href={`${base}/#contact`}>お問い合わせ</a>からも削除を頼める。</p>
+      <h3>アクセス解析</h3>
+      <p>ページの表示数とボタンの押された回数を、個人を特定せん形で数えとる（Cloudflare Web Analytics・Cookie なし）。</p>
+      <p><a href={`${base}/angleon/`}>← Angleon に戻る</a></p>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

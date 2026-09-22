@@ -1,5 +1,12 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-09-22 — Angleon 需要検証 LP（Prompt231 フェーズ1）
+- `src/pages/angleon/index.astro` — `/angleon/`：ヒーロー（無音ツアー動画 540p 20s・LINE CTA）／ミニ体験（`public/angleon/play.html`＝Angleon HTML 版の 3 枚軽量ビルド・275KB・iframe）／なぜ出る／使い道 4／実績（曲 3 曲 9/29）／事前登録（LINE 主・メール任意→bcnofne-edge `/waitlist`、未実装のうちは「準備中」表示）／CTA 計測 beacon（`/angleon/hit`）
+- `src/pages/angleon/privacy/index.astro` — 事前登録のプライバシーポリシー
+- `public/og/og-angleon.jpg`・`src/assets/app-angleon-icon.png`・`public/media/angleon_promo.mp4`（6.5MB）＋poster
+- `BaseLayout` に `ogImage` prop を追加（ページ別 OGP）
+
+
 All notable changes to this project.
 形式は [Keep a Changelog](https://keepachangelog.com/ja/1.0.0/) を緩く踏襲。
 

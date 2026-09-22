@@ -1,0 +1,312 @@
+---
+// Angleon 需要検証 LP（Prompt231 フェーズ1）。
+// ヒーロー = ツアー動画（無音ループ）／ミニ体験 = /angleon/play.html（iframe）／CTA = LINE 主・メール任意。
+// メール登録の POST 先は bcnofne-edge の /waitlist（フェーズ2で実装。未実装のうちはフォームが「準備中」を返す）。
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+import icon from '../../assets/app-angleon-icon.png';
+import aynExcited from '../../assets/ayn/ayn-excited.png';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
+const LINE_URL = 'https://lin.ee/V2sme7z';
+const title = 'Angleon（アングリオン）｜回すと、絵が出る。';
+const description =
+  'ぐちゃぐちゃの線の塊を指で回すと、決まった角度でだけ絵が浮かぶ iPhone アプリ。推しや自分の絵を「隠し絵」にして、光る壁紙や動画に。事前登録受付中。';
+---
+<BaseLayout title={title} description={description} ogImage="og/og-angleon.jpg">
+  <main id="main" class="lp">
+    <!-- Hero -->
+    <header class="lp-hero">
+      <div class="container lp-hero__inner">
+        <div class="lp-hero__copy">
+          <p class="lp-hero__eyebrow">BCNOFNe の新作 iPhone アプリ ／ 制作中</p>
+          <div class="lp-hero__brand">
+            <Image src={icon} alt="Angleon のアイコン" width="72" height="72" class="lp-hero__icon" />
+            <h1 class="lp-hero__title">Angleon<span>アングリオン</span></h1>
+          </div>
+          <p class="lp-hero__lead">
+            ぐちゃぐちゃの線を、指でくるくる回す。<br />
+            <strong>角度が合った瞬間だけ、絵が浮かぶ。</strong>
+          </p>
+          <p class="lp-hero__sub">
+            推しの絵も、自分の絵も、「隠し絵」にして光らせる。動く壁紙にも、曲に乗った動画にも。
+          </p>
+          <div class="lp-hero__cta">
+            <a class="btn btn--line" href={LINE_URL} target="_blank" rel="noopener noreferrer" data-cta="line">
+              LINE で公開を待つ
+            </a>
+            <a class="btn btn--ghost" href="#play">ブラウザで試す</a>
+          </div>
+          <p class="lp-hero__note">公開日に LINE で知らせるばい。しつこい配信はせん。</p>
+        </div>
+        <div class="lp-hero__art">
+          <video
+            src={`${base}/media/angleon_promo.mp4`}
+            poster={`${base}/media/angleon_promo_poster.jpg`}
+            width="540"
+            height="960"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-label="Angleon のデモ動画。絡まった線の塊が回り、決まった角度で AYN の線画が浮かび上がる。"
+          ></video>
+        </div>
+      </div>
+    </header>
+
+    <!-- Play -->
+    <section id="play" class="section lp-play">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Try it</span>
+          <h2>回してみて</h2>
+          <p>3 枚の絵が隠れとる。指（マウス）でドラッグして、角度を探してみて。</p>
+        </div>
+        <div class="lp-play__frame">
+          <iframe
+            src={`${base}/angleon/play.html`}
+            title="Angleon ミニ体験"
+            loading="lazy"
+            allow="fullscreen"
+          ></iframe>
+        </div>
+        <p class="lp-play__hint">アプリ版は 10 枚。自分の絵も入る。</p>
+      </div>
+    </section>
+
+    <!-- Why -->
+    <section class="section section--mist">
+      <div class="container lp-why">
+        <div class="section-head">
+          <span class="eyebrow">How</span>
+          <h2>なんで、出ると？</h2>
+        </div>
+        <div class="lp-why__grid">
+          <div class="lp-why__item">
+            <h3>絵は最初からそこにある</h3>
+            <p>1 枚の絵を「ある方向から見た影」として 3D に置く。その方向からだけ元の絵が見えて、ほかの角度ではノイズになる。</p>
+          </div>
+          <div class="lp-why__item">
+            <h3>10 方向に 10 枚</h3>
+            <p>同じ塊に、別々の方向で別々の絵を埋める。ほどくんやなくて、正しい角度に立つと現れる。</p>
+          </div>
+          <div class="lp-why__item">
+            <h3>揃った瞬間、ネオンが灯る</h3>
+            <p>角度が合うと線が太く明るくにじんで、絵の名前がふわっと出る。宝探しみたいに集めていける。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Uses -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Use</span>
+          <h2>こう使う</h2>
+        </div>
+        <div class="lp-uses">
+          <div class="lp-use">
+            <span class="lp-use__n">壁紙</span>
+            <h3>ロック画面を、起こすたびに絵にする</h3>
+            <p>Live Photo として書き出して壁紙に。iPhone を起こすと線が集まって、推しが現れる。</p>
+          </div>
+          <div class="lp-use">
+            <span class="lp-use__n">動画</span>
+            <h3>曲に乗って回る、ショート動画</h3>
+            <p>回転が曲のアクセントで「絵になる」動画を書き出して、そのまま X・Instagram・TikTok へ。</p>
+          </div>
+          <div class="lp-use">
+            <span class="lp-use__n">自分の絵</span>
+            <h3>写真から、その場で線画に</h3>
+            <p>イラストを写真ライブラリから選ぶだけ。iPhone の中で線を拾って、塊に埋め込む。</p>
+          </div>
+          <div class="lp-use">
+            <span class="lp-use__n">交換</span>
+            <h3>作品ファイルを送り合う</h3>
+            <p>1 つの作品を 1 ファイルに。AirDrop や LINE で送れば、相手の Angleon で開ける。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Proof -->
+    <section class="section section--mist">
+      <div class="container lp-proof">
+        <Image src={aynExcited} alt="嬉しそうな AYN" width="120" height="120" class="lp-proof__ayn" />
+        <div class="lp-proof__body">
+          <div class="section-head section-head--left">
+            <span class="eyebrow">Made by</span>
+            <h2>ぼく、AYN が最初の主役ばい</h2>
+          </div>
+          <p>
+            元・有明海の機関士が作っとる <a href={`${base}/`}>BCNOFNe</a> のアプリ。最初の作品は機関士AI のぼく（AYN）の 10 ポーズ。
+            テーマソングも 3 曲できて、<strong>9 月 29 日</strong>に Spotify・Apple Music で配信される。
+          </p>
+          <p class="lp-proof__songs">「Angleon」「もつれ線」「Neon Drop (Angleon)」</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="join" class="section lp-join">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Join</span>
+          <h2>公開したら、いちばんに知らせる</h2>
+          <p>いまは制作中。LINE の友だちになっとってくれたら、公開日にぼくから連絡するばい。</p>
+        </div>
+        <div class="lp-join__grid">
+          <div class="lp-join__card lp-join__card--main">
+            <h3>LINE で待つ（おすすめ）</h3>
+            <p>友だち追加だけ。公開のお知らせと、先行ベータの案内が届く。</p>
+            <a class="btn btn--line" href={LINE_URL} target="_blank" rel="noopener noreferrer" data-cta="line">LINE 友だち追加</a>
+          </div>
+          <div class="lp-join__card">
+            <h3>メールで待つ（任意）</h3>
+            <form class="lp-form" data-waitlist data-endpoint={EDGE} novalidate>
+              <label class="lp-form__field">
+                <span>メールアドレス</span>
+                <input type="email" name="email" maxlength="200" autocomplete="email" required inputmode="email" />
+              </label>
+              <label class="lp-form__consent">
+                <input type="checkbox" name="consent" required />
+                <span>Angleon の公開・ベータのお知らせだけ受け取る（いつでも配信停止できる）</span>
+              </label>
+              <div class="lp-form__hp" aria-hidden="true">
+                <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+              </div>
+              <button type="submit" class="btn" data-submit>登録する</button>
+              <p class="lp-form__status" data-status role="status" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
+        <p class="lp-join__legal">
+          送信者：BCNOFNe（aynyan）。メールは公開・ベータの案内のみに使い、ほかに渡さん。
+          <a href={`${base}/angleon/privacy/`}>プライバシーポリシー</a>
+        </p>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<script>
+  // 事前登録フォーム → bcnofne-edge /waitlist（JSON）。CTA クリックは /counter 型で計測（best-effort）。
+  const form = document.querySelector('[data-waitlist]') as HTMLFormElement | null;
+  const EP = form?.dataset.endpoint || '';
+  const beacon = (name: string) => {
+    try { navigator.sendBeacon?.(EP + '/angleon/hit?cta=' + encodeURIComponent(name)); } catch (_) {}
+  };
+  document.querySelectorAll<HTMLAnchorElement>('[data-cta]').forEach((a) => {
+    a.addEventListener('click', () => beacon(a.dataset.cta || 'cta'));
+  });
+  if (form) {
+    const statusEl = form.querySelector('[data-status]') as HTMLElement;
+    const btn = form.querySelector('[data-submit]') as HTMLButtonElement;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const email = String(fd.get('email') || '').trim();
+      const consent = fd.get('consent') === 'on';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { statusEl.textContent = 'メールアドレスを確認してほしか。'; statusEl.className = 'lp-form__status is-err'; return; }
+      if (!consent) { statusEl.textContent = 'お知らせ受け取りにチェックを入れてほしか。'; statusEl.className = 'lp-form__status is-err'; return; }
+      btn.disabled = true; statusEl.textContent = '登録中…'; statusEl.className = 'lp-form__status';
+      try {
+        const res = await fetch(EP + '/waitlist', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, consent, website: fd.get('website') || '', source: 'lp' }),
+        });
+        if (res.ok) { statusEl.textContent = '登録したばい。公開したら知らせるけん。'; statusEl.className = 'lp-form__status is-ok'; form.reset(); beacon('email'); }
+        else if (res.status === 404) { statusEl.textContent = 'メール登録は準備中ばい。いまは LINE で待っとって。'; statusEl.className = 'lp-form__status is-err'; }
+        else { statusEl.textContent = '登録できんかった。少し待ってもう一回。'; statusEl.className = 'lp-form__status is-err'; }
+      } catch (_) {
+        statusEl.textContent = '通信できんかった。電波を確認してもう一回。'; statusEl.className = 'lp-form__status is-err';
+      } finally { btn.disabled = false; }
+    });
+  }
+</script>
+
+<style>
+  /* LP 専用: サイトの水彩トーンに、ネオンの黒をヒーローだけ差す */
+  .lp-hero {
+    background: radial-gradient(120% 120% at 50% 0%, #0b0f24 0%, #141a3a 45%, #2a3566 100%);
+    color: #fff;
+    padding-block: clamp(2.2rem, 6vw, 4rem) clamp(2rem, 5vw, 3.5rem);
+  }
+  .lp-hero__inner {
+    display: grid;
+    grid-template-columns: 1.15fr minmax(220px, 320px);
+    gap: clamp(1.4rem, 4vw, 3rem);
+    align-items: center;
+  }
+  .lp-hero__eyebrow { font-size: 0.8rem; letter-spacing: 0.18em; opacity: 0.75; margin: 0 0 0.8rem; }
+  .lp-hero__brand { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1rem; }
+  .lp-hero__icon { width: 72px; height: 72px; border-radius: 18px; box-shadow: 0 0 24px rgba(124, 108, 240, 0.55); }
+  .lp-hero__title { font-family: var(--font-display); font-size: clamp(2rem, 6vw, 3rem); line-height: 1; letter-spacing: 0.02em; }
+  .lp-hero__title span { display: block; font-size: 0.42em; letter-spacing: 0.3em; opacity: 0.8; margin-top: 0.3rem; }
+  .lp-hero__lead { font-size: clamp(1.15rem, 2.6vw, 1.5rem); line-height: 1.6; margin: 0 0 0.6rem; }
+  .lp-hero__lead strong { color: #f3a6ff; text-shadow: 0 0 18px rgba(243, 166, 255, 0.55); }
+  .lp-hero__sub { opacity: 0.85; margin: 0 0 1.4rem; max-width: 40ch; }
+  .lp-hero__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .lp-hero__note { font-size: 0.85rem; opacity: 0.7; margin: 0.8rem 0 0; }
+  .lp-hero__art video { width: 100%; height: auto; border-radius: 22px; box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.8), 0 0 40px rgba(106, 169, 224, 0.25); border: 1px solid rgba(255, 255, 255, 0.12); display: block; }
+  .btn--line { background: #06c755; color: #fff; }
+  .btn--line:hover { filter: brightness(1.05); }
+  .lp-hero .btn--ghost { color: #fff; border-color: rgba(255, 255, 255, 0.5); }
+
+  .lp-play__frame {
+    max-width: 420px;
+    margin: 0 auto;
+    aspect-ratio: 9 / 16;
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 6px solid #111;
+    background: #000;
+  }
+  .lp-play__frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .lp-play__hint { text-align: center; color: var(--c-ink-soft); margin: 1rem 0 0; font-size: 0.95rem; }
+
+  .lp-why__grid, .lp-uses, .lp-join__grid { display: grid; gap: clamp(1rem, 2.5vw, 1.4rem); }
+  .lp-why__grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .lp-why__item h3, .lp-use h3, .lp-join__card h3 { font-family: var(--font-display); font-size: 1.15rem; margin-bottom: 0.4rem; }
+  .lp-why__item p, .lp-use p, .lp-join__card p { margin: 0; color: var(--c-ink-soft); }
+
+  .lp-uses { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .lp-use { background: var(--c-card); border: 1px solid var(--c-line); border-radius: var(--radius); padding: 1.2rem 1.3rem; box-shadow: var(--shadow-soft); }
+  .lp-use__n { display: inline-block; font-size: 0.75rem; letter-spacing: 0.2em; color: var(--c-purple); margin-bottom: 0.4rem; }
+
+  .lp-proof { display: grid; grid-template-columns: 120px 1fr; gap: 1.4rem; align-items: start; }
+  .lp-proof__ayn { border-radius: 50%; }
+  .section-head--left { text-align: left; margin-bottom: 0.8rem; }
+  .lp-proof p { margin: 0 0 0.6rem; }
+  .lp-proof__songs { color: var(--c-ink-soft); }
+
+  .lp-join__grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .lp-join__card { background: var(--c-card); border: 1px solid var(--c-line); border-radius: var(--radius); padding: 1.4rem; box-shadow: var(--shadow-soft); }
+  .lp-join__card--main { border-color: #06c755; }
+  .lp-join__card .btn { margin-top: 0.9rem; }
+  .lp-form { display: grid; gap: 0.8rem; margin-top: 0.8rem; }
+  .lp-form__field span { display: block; font-size: 0.85rem; color: var(--c-ink-soft); margin-bottom: 0.25rem; }
+  .lp-form__field input { width: 100%; padding: 0.7rem 0.9rem; border: 1px solid var(--c-line); border-radius: 12px; font: inherit; }
+  .lp-form__consent { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.88rem; color: var(--c-ink-soft); }
+  .lp-form__consent input { margin-top: 0.3rem; }
+  .lp-form__hp { position: absolute; left: -9999px; }
+  .lp-form__status { margin: 0; font-size: 0.9rem; min-height: 1.4em; }
+  .lp-form__status.is-ok { color: #1f8a4c; }
+  .lp-form__status.is-err { color: #c8452a; }
+  .lp-join__legal { text-align: center; font-size: 0.82rem; color: var(--c-ink-soft); margin: 1.4rem auto 0; max-width: 60ch; }
+
+  @media (max-width: 720px) {
+    .lp-hero__inner { grid-template-columns: 1fr; }
+    .lp-hero__art { max-width: 300px; margin: 0 auto; }
+    .lp-proof { grid-template-columns: 1fr; }
+    .lp-proof__ayn { width: 90px; height: 90px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .lp-hero__art video { display: none; } }
+</style>
