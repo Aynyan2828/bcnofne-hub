@@ -5,8 +5,8 @@ url: https://www.instagram.com/aynyan28
 handle: aynyan28
 category: SNS
 cta: Instagramを見る
-order: 30
+order: 35
 image: ../../assets/sns/art-instagram.png
 status: active
-tier: more
+tier: primary
 ---

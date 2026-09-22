@@ -4,7 +4,7 @@ summary: ぼくと直接おしゃべりできる窓口。友だち追加して�
 url: https://lin.ee/V2sme7z
 category: SNS
 cta: 友だち追加
-order: 50
+order: 25
 image: ../../assets/sns/art-line.png
 status: active
 tier: primary

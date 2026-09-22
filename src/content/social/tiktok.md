@@ -5,8 +5,8 @@ url: https://www.tiktok.com/@aynyan2828
 handle: "@aynyan2828"
 category: SNS
 cta: TikTokを見る
-order: 20
+order: 40
 image: ../../assets/sns/art-tiktok.png
 status: active
-tier: more
+tier: primary
 ---

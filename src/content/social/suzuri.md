@@ -5,8 +5,8 @@ url: https://suzuri.jp/BCNOFNe
 handle: BCNOFNe
 category: グッズ
 cta: グッズを見る
-order: 60
+order: 45
 image: ../../assets/sns/art-suzuri.png
 status: active
-tier: more
+tier: primary
 ---

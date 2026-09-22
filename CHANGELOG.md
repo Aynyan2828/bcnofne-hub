@@ -22,9 +22,12 @@
   夜の水彩ループも動画棚に合流させて「動画は動画で1か所」に。
 - Radio: チャンネル4枚の縦並び → 横の棚。
 - Music: 作品8件の grid → 横の棚（件数を右肩に出す）。気分で絞ると先頭へ戻る。
-- Social: 主な発信先4枚 → 横の棚。「その他の航路」も横の棚にしたうえで
-  **畳むのをやめて最初から中身を見せる**（横に流すなら隠す理由が無い）。
-  カードより一段小さいピルにして、強さの差だけ残しとる。
+- Social: **SNS 8件をぜんぶ画像つきカード1本の棚に統合**。
+  「その他の航路」に落としとった X / Instagram / TikTok / SUZURI も
+  note / Bluesky / GitHub / 公式LINE と同じ扱いに上げた（横に流すなら
+  格下げして隠す理由が無い）。棚の並びは order で note→Bluesky→GitHub→
+  LINE→X→Instagram→TikTok→SUZURI。Litlink は見出し下のピルのまま。
+  `tier: more` の受け皿は残しとる＝リンクが増えすぎた時の逃がし先。
 - Art（水彩の航海記録）: 自前の横スクロールをやめて HScroll に統合。
 - 見出し・Featured・About・Contact に出現演出（Featured は本文が左から、
   動画が右から入る。About は絵が左・文が右）。

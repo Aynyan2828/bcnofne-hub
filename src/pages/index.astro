@@ -221,7 +221,7 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
       </div>
 
       <div data-reveal="up">
-        <HScroll label="主な発信先" size="card" hint={`${primarySocial.length}件`}>
+        <HScroll label="発信先とリンク" size="card" hint={`${primarySocial.length}件`}>
           {primarySocial.map((s) => (
             <Card
               title={s.data.title}
@@ -235,8 +235,9 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
         </HScroll>
       </div>
 
-      {/* 横に流すようになったけん、もう畳まんでよか＝最初から中身を見せる。
-          カード（主な発信先）より一段小さいピルで、強さの差だけ残しとる。 */}
+      {/* いまは空（SNS はぜんぶ上の棚に画像つきカードで出しとる）。
+          リンクが増えすぎた時に .md の tier を more に落とせば、
+          ここに一段小さいピルの棚として逃がせる＝受け皿として残しとる。 */}
       {moreSocial.length > 0 && (
         <div class="routes" data-reveal="up">
           <HScroll

@@ -6,7 +6,7 @@ handle: Aynyan2828
 category: Dev
 cta: GitHubを見る
 image: ../../assets/sns/art-github.png
-order: 55
+order: 20
 status: active
 tier: primary
 ---

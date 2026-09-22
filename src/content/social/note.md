@@ -6,7 +6,7 @@ handle: aynyan_sui_ice
 category: SNS
 cta: noteを読む
 image: ../../assets/sns/art-note.png
-order: 45
+order: 10
 status: active
 tier: primary
 ---

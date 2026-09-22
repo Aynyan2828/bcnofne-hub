@@ -5,7 +5,7 @@ url: https://bsky.app/profile/aynyan.bsky.social
 handle: aynyan.bsky.social
 category: SNS
 cta: Blueskyを見る
-order: 40
+order: 15
 image: ../../assets/sns/art-bluesky.png
 status: active
 tier: primary
