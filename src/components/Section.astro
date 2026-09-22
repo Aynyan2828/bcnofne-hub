@@ -17,7 +17,7 @@ const { id, eyebrow, title, lead, mist = false, avatar, avatarAlt, harbor } = As
 ---
 <section id={id} class:list={['section', { 'section--mist': mist }]}>
   <div class="container">
-    <div class="section-head">
+    <div class="section-head" data-reveal="up">
       {/* 到着演出: VoyageRail の IntersectionObserver が .is-arrived を付ける。
           JS なし／動きを減らす設定なら最初から静かに見えとる状態で置いとく。 */}
       {harbor && (

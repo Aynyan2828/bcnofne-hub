@@ -104,6 +104,12 @@ const MOODS = [
         noteEl.hidden = true;
       }
       countEl.textContent = `${shown}件の作品を表示しとる。`;
+      // 棚（HScroll）に入っとるので、絞り込んだら先頭に戻す。
+      // scroll を1回投げて、端の霧と送りボタンの出し分けを測り直させる。
+      if (grid.scrollWidth > grid.clientWidth || grid.scrollLeft > 0) {
+        grid.scrollTo({ left: 0 });
+      }
+      grid.dispatchEvent(new Event('scroll'));
     };
 
     picker.addEventListener('click', (e) => {

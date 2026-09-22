@@ -1,0 +1,78 @@
+---
+/**
+ * Reveal — 「ふわっと湧く／横から入る」到着演出の裏方（1ページに1つ置くだけ）
+ *
+ * 要素に属性を足すだけで効く:
+ *   data-reveal="up"     下からふわっと湧く（既定）
+ *   data-reveal="left"   左からすーっと入る
+ *   data-reveal="right"  右からすーっと入る
+ *   data-reveal-stagger  子要素を1枚ずつ順に湧かせる（カードの束に）
+ *
+ * CSS は global.css 側（複数コンポーネントで使うけん）。
+ * IntersectionObserver は1つだけ。出したら監視を外すけん残らん。
+ * JS が無い時は最初から見えとる（global.css が html.has-js の時だけ伏せる）。
+ * prefers-reduced-motion では動かさず、その場に静かに置いとく。
+ */
+---
+<script>
+  (() => {
+    const init = () => {
+      const targets = document.querySelectorAll('[data-reveal], [data-reveal-stagger]');
+      if (!targets.length) return;
+
+      // 演出なしで、その場に静かに置く
+      const showAll = (els) => {
+        for (const el of els) {
+          if (el.hasAttribute('data-reveal-stagger')) for (const k of el.children) k.classList.add('is-in');
+          el.classList.add('is-in');
+        }
+      };
+
+      // 動きを減らす設定 / IO が無い環境: 伏せずに全部そのまま出す
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+        showAll(targets);
+        return;
+      }
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            const el = e.target;
+            io.unobserve(el);
+            if (el.hasAttribute('data-reveal-stagger')) {
+              // 1枚ずつ、ほんの少し遅らせて湧かせる（最大 0.42 秒まで）
+              let i = 0;
+              for (const k of el.children) {
+                k.style.transitionDelay = Math.min(i * 70, 420) + 'ms';
+                k.classList.add('is-in');
+                i++;
+              }
+            }
+            el.classList.add('is-in');
+          }
+        },
+        // 画面の下から少し入ってきたら点く（入った瞬間やと気づかれん）
+        { rootMargin: '0px 0px -7% 0px', threshold: 0.06 }
+      );
+      for (const el of targets) io.observe(el);
+
+      /* 保険: 万一 IO が届かん環境でも、読み込みから少し経ったら
+         「もう画面に届いとるはずの要素」は問答無用で出す。
+         演出が一度も動かんより、静かに出とる方がずっとよか。 */
+      setTimeout(() => {
+        const stuck = [];
+        for (const el of targets) {
+          if (el.classList.contains('is-in')) continue;
+          if (el.getBoundingClientRect().top < innerHeight * 1.2) stuck.push(el);
+        }
+        if (stuck.length) {
+          showAll(stuck);
+          for (const el of stuck) io.unobserve(el);
+        }
+      }, 4000);
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+    else init();
+  })();
+</script>

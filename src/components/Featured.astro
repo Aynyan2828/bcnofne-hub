@@ -41,7 +41,7 @@ const {
 const hookLines = (hook ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
 ---
 <article class="feat">
-  <div class="feat__body">
+  <div class="feat__body" data-reveal="left">
     <p class="feat__eyebrow">{eyebrow}</p>
     <div class="feat__brand">
       {icon && <Image src={icon} alt={`${title} のアイコン`} width={68} height={68} class="feat__icon" />}
@@ -63,7 +63,7 @@ const hookLines = (hook ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
     </div>
   </div>
   {demo && (
-    <div class="feat__art">
+    <div class="feat__art" data-reveal="right">
       <video
         data-lazyvideo
         data-src={demo}

@@ -126,6 +126,41 @@ h1, h2, h3 { line-height: 1.4; margin: 0; font-weight: 400; }
   background: linear-gradient(180deg, rgba(234, 241, 251, 0.55) 0%, rgba(251, 252, 255, 0.25) 100%);
 }
 
+/* ── ふわっと湧く／横から入る（Reveal）───────────────────────────
+   data-reveal="up|left|right" と data-reveal-stagger を付けた要素に効く。
+   既定は「見えとる」＝JS が無くても読める。JS がある時だけ伏せて、
+   画面に入ったら Reveal.astro が .is-in を付けて灯す。
+   水彩の静けさを壊さんよう、距離は小さめ・時間は長めにしとる。 */
+html.has-js [data-reveal],
+html.has-js [data-reveal-stagger] > * {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.75s ease, transform 0.75s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+html.has-js [data-reveal='left'] { transform: translateX(-28px); }
+html.has-js [data-reveal='right'] { transform: translateX(28px); }
+html.has-js [data-reveal].is-in,
+html.has-js [data-reveal-stagger] > *.is-in {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+/* 横から入るのは、画面が狭い時は横揺れになるけん下からに寄せる */
+@media (max-width: 760px) {
+  html.has-js [data-reveal='left'],
+  html.has-js [data-reveal='right'] { transform: translateY(18px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.has-js [data-reveal],
+  html.has-js [data-reveal-stagger] > * { opacity: 1; transform: none; }
+}
+/* 印刷では演出を待たん（JS が動かん紙の上で真っ白にせんため） */
+@media print {
+  html.has-js [data-reveal],
+  html.has-js [data-reveal-stagger] > * { opacity: 1 !important; transform: none !important; }
+}
+
 /* ── 到着演出（ARRIVING / APPS HARBOR）─────────────────────────────
    VoyageRail の IntersectionObserver が [data-harbor] に .is-arrived を付ける。
    既定は「見えとる」＝JS 無しでも読める。JS があるときだけ伏せて到着で灯す
@@ -171,53 +206,6 @@ html.has-js .arrival.is-arrived { opacity: 1; transform: none; }
   display: grid;
   gap: clamp(1rem, 2.5vw, 1.4rem);
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-}
-
-/* 大きな水彩シーン + カードの横並びレイアウト */
-.feature {
-  display: grid;
-  grid-template-columns: minmax(0, 320px) 1fr;
-  gap: clamp(1.4rem, 4vw, 2.4rem);
-  align-items: start;
-}
-.feature--reverse { grid-template-columns: 1fr minmax(0, 320px); }
-.feature__art {
-  position: sticky;
-  top: 1.5rem;
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--c-line);
-  line-height: 0;
-}
-.feature--reverse .feature__art { order: 2; }
-.feature__art img,
-.feature__art video { width: 100%; height: auto; display: block; }
-/* 動画版: 縦型プロモをそのまま埋め込む（複数本は縦に並べ、細い区切りを見せる） */
-.feature__art--video {
-  background: #0d1330;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.feature__art--video video {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 9 / 16;
-  object-fit: cover;
-}
-.feature .grid {
-  grid-template-columns: 1fr;
-}
-@media (min-width: 560px) {
-  .feature .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
-}
-@media (max-width: 760px) {
-  .feature,
-  .feature--reverse { grid-template-columns: 1fr; }
-  .feature__art { position: static; max-width: 360px; margin-inline: auto; }
-  .feature--reverse .feature__art { order: 0; }
 }
 
 /* Button */

@@ -11,6 +11,8 @@ import Section from '../components/Section.astro';
 import Card from '../components/Card.astro';
 import Featured from '../components/Featured.astro';
 import MoodPicker from '../components/MoodPicker.astro';
+import HScroll from '../components/HScroll.astro';
+import Reveal from '../components/Reveal.astro';
 import About from '../components/About.astro';
 import Contact from '../components/Contact.astro';
 import Feed from '../components/Feed.astro';
@@ -75,12 +77,26 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
 
       {otherApps.length > 0 && (
         <>
-          <h3 class="subhead">
+          <h3 class="subhead" data-reveal="up">
             <span class="subhead__en">Other Apps</span>
             もう動きよるアプリ
           </h3>
-          <div class="feature">
-            <div class="feature__art feature__art--video">
+          <div class="grid" data-reveal-stagger>
+            {otherApps.map((app) => (
+              <Card
+                title={app.data.title}
+                summary={app.data.summary}
+                url={app.data.url}
+                cta={app.data.cta}
+                badge={app.data.price}
+                icon={app.data.icon}
+              />
+            ))}
+          </div>
+
+          {/* 縦型プロモは縦に積むと画面が果てしなく伸びるけん、横に流す棚へ */}
+          <div class="shelf" data-reveal="up">
+            <HScroll label="アプリの紹介動画" size="video" title="紹介動画" hint="AYN が使い方を案内しよる">
               <video
                 data-lazyvideo
                 data-src={`${base}/media/shiftwake_promo.mp4`}
@@ -90,7 +106,9 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
                 muted
                 loop
                 playsinline
+                controls
                 preload="none"
+                class="shelfvideo"
                 aria-label="ShiftWake の紹介動画。AYNがシフト自動アラームの使い方を案内する縦型プロモ。"
               ></video>
               <video
@@ -102,22 +120,25 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
                 muted
                 loop
                 playsinline
+                controls
                 preload="none"
+                class="shelfvideo"
                 aria-label="扶養メーターの紹介動画。AYNがアプリの使い方を案内する縦型プロモ。"
               ></video>
-            </div>
-            <div class="grid">
-              {otherApps.map((app) => (
-                <Card
-                  title={app.data.title}
-                  summary={app.data.summary}
-                  url={app.data.url}
-                  cta={app.data.cta}
-                  badge={app.data.price}
-                  icon={app.data.icon}
-                />
-              ))}
-            </div>
+              <video
+                data-lazyvideo
+                data-src={`${base}/media/scene_night_loop.mp4`}
+                poster={`${base}/media/scene_night_poster.jpg`}
+                width="720"
+                height="1080"
+                muted
+                loop
+                playsinline
+                preload="none"
+                class="shelfvideo shelfvideo--scene"
+                aria-label="星空の下で『おやすみー！』と手を伸ばすAYNの水彩アニメーション。"
+              ></video>
+            </HScroll>
           </div>
         </>
       )}
@@ -134,8 +155,8 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
       avatarAlt="おやすみのAYN"
     >
       <LatestVideo />
-      <div class="feature feature--reverse">
-        <div class="grid">
+      <div data-reveal="up">
+        <HScroll label="チャンネル一覧" size="card" hint={`${channels.length}チャンネル`}>
           {channels.map((ch) => (
             <Card
               title={ch.data.title}
@@ -146,21 +167,7 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
               image={ch.data.image}
             />
           ))}
-        </div>
-        <div class="feature__art">
-          <video
-            data-lazyvideo
-            data-src={`${base}/media/scene_night_loop.mp4`}
-            poster={`${base}/media/scene_night_poster.jpg`}
-            width="720"
-            height="1080"
-            muted
-            loop
-            playsinline
-            preload="none"
-            aria-label="星空の下で『おやすみー！』と手を伸ばすAYNの水彩アニメーション。"
-          ></video>
-        </div>
+        </HScroll>
       </div>
     </Section>
 
@@ -174,18 +181,20 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
       avatarAlt="うれしそうなAYN"
     >
       <MoodPicker />
-      <div class="grid" data-music-grid>
-        {music.map((m) => (
-          <Card
-            title={m.data.title}
-            summary={m.data.summary}
-            url={m.data.url}
-            cta={m.data.cta}
-            badge={m.data.service}
-            image={m.data.image}
-            moods={m.data.moods}
-          />
-        ))}
+      <div data-reveal="up">
+        <HScroll label="音楽作品" size="card" hint={`${music.length}件`} trackAttr="data-music-grid">
+          {music.map((m) => (
+            <Card
+              title={m.data.title}
+              summary={m.data.summary}
+              url={m.data.url}
+              cta={m.data.cta}
+              badge={m.data.service}
+              image={m.data.image}
+              moods={m.data.moods}
+            />
+          ))}
+        </HScroll>
       </div>
     </Section>
 
@@ -211,17 +220,19 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
         <a class="pins__pin" href="#listen">YouTube（3チャンネル）は Radio 港に</a>
       </div>
 
-      <div class="grid">
-        {primarySocial.map((s) => (
-          <Card
-            title={s.data.title}
-            summary={s.data.summary}
-            url={s.data.url}
-            cta={s.data.cta}
-            handle={s.data.handle}
-            image={s.data.image}
-          />
-        ))}
+      <div data-reveal="up">
+        <HScroll label="主な発信先" size="card" hint={`${primarySocial.length}件`}>
+          {primarySocial.map((s) => (
+            <Card
+              title={s.data.title}
+              summary={s.data.summary}
+              url={s.data.url}
+              cta={s.data.cta}
+              handle={s.data.handle}
+              image={s.data.image}
+            />
+          ))}
+        </HScroll>
       </div>
 
       {moreSocial.length > 0 && (
@@ -230,16 +241,18 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
             <span class="routes__en">More Routes</span>
             その他の航路（{moreSocial.length}）
           </summary>
-          <ul class="routes__list">
-            {moreSocial.map((s) => (
-              <li>
-                <a href={s.data.url} target="_blank" rel="noopener noreferrer">
+          {/* 畳んだ中も横に流す＝開いても縦に伸びん */}
+          <div class="routes__shelf">
+            <HScroll label="その他の航路" size="pill">
+              {moreSocial.map((s) => (
+                <a class="routes__pill" href={s.data.url} target="_blank" rel="noopener noreferrer">
                   <b>{s.data.title}</b>
                   {s.data.handle && <span>{s.data.handle}</span>}
+                  <em>{s.data.summary}</em>
                 </a>
-              </li>
-            ))}
-          </ul>
+              ))}
+            </HScroll>
+          </div>
         </details>
       )}
     </Section>
@@ -250,6 +263,7 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
   <Footer />
   <AynNavigator />
   <LazyVideos />
+  <Reveal />
 </BaseLayout>
 
 <style>
@@ -322,27 +336,47 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
     text-transform: uppercase;
     color: var(--c-blue-deep);
   }
-  .routes__list {
-    list-style: none;
-    margin: 0.8rem 0 0.2rem;
-    padding: 0;
-    display: grid;
-    gap: 0.4rem;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  }
-  .routes__list a {
+  .routes__shelf { margin-top: 0.8rem; }
+  .routes__pill {
     display: flex;
     flex-direction: column;
+    gap: 0.1rem;
     line-height: 1.35;
-    padding: 0.45rem 0.7rem;
-    border-radius: 10px;
+    padding: 0.6rem 0.75rem;
+    border-radius: 12px;
     border: 1px solid var(--c-line);
     background: #fff;
     color: var(--c-ink);
     text-decoration: none;
     transition: border-color 0.18s ease, transform 0.18s ease;
+    height: 100%;
   }
-  .routes__list a:hover { border-color: var(--c-blue); transform: translateY(-1px); text-decoration: none; }
-  .routes__list b { font-size: 0.88rem; font-weight: 600; }
-  .routes__list span { font-size: 0.7rem; color: var(--c-ink-soft); font-family: var(--font-display); }
+  .routes__pill:hover { border-color: var(--c-blue); transform: translateY(-2px); text-decoration: none; }
+  .routes__pill b { font-size: 0.88rem; font-weight: 600; }
+  .routes__pill span { font-size: 0.7rem; color: var(--c-ink-soft); font-family: var(--font-display); }
+  .routes__pill em {
+    font-style: normal;
+    font-size: 0.7rem;
+    color: var(--c-ink-soft);
+    margin-top: 0.2rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* 横に流す動画棚 */
+  .shelf { margin-top: clamp(1.4rem, 4vw, 2.2rem); }
+  .shelfvideo {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+    border-radius: 14px;
+    background: #0d1330;
+    border: 1px solid var(--c-line);
+    box-shadow: var(--shadow-soft);
+    display: block;
+  }
+  .shelfvideo--scene { aspect-ratio: 2 / 3; }
 </style>

@@ -3,10 +3,11 @@
  * 水彩の航海記録（Art）— AYN の港に置く、横に流れる情景の帯。
  *
  * 動画やEPのために描いた水彩シーン（src/assets/scenes）をそのまま作品として見せる。
- * 横スクロール＋スナップ。画像は遅延読み込み（横にはみ出した分は後から）。
+ * 横スクロールは共通部品 HScroll（棚）に寄せとる。画像は遅延読み込み。
  * 「Art って何？」への答えがここばい。
  */
 import { Image } from 'astro:assets';
+import HScroll from './HScroll.astro';
 import moonlitSea from '../assets/scenes/moonlit-sea.jpg';
 import pierLighthouse from '../assets/scenes/pier-lighthouse.jpg';
 import gondolaLantern from '../assets/scenes/gondola-lantern.jpg';
@@ -27,29 +28,29 @@ const SCENES = [
   { img: cozySleep, en: 'Cozy Sleep', ja: '寝落ちの部屋' },
 ];
 ---
-<div class="scenes">
+<div class="scenes" data-reveal="up">
   <p class="scenes__head">
     <span class="scenes__tag">Art</span>
     水彩の航海記録 ― 動画やEPのために描いた情景ばい。
   </p>
-  <ul class="scenes__strip" tabindex="0" aria-label="水彩シーンの一覧（横スクロール）">
+  <HScroll label="水彩シーンの一覧" size="wide">
     {SCENES.map((s) => (
-      <li class="scenes__item">
+      <figure class="scenes__item">
         <Image
           src={s.img}
           alt={`水彩シーン「${s.ja}」`}
           widths={[360, 540]}
-          sizes="(max-width: 560px) 72vw, 300px"
+          sizes="(max-width: 560px) 84vw, 330px"
           loading="lazy"
           decoding="async"
         />
-        <span class="scenes__cap">
+        <figcaption class="scenes__cap">
           <b>{s.en}</b>
           <i>{s.ja}</i>
-        </span>
-      </li>
+        </figcaption>
+      </figure>
     ))}
-  </ul>
+  </HScroll>
 </div>
 
 <style>
@@ -73,21 +74,9 @@ const SCENES = [
     padding: 0.2em 0.7em;
     border-radius: 999px;
   }
-  .scenes__strip {
-    list-style: none;
-    margin: 0;
-    padding: 0 0 0.6rem;
-    display: flex;
-    gap: 0.7rem;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-  }
   .scenes__item {
     position: relative;
-    flex: 0 0 min(72vw, 300px);
-    scroll-snap-align: start;
+    margin: 0;
     border-radius: 14px;
     overflow: hidden;
     background: #fff;
