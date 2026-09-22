@@ -8,4 +8,5 @@ cta: グッズを見る
 order: 60
 image: ../../assets/sns/art-suzuri.png
 status: active
+tier: more
 ---

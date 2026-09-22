@@ -11,6 +11,17 @@ order: 5
 status: active
 appId: angleon
 tagline: 回すと、絵が出る
+featured: true
+hook: |
+  ぐちゃぐちゃの線を回す。
+  ある角度だけ、絵が現れる。
+demo: /media/angleon_promo.mp4
+demoPoster: /media/angleon_promo_poster.jpg
+extraLinks:
+  - label: ブラウザで回してみる
+    url: https://bcnofne.com/angleon/#play
+  - label: 公開を待つ（LINE）
+    url: https://bcnofne.com/angleon/#join
 ---
 
 絡まった線の塊を回すと、ある角度でだけネオンみたいに絵が浮かぶ iPhone アプリ。

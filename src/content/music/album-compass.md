@@ -8,4 +8,6 @@ cta: 配信で聴く
 image: ../../assets/covers/compass.webp
 order: 50
 status: active
+moods:
+  - morning
 ---

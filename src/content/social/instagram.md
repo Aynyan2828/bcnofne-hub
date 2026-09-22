@@ -8,4 +8,5 @@ cta: Instagramを見る
 order: 30
 image: ../../assets/sns/art-instagram.png
 status: active
+tier: more
 ---

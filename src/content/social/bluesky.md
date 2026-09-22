@@ -8,4 +8,5 @@ cta: Blueskyを見る
 order: 40
 image: ../../assets/sns/art-bluesky.png
 status: active
+tier: primary
 ---

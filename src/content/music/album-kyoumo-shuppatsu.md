@@ -8,4 +8,6 @@ cta: 配信で聴く
 image: ../../assets/covers/kyoumo-shuppatsu.webp
 order: 40
 status: active
+moods:
+  - morning
 ---

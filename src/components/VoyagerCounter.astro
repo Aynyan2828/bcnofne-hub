@@ -16,6 +16,9 @@ const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
     <span class="voyager__no" data-count>—</span>
     <span data-post> 人目の航海者ばい。</span>
   </p>
+  <p class="voyager__gloss">
+    <b>Crypto Ocean</b> ＝ AI・アプリ・音楽・創作が流れる情報の海。BCNOFNe ではこの海のことばい。
+  </p>
 </aside>
 
 <script>
@@ -86,6 +89,7 @@ const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
     align-items: center;
     justify-content: center;
     gap: 0.55rem;
+    flex-wrap: wrap;
     padding: 0.7rem 1rem;
     min-height: 3rem;
     color: var(--c-ink-soft);
@@ -94,6 +98,22 @@ const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
     text-align: center;
   }
   .voyager__anchor { display: inline-flex; color: var(--c-blue-deep); flex-shrink: 0; }
+  .voyager__text { margin: 0; }
+  /* Crypto Ocean の注記: 暗号資産専門サイトと間違われんための一行（控えめに） */
+  .voyager__gloss {
+    flex-basis: 100%;
+    margin: 0.15rem 0 0;
+    font-size: 0.74rem;
+    line-height: 1.6;
+    color: var(--c-ink-soft);
+    opacity: 0.9;
+  }
+  .voyager__gloss b {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--c-blue-deep);
+  }
   .voyager__no {
     font-family: var(--font-display);
     font-weight: 700;

@@ -57,6 +57,72 @@ status: active
 
 ---
 
+## 例3: Featured（Apps 港の主役）を差し替える
+
+トップの大きな `FEATURED PROJECT` 枠に出るアプリは、**`featured: true` を書いた .md 1本**で決まる。
+コードは触らんでよか。新しいアプリを主役にしたい時は:
+
+1. 今の主役（`src/content/apps/angleon.md`）から `featured: true` の行を消す
+2. 新しい .md に下の項目を足す
+
+```markdown
+---
+title: あたらしいアプリ
+summary: カードにも Featured にも出る説明。
+url: https://bcnofne.com/newapp/
+price: 制作中
+icon: ../../assets/app-newapp-icon.png
+cta: 先行して見る
+featured: true          # ← これが主役の印（1本だけ）
+hook: |                 # ← 大きく出る2〜3行のキャッチ（改行で1行ずつ）
+  ぐちゃぐちゃの線を回す。
+  ある角度だけ、絵が現れる。
+demo: /media/newapp_promo.mp4        # 任意（public/ 配下のパス）
+demoPoster: /media/newapp_poster.jpg # 任意（動画の1枚目）
+extraLinks:                          # 任意（サブの導線）
+  - label: ブラウザで試す
+    url: https://bcnofne.com/newapp/#play
+---
+```
+
+`featured: true` が無いアプリは、その下の「Other Apps」に並ぶ。
+`featured` が1つも無い時は、Featured 枠ごと出んようになるだけ（壊れん）。
+
+---
+
+## 例4: 音楽に「気分」タグを付ける
+
+Music 港の「いま、どんな気分？」で絞り込むためのタグ。`src/content/music/*.md` に:
+
+```markdown
+moods:
+  - sleep     # 眠りたい
+  - night     # 夜の航海
+  # morning   # 朝・ドライブ
+  # focus     # 集中したい
+```
+
+- **`moods` を書かんかったら「常設」**＝どの気分でも出る（Spotify の入口カードがこれ）。
+- 気分そのものを増やしたい時は `src/components/MoodPicker.astro` の `MOODS` に1行＋
+  `src/content.config.ts` の `z.enum([...])` に同じ値を足す。
+
+---
+
+## 例5: SNS リンクの「強さ」を変える
+
+Social 港はリンクを3段に分けとる。`src/content/social/*.md` の `tier:` で決まる。
+
+| `tier` | どう出るか |
+|---|---|
+| `pinned` | 見出しの下の目立つピル（いまは Litlink だけ） |
+| `primary` | 大きなカード（note / Bluesky / GitHub / 公式LINE） |
+| `more` | 「その他の航路」の中に畳まれる（既定値） |
+
+`tier` を書かんかったら `more`。**リンクを消さんでも目立ち方だけ下げられる**けん、
+増えてきたら `more` に落とすとよか。
+
+---
+
 ## 公開まで
 
 ```bash

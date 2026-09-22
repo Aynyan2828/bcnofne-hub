@@ -1,5 +1,55 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-09-22 — サイトを「一隻の船」にする（航海体験化）
+既存の水彩・夜の海・AYN・青〜紫〜ピンクはそのまま。UI 側を航海に寄せた。
+
+### Added
+- `src/lib/voyage.ts` — 寄港地マップの正本（PORT / APPS / RADIO / MUSIC / SOCIAL / AYN）。
+  航路レール・到着演出・AYN ナビの3つがここを見る。港を増やす時はここ＋Section の id。
+- `src/components/VoyageRail.astro` — 画面端の細い航路。PC(>=1240px)は左端の縦航路に
+  寄港地の点＋小さな船が航跡を引いて進む／狭い画面は最上部 2px の航跡線＋到着時だけ
+  左上に港名が一瞬出る。scroll は rAF で間引き、現在地と到着演出は
+  IntersectionObserver 1つで兼用（監視を二重に持たん）。
+- `src/components/AynNavigator.astro` — 右下の小さな AYN（AYN ● ONLINE）。押すと
+  「今日はどこ行くと？」＋行き先一覧。**いまはサイト内ナビだけ**。将来 LLM を繋ぐ用に
+  `window.AYN_NAV = { open, close, say, setStatus }` を公開しとる。
+  Esc / 外側クリックで閉じる・開いたら先頭にフォーカス。スマホは丸だけ（文字なし）。
+- `src/components/Featured.astro` — FEATURED PROJECT 枠（いまは Angleon）。
+  出すものは `src/content/apps/*.md` の `featured: true` 1本で決まる＝**差し替えは .md だけ**。
+- `src/components/MoodPicker.astro` — 「いま、どんな気分？」で音楽を絞る舵輪。
+  眠りたい／夜の航海／朝・ドライブ／集中したい。作品側のタグは music の `moods:`。
+  タグ無し＝常設（どの気分でも出る）。集中は Work Radio へ案内。
+- `src/components/ScenesStrip.astro` — 水彩の航海記録（Art）。使っとらんかった
+  `src/assets/scenes/*.jpg` 8枚を横スクロールの帯に。1枚 15〜31KB に最適化される。
+- `src/components/LazyVideos.astro` — 動画の遅延読み込み（見える手前で src を入れ、
+  画面外では一時停止）。save-data / reduced-motion では自動再生せず controls を出す。
+- Hero に「積荷マニフェスト」（Apps / Radio / Music / Art / AI）。初見の人が3秒で
+  何を作っとる場所か分かる行。スマホでは見出しの直下に順番を上げる。
+- Section に `harbor` prop ＝ 到着演出（ARRIVING / APPS HARBOR）。`.arrival` の CSS は
+  About でも使うけん global.css に置いた。
+- BaseLayout の head に `<html class="has-js">` を付ける1行。到着演出を
+  「JS がある時だけ伏せる」ためのちらつき防止。
+
+### Changed
+- `src/content.config.ts` — apps に `featured` / `hook` / `demo` / `demoPoster` / `extraLinks`、
+  music に `moods`、social に `tier`（pinned / primary / more）を追加。全部 default 付き＝
+  既存の .md はそのまま通る。
+- Apps 港: Angleon を Featured に昇格、扶養メーター・ShiftWake は「Other Apps」に。
+- Music 港: MoodPicker を一覧の上に。一覧自体は残す（消しとらん）。
+- Social 港: 「航海日誌・リンク」に改名。Litlink をピル、note / Bluesky / GitHub / 公式LINE を
+  カード、X / Instagram / TikTok / SUZURI は `<details>`「その他の航路」に畳んだ。
+  **リンクは1つも消しとらん**。YouTube は Radio 港への案内ピルを置いた。
+- VoyagerCounter と About に Crypto Ocean の注記（＝AI・アプリ・音楽・創作が流れる情報の海。
+  暗号資産の専門サイトやなか）を追加。
+- ホームの動画4本を `autoplay preload="metadata"` から遅延読み込みへ。
+  **初回表示で動画 0 バイト**（以前は約 11MB が即読み込み）。Angleon の 6.5MB を足しても初速は軽い。
+
+### 地雷メモ
+- `<script define:vars>` は Astro が hoist せん＝その場で即実行される。下にある DOM を
+  触るなら DOMContentLoaded を待つこと（MoodPicker で踏んだ）。
+- `hidden` 属性は author style（`display:block` 等）に負ける。`[hidden]{display:none!important}` を明示。
+- 航路レールの現在地ラベルは 1240px 未満だと本文にかぶる。だから PC 表示は >=1240px だけ。
+
 ## 2026-09-22 — Angleon 需要検証 LP（Prompt231 フェーズ1）
 - `src/pages/angleon/index.astro` — `/angleon/`：ヒーロー（無音ツアー動画 540p 20s・LINE CTA）／ミニ体験（`public/angleon/play.html`＝Angleon HTML 版の 3 枚軽量ビルド・275KB・iframe）／なぜ出る／使い道 4／実績（曲 3 曲 9/29）／事前登録（LINE 主・メール任意→bcnofne-edge `/waitlist`、未実装のうちは「準備中」表示）／CTA 計測 beacon（`/angleon/hit`）
 - `src/pages/angleon/privacy/index.astro` — 事前登録のプライバシーポリシー

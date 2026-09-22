@@ -8,4 +8,7 @@ cta: 配信で聴く
 image: ../../assets/covers/akari-no-mukou.webp
 order: 10
 status: active
+moods:
+  - sleep
+  - night
 ---

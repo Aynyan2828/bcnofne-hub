@@ -22,6 +22,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+    <!-- JS ありを最初に宣言: 到着演出などを「JSがある時だけ伏せる」ため（ちらつき防止） -->
+    <script is:inline>document.documentElement.classList.add('has-js');</script>
     <link rel="icon" href={`${base}/favicon.png`} type="image/png" />
     <link rel="apple-touch-icon" href={`${base}/apple-touch-icon.png`} />
     <link rel="sitemap" href={`${base}/sitemap-index.xml`} />

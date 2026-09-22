@@ -8,4 +8,7 @@ cta: 配信で聴く
 image: ../../assets/covers/yonagi.webp
 order: 30
 status: active
+moods:
+  - sleep
+  - night
 ---

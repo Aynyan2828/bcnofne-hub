@@ -1,0 +1,173 @@
+---
+/**
+ * 「いまどんな気分？」— 音楽を気分から選ぶ舵輪。
+ *
+ * 作品側のタグは src/content/music/*.md の `moods:`（sleep / night / morning / focus）。
+ * moods を書いてない作品は「常設」＝どの気分でも出る（Spotify の入口など）。
+ * 気分を増やしたい時は下の MOODS に1行足して、content.config.ts の enum に同じ値を足す。
+ *
+ * JS が無いときはチップを出さず、一覧はそのまま全部見える（何も失わん）。
+ */
+const MOODS = [
+  { key: 'all', label: 'ぜんぶ', note: '' },
+  {
+    key: 'sleep',
+    label: '眠りたい',
+    note: '灯りを落として、港に着くまでの音ばい。寝落ち用の睡眠EP。',
+    link: { label: '眠る用の動画はこっち', url: '#listen' },
+  },
+  {
+    key: 'night',
+    label: '夜の航海',
+    note: '凪いだ海をランタンひとつで進む、BCNOFNe のいちばん芯にある音。',
+  },
+  {
+    key: 'morning',
+    label: '朝・ドライブ',
+    note: 'エンジンかけて、朝へ走り出す。窓開けて聴いてほしか。',
+  },
+  {
+    key: 'focus',
+    label: '集中したい',
+    note: 'これはアルバムより、流しっぱなしの作業BGMが合う。',
+    link: { label: 'AYN Work Radio を開く', url: 'https://www.youtube.com/@AYNWorkRadio' },
+  },
+];
+---
+<div class="moods" data-moods-picker data-target="[data-music-grid]" hidden>
+  <p class="moods__q">いま、どんな気分？</p>
+  <div class="moods__chips" role="group" aria-label="気分で選ぶ">
+    {MOODS.map((m) => (
+      <button type="button" class="moods__chip" data-mood={m.key} aria-pressed={m.key === 'all' ? 'true' : 'false'}>
+        {m.label}
+      </button>
+    ))}
+  </div>
+  <p class="moods__note" data-moods-note hidden>
+    <span data-moods-text></span>
+    <a data-moods-link hidden></a>
+  </p>
+  <p class="visually-hidden" role="status" aria-live="polite" data-moods-count></p>
+</div>
+
+<script define:vars={{ MOODS }}>
+  // define:vars の <script> は「その場」で即実行される（Astro が hoist せん）＝
+  // 下にある一覧グリッドはまだ DOM に無い。必ず DOM の準備を待ってから繋ぐ。
+  (() => {
+    const init = () => {
+    const picker = document.querySelector('[data-moods-picker]');
+    if (!picker) return;
+    const grid = document.querySelector(picker.getAttribute('data-target'));
+    if (!grid) return;
+
+    // JS があるときだけ舵輪を出す（無ければ一覧は全部見えとる）
+    picker.hidden = false;
+
+    const cards = Array.from(grid.querySelectorAll('[data-moods]'));
+    const noteEl = picker.querySelector('[data-moods-note]');
+    const textEl = picker.querySelector('[data-moods-text]');
+    const linkEl = picker.querySelector('[data-moods-link]');
+    const countEl = picker.querySelector('[data-moods-count]');
+    const byKey = Object.fromEntries(MOODS.map((m) => [m.key, m]));
+
+    const apply = (key) => {
+      let shown = 0;
+      for (const card of cards) {
+        const tags = (card.getAttribute('data-moods') || '').split(/\s+/).filter(Boolean);
+        // タグ無し＝常設カード（どの気分でも出す）
+        const hit = key === 'all' || tags.length === 0 || tags.includes(key);
+        card.hidden = !hit;
+        if (hit) shown++;
+      }
+      for (const b of picker.querySelectorAll('[data-mood]')) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-mood') === key));
+      }
+      const m = byKey[key];
+      if (m && m.note) {
+        textEl.textContent = m.note;
+        if (m.link) {
+          linkEl.textContent = m.link.label;
+          linkEl.setAttribute('href', m.link.url);
+          if (/^https?:/.test(m.link.url)) {
+            linkEl.setAttribute('target', '_blank');
+            linkEl.setAttribute('rel', 'noopener noreferrer');
+          } else {
+            linkEl.removeAttribute('target');
+            linkEl.removeAttribute('rel');
+          }
+          linkEl.hidden = false;
+        } else {
+          linkEl.hidden = true;
+        }
+        noteEl.hidden = false;
+      } else {
+        noteEl.hidden = true;
+      }
+      countEl.textContent = `${shown}件の作品を表示しとる。`;
+    };
+
+    picker.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-mood]');
+      if (!b) return;
+      apply(b.getAttribute('data-mood'));
+    });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init, { once: true });
+    } else {
+      init();
+    }
+  })();
+</script>
+
+<style>
+  .moods {
+    max-width: 640px;
+    margin: 0 auto clamp(1.2rem, 3vw, 1.8rem);
+    text-align: center;
+  }
+  .moods[hidden] { display: none !important; }
+  .moods__q {
+    margin: 0 0 0.6rem;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    color: var(--c-ink-soft);
+  }
+  .moods__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    justify-content: center;
+  }
+  .moods__chip {
+    font-family: inherit;
+    font-size: 0.86rem;
+    color: var(--c-ink-soft);
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid var(--c-line);
+    border-radius: 999px;
+    padding: 0.38em 0.95em;
+    cursor: pointer;
+    transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+  }
+  .moods__chip:hover { border-color: var(--c-blue); color: var(--c-blue-deep); transform: translateY(-1px); }
+  .moods__chip[aria-pressed='true'] {
+    background: var(--grad-accent);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: var(--shadow-soft);
+  }
+  .moods__note {
+    margin: 0.8rem auto 0;
+    max-width: 42ch;
+    font-size: 0.86rem;
+    color: var(--c-ink-soft);
+  }
+  .moods__note a {
+    display: inline-block;
+    margin-left: 0.35em;
+    font-size: 0.84rem;
+    white-space: nowrap;
+  }
+  .moods__note a[hidden] { display: none; }
+</style>

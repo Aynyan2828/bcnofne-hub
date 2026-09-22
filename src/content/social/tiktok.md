@@ -8,4 +8,5 @@ cta: TikTokを見る
 order: 20
 image: ../../assets/sns/art-tiktok.png
 status: active
+tier: more
 ---

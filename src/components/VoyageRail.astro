@@ -1,0 +1,284 @@
+---
+/**
+ * 航路レール（VoyageRail）— スクロールそのものを航海にする細い航路。
+ *
+ * PC（>=1240px・本文 1080px の外に余白が確保できる幅だけ）: 画面左端に縦の航路。
+ * （これより狭いと現在地ラベルが本文にかぶるけん出さん）
+ *   星のような寄港地の点が並び、小さな船（ランタン持ち）が航跡を引いて進む。
+ * スマホ／狭い画面: 画面最上部の 2px の航跡線（進捗）＋到着したときだけ
+ *   左上に小さく港名が「ふっ」と出て、すぐ消える。邪魔せん。
+ *
+ * 到着演出（ARRIVING / APPS HARBOR）も、この1つの IntersectionObserver から
+ * [data-harbor] に .is-arrived を付けて動かす（監視をページ内で二重に持たない）。
+ *
+ * prefers-reduced-motion: 船の移動・線の伸び・到着のふわっ、を全部やめて
+ * 「現在地の点が光る」だけにする。JS が無い時はレールごと出さない。
+ */
+import { STATIONS } from '../lib/voyage';
+---
+<nav class="rail" data-rail aria-label="航路（現在地）" hidden>
+  <!-- PC: 左端の縦航路 -->
+  <div class="rail__line" aria-hidden="true">
+    <span class="rail__wake"></span>
+    <span class="rail__ship">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 16.5h18l-2.2 3.2a2 2 0 0 1-1.7.9H6.9a2 2 0 0 1-1.7-.9Z" fill="currentColor" stroke="none" opacity="0.85"/>
+        <path d="M12 16V4.5" />
+        <path d="M12.9 5.2 18 9.4l-5.1 1.5Z" fill="currentColor" stroke="none" opacity="0.7"/>
+        <circle cx="7.6" cy="12.6" r="1.5" />
+      </svg>
+    </span>
+  </div>
+  <ol class="rail__stops">
+    {STATIONS.map((s) => (
+      <li class="rail__stop" data-stop={s.id}>
+        <a href={`#${s.id}`}>
+          <span class="rail__dot" aria-hidden="true"></span>
+          <span class="rail__code">{s.code}</span>
+          <span class="visually-hidden">{s.label}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<!-- スマホ／狭い画面: 最上部の航跡線＋到着時だけ出る港名 -->
+<div class="railbar" data-railbar aria-hidden="true" hidden>
+  <span class="railbar__wake"></span>
+  <span class="railbar__now" data-railbar-now></span>
+</div>
+
+<script>
+  (() => {
+    const rail = document.querySelector('[data-rail]');
+    const bar = document.querySelector('[data-railbar]');
+    if (!rail || !bar) return;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+
+    // JS があるときだけ出す（noscript では航路ごと出さない）
+    rail.hidden = false;
+    bar.hidden = false;
+
+    const stops = Array.from(rail.querySelectorAll('[data-stop]'));
+    const nowEl = bar.querySelector('[data-railbar-now]');
+    const sections = stops
+      .map((li) => {
+        const id = li.getAttribute('data-stop');
+        return { id, li, el: document.getElementById(id) };
+      })
+      .filter((s) => s.el);
+
+    /* ── 1) 進捗（船の位置・航跡の長さ）: scroll は rAF で間引く ───────── */
+    let docH = 1;
+    const measure = () => {
+      docH = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+    };
+    let queued = false;
+    const paint = () => {
+      queued = false;
+      const p = Math.min(1, Math.max(0, scrollY / docH));
+      rail.style.setProperty('--p', String(p));
+      bar.style.setProperty('--p', String(p));
+    };
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(paint);
+    };
+    measure();
+    paint();
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', () => { measure(); paint(); }, { passive: true });
+
+    /* ── 2) 現在地＋到着演出: IntersectionObserver 1つで両方 ─────────── */
+    let nowTimer = 0;
+    const showNow = (text) => {
+      if (!nowEl) return;
+      nowEl.textContent = text;
+      nowEl.classList.add('is-on');
+      clearTimeout(nowTimer);
+      // 静かに消える（スマホで居座らせない）
+      nowTimer = setTimeout(() => nowEl.classList.remove('is-on'), reduce.matches ? 2600 : 1900);
+    };
+
+    let current = '';
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const harbor = e.target.querySelector('[data-harbor]');
+          if (e.isIntersecting && harbor) harbor.classList.add('is-arrived');
+        }
+        // 画面のいちばん上に近い交差中セクションを現在地にする
+        const visible = sections
+          .filter((s) => {
+            const r = s.el.getBoundingClientRect();
+            return r.top < innerHeight * 0.55 && r.bottom > innerHeight * 0.2;
+          })
+          .sort((a, b) => a.el.getBoundingClientRect().top - b.el.getBoundingClientRect().top);
+        const next = visible[0];
+        if (!next || next.id === current) return;
+        current = next.id;
+        for (const s of sections) s.li.classList.toggle('is-current', s.id === current);
+        const code = next.li.querySelector('.rail__code');
+        showNow(code ? code.textContent : '');
+      },
+      { rootMargin: '-18% 0px -45% 0px', threshold: [0, 0.01, 0.2] }
+    );
+    for (const s of sections) io.observe(s.el);
+  })();
+</script>
+
+<style>
+  /* ── PC: 左端の縦航路 ─────────────────────────────────────────────
+     本文（max 1080px）にかぶらん幅のときだけ出す。 */
+  .rail { display: none; }
+  /* JS が無い時は航路ごと出さない（author style が UA の hidden を上書きするため明示） */
+  .rail[hidden],
+  .railbar[hidden] { display: none !important; }
+
+  @media (min-width: 1240px) {
+    .rail {
+      display: block;
+      position: fixed;
+      left: clamp(14px, 2.4vw, 34px);
+      top: 50%;
+      transform: translateY(-50%);
+      height: min(58vh, 430px);
+      z-index: 20;
+      pointer-events: none; /* 点だけクリックできるようにする */
+    }
+    .rail__line {
+      position: absolute;
+      left: 5px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      border-radius: 2px;
+      /* 進んでいない航路＝うっすら */
+      background: linear-gradient(180deg, rgba(106, 169, 224, 0.28), rgba(139, 123, 216, 0.24), rgba(244, 166, 196, 0.24));
+    }
+    /* 通ってきた航跡＝はっきり */
+    .rail__wake {
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: calc(var(--p, 0) * 100%);
+      border-radius: 2px;
+      background: linear-gradient(180deg, var(--c-blue), var(--c-purple) 70%, var(--c-pink));
+      box-shadow: 0 0 10px -2px rgba(139, 123, 216, 0.75);
+      transition: height 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+    .rail__ship {
+      position: absolute;
+      left: 50%;
+      top: calc(var(--p, 0) * 100%);
+      transform: translate(-50%, -50%);
+      color: var(--c-blue-deep);
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
+      transition: top 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+      animation: railBob 4.5s ease-in-out infinite;
+    }
+    @keyframes railBob {
+      0%, 100% { margin-left: -1px; }
+      50% { margin-left: 1px; }
+    }
+    .rail__stops {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .rail__stop a {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      width: max-content;
+    }
+    .rail__stop a:hover { text-decoration: none; }
+    .rail__dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--c-cream);
+      border: 2px solid rgba(106, 169, 224, 0.55);
+      box-shadow: 0 1px 6px -2px rgba(45, 60, 120, 0.4);
+      flex-shrink: 0;
+      transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+    }
+    .rail__code {
+      font-family: var(--font-display);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--c-ink-soft);
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      white-space: nowrap;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .rail__stop:hover .rail__code,
+    .rail__stop a:focus-visible .rail__code,
+    .rail__stop.is-current .rail__code { opacity: 1; transform: none; }
+    .rail__stop.is-current .rail__code { color: var(--c-blue-deep); }
+    .rail__stop.is-current .rail__dot {
+      background: var(--grad-accent);
+      border-color: #fff;
+      transform: scale(1.22);
+    }
+    .rail__stop:hover .rail__dot { border-color: var(--c-purple); }
+  }
+
+  /* ── スマホ／狭い画面: 最上部の航跡線 ───────────────────────────── */
+  .railbar { display: none; }
+  @media (max-width: 1239px) {
+    .railbar {
+      display: block;
+      position: fixed;
+      inset: 0 0 auto 0;
+      height: 2px;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .railbar__wake {
+      display: block;
+      height: 100%;
+      width: 100%;
+      transform-origin: 0 50%;
+      transform: scaleX(var(--p, 0));
+      background: linear-gradient(90deg, var(--c-blue), var(--c-purple) 60%, var(--c-pink));
+      box-shadow: 0 0 8px -1px rgba(139, 123, 216, 0.7);
+      transition: transform 0.2s linear;
+    }
+    .railbar__now {
+      position: absolute;
+      top: 8px;
+      left: max(10px, env(safe-area-inset-left));
+      font-family: var(--font-display);
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      color: var(--c-blue-deep);
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--c-line);
+      border-radius: 999px;
+      padding: 0.15em 0.7em;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .railbar__now.is-on { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rail__ship { display: none; }
+    .rail__wake,
+    .railbar__wake,
+    .railbar__now { transition: none; }
+  }
+</style>

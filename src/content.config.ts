@@ -26,6 +26,19 @@ const apps = defineCollection({
       platform: z.string().default('iOS'),
       icon: image().optional(),
       image: image().optional(), // カード上部のサムネイル（横長推奨）
+      // ── Featured Project（Apps 港の主役）────────────────────────────
+      // featured: true にした1本が大きな FEATURED PROJECT 枠に出る。
+      // 主役を差し替えたい時は、古い方の featured を消して新しい方に true を付けるだけ。
+      featured: z.boolean().default(false),
+      // 主役枠の2〜3行キャッチ（改行で分ける）。未指定なら summary を使う。
+      hook: z.string().optional(),
+      // 主役枠のデモ動画（public/ 配下の絶対パス。例: /media/angleon_promo.mp4）
+      demo: z.string().optional(),
+      demoPoster: z.string().optional(),
+      // 主役枠の追加ボタン（デモ・制作記録・事前登録など）
+      extraLinks: z
+        .array(z.object({ label: z.string(), url: z.string() }))
+        .default([]),
     }),
 });
 
@@ -48,6 +61,11 @@ const music = defineCollection({
       ...cardBase,
       service: z.string().optional(),
       image: image().optional(),
+      // 「今どんな気分？」で絞り込むためのタグ。
+      // 未指定（空）＝どの気分でも出る常設カード（Spotify のような入口）。
+      moods: z
+        .array(z.enum(['sleep', 'night', 'morning', 'focus']))
+        .default([]),
     }),
 });
 
@@ -59,6 +77,8 @@ const social = defineCollection({
       ...cardBase,
       handle: z.string().optional(),
       image: image().optional(),
+      // 表示の強さ。pinned=見出し横のピル / primary=大きなカード / more=「その他の航路」の中。
+      tier: z.enum(['pinned', 'primary', 'more']).default('more'),
     }),
 });
 

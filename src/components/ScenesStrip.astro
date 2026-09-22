@@ -1,0 +1,116 @@
+---
+/**
+ * 水彩の航海記録（Art）— AYN の港に置く、横に流れる情景の帯。
+ *
+ * 動画やEPのために描いた水彩シーン（src/assets/scenes）をそのまま作品として見せる。
+ * 横スクロール＋スナップ。画像は遅延読み込み（横にはみ出した分は後から）。
+ * 「Art って何？」への答えがここばい。
+ */
+import { Image } from 'astro:assets';
+import moonlitSea from '../assets/scenes/moonlit-sea.jpg';
+import pierLighthouse from '../assets/scenes/pier-lighthouse.jpg';
+import gondolaLantern from '../assets/scenes/gondola-lantern.jpg';
+import nightHelm from '../assets/scenes/night-helm.jpg';
+import stargazing from '../assets/scenes/night-deck-stargazing.jpg';
+import windowLantern from '../assets/scenes/window-lantern.jpg';
+import mirrorWater from '../assets/scenes/mirror-water.jpg';
+import cozySleep from '../assets/scenes/cozy-sleep.jpg';
+
+const SCENES = [
+  { img: moonlitSea, en: 'Moonlit Sea', ja: '月あかりの海' },
+  { img: nightHelm, en: 'Night Helm', ja: '夜の操舵室' },
+  { img: gondolaLantern, en: 'Lantern Boat', ja: 'ランタンの小舟' },
+  { img: pierLighthouse, en: 'Pier & Lighthouse', ja: '桟橋と灯台' },
+  { img: stargazing, en: 'Stargazing Deck', ja: '甲板で星を数える' },
+  { img: mirrorWater, en: 'Mirror Water', ja: '鏡みたいな水面' },
+  { img: windowLantern, en: 'Window Lantern', ja: '窓辺の灯り' },
+  { img: cozySleep, en: 'Cozy Sleep', ja: '寝落ちの部屋' },
+];
+---
+<div class="scenes">
+  <p class="scenes__head">
+    <span class="scenes__tag">Art</span>
+    水彩の航海記録 ― 動画やEPのために描いた情景ばい。
+  </p>
+  <ul class="scenes__strip" tabindex="0" aria-label="水彩シーンの一覧（横スクロール）">
+    {SCENES.map((s) => (
+      <li class="scenes__item">
+        <Image
+          src={s.img}
+          alt={`水彩シーン「${s.ja}」`}
+          widths={[360, 540]}
+          sizes="(max-width: 560px) 72vw, 300px"
+          loading="lazy"
+          decoding="async"
+        />
+        <span class="scenes__cap">
+          <b>{s.en}</b>
+          <i>{s.ja}</i>
+        </span>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .scenes { margin-top: clamp(1.4rem, 4vw, 2.2rem); }
+  .scenes__head {
+    margin: 0 0 0.7rem;
+    font-size: 0.86rem;
+    color: var(--c-ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .scenes__tag {
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--grad-accent);
+    padding: 0.2em 0.7em;
+    border-radius: 999px;
+  }
+  .scenes__strip {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0.6rem;
+    display: flex;
+    gap: 0.7rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .scenes__item {
+    position: relative;
+    flex: 0 0 min(72vw, 300px);
+    scroll-snap-align: start;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    box-shadow: var(--shadow-soft);
+    line-height: 0;
+  }
+  .scenes__item :global(img) { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+  .scenes__cap {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 0.9rem 0.7rem 0.5rem;
+    background: linear-gradient(180deg, transparent, rgba(24, 31, 66, 0.72));
+    color: #fff;
+    line-height: 1.3;
+  }
+  .scenes__cap b {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    font-weight: 400;
+    opacity: 0.85;
+  }
+  .scenes__cap i { font-style: normal; font-size: 0.82rem; }
+</style>

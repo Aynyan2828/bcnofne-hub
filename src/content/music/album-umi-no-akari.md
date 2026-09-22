@@ -8,4 +8,7 @@ cta: 配信で聴く
 image: ../../assets/covers/umi-no-akari.webp
 order: 20
 status: active
+moods:
+  - sleep
+  - night
 ---

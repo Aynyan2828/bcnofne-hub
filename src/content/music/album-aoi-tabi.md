@@ -8,4 +8,6 @@ cta: 配信で聴く
 image: ../../assets/covers/aoi-tabi.webp
 order: 5
 status: active
+moods:
+  - morning
 ---

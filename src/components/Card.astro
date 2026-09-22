@@ -11,15 +11,17 @@ interface Props {
   badge?: string; // 価格やサービス名など
   icon?: ImageMetadata;
   image?: ImageMetadata; // カード上部の横長サムネイル
+  /** 気分タグ（MoodPicker の絞り込み用）。空配列＝どの気分でも出る常設カード。 */
+  moods?: string[];
 }
-const { title, summary, url, cta = '開く', handle, badge, icon, image } = Astro.props;
+const { title, summary, url, cta = '開く', handle, badge, icon, image, moods } = Astro.props;
 const external = /^https?:\/\//.test(url);
 // サムネイルの縦横比: 正方形アートは切らずにそのまま、横長は16:9まで
 const thumbRatio = image
   ? Math.max(1, Math.min(16 / 9, image.width / image.height))
   : null;
 ---
-<article class="card">
+<article class="card" data-moods={moods ? moods.join(' ') : undefined}>
   <a class="card__link" href={url} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
     {image && (
       <div class="card__thumb" style={`aspect-ratio: ${thumbRatio};`}>

@@ -102,6 +102,46 @@ h1, h2, h3 { line-height: 1.4; margin: 0; font-weight: 400; }
   background: linear-gradient(180deg, rgba(234, 241, 251, 0.55) 0%, rgba(251, 252, 255, 0.25) 100%);
 }
 
+/* ── 到着演出（ARRIVING / APPS HARBOR）─────────────────────────────
+   VoyageRail の IntersectionObserver が [data-harbor] に .is-arrived を付ける。
+   既定は「見えとる」＝JS 無しでも読める。JS があるときだけ伏せて到着で灯す
+   （BaseLayout が <html class="has-js"> を head で付けるけん、ちらつかん）。
+   Section.astro と About.astro の両方で使うけん、ここ（global）に置いとる。 */
+.arrival {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 0 0 0.9rem;
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+html.has-js .arrival { opacity: 0; transform: translateY(6px); }
+html.has-js .arrival.is-arrived { opacity: 1; transform: none; }
+.arrival__rule {
+  height: 1px;
+  width: clamp(18px, 8vw, 70px);
+  background: linear-gradient(90deg, transparent, var(--c-blue));
+  opacity: 0.5;
+}
+.arrival__rule:last-child { background: linear-gradient(90deg, var(--c-blue), transparent); }
+.arrival__tag {
+  font-family: var(--font-display);
+  font-size: 0.56rem;
+  letter-spacing: 0.28em;
+  color: var(--c-ink-soft);
+  opacity: 0.75;
+}
+.arrival__name {
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  color: var(--c-blue-deep);
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.has-js .arrival { opacity: 1; transform: none; }
+}
+
 /* Card grid */
 .grid {
   display: grid;

@@ -8,4 +8,6 @@ cta: 配信で聴く
 image: ../../assets/covers/asa-e.webp
 order: 35
 status: active
+moods:
+  - morning
 ---

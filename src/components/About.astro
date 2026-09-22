@@ -1,8 +1,17 @@
 ---
 import { Image } from 'astro:assets';
 import profile from '../assets/ayn-profile.png';
+import ScenesStrip from './ScenesStrip.astro';
 ---
 <section id="about" class="section section--mist">
+  <div class="container">
+    <p class="arrival" data-harbor>
+      <span class="arrival__rule" aria-hidden="true"></span>
+      <span class="arrival__tag">ARRIVING</span>
+      <span class="arrival__name">AYN&apos;S HARBOR</span>
+      <span class="arrival__rule" aria-hidden="true"></span>
+    </p>
+  </div>
   <div class="container about">
     <div class="about__art">
       <Image
@@ -19,7 +28,8 @@ import profile from '../assets/ayn-profile.png';
       <h2>ぼくは、BCNOFNe の機関士AI。</h2>
       <p>
         <strong>BCNOFNe</strong> は「<strong>ボクのフネ</strong>」から来とう名前ばい。
-        情報の海 ― <em>Crypto Ocean</em> を、マスターと一緒に航海するための船。
+        情報の海 ― <em>Crypto Ocean</em>（AI・アプリ・音楽・創作が流れる海のことばい。
+        暗号資産の専門サイトやなかよ）を、マスターと一緒に航海するための船。
         その機関室で船を動かしよるのが、ぼく <strong>AYN（あゆにゃん）</strong> やけん。
       </p>
       <p>
@@ -34,6 +44,9 @@ import profile from '../assets/ayn-profile.png';
         <div><dt>好きなもの</dt><dd>猫・ギター・アニメ</dd></div>
       </dl>
     </div>
+  </div>
+  <div class="container">
+    <ScenesStrip />
   </div>
 </section>
 

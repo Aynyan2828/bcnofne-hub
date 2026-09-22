@@ -1,0 +1,184 @@
+---
+/**
+ * FEATURED PROJECT — Apps 港の主役ひとつ。
+ *
+ * 出すものは src/content/apps/*.md の `featured: true` で決まる。
+ * 主役を替えたい時は、古い .md の featured を消して新しい .md に true を付けるだけ。
+ * 動画は public/ 配下のパス（frontmatter の demo / demoPoster）。
+ * 見えるまで読み込まん（data-lazyvideo）ので、重い動画を置いても初速は落ちん。
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  hook?: string;
+  summary: string;
+  url: string;
+  cta?: string;
+  badge?: string;
+  icon?: ImageMetadata;
+  demo?: string;
+  demoPoster?: string;
+  extraLinks?: { label: string; url: string }[];
+}
+const {
+  eyebrow = 'Featured Project',
+  title,
+  hook,
+  summary,
+  url,
+  cta = '見てみる',
+  badge,
+  icon,
+  demo,
+  demoPoster,
+  extraLinks = [],
+} = Astro.props;
+
+// hook は改行区切りで「一行ずつ」出す（詩みたいに見せたいけん）
+const hookLines = (hook ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
+---
+<article class="feat">
+  <div class="feat__body">
+    <p class="feat__eyebrow">{eyebrow}</p>
+    <div class="feat__brand">
+      {icon && <Image src={icon} alt={`${title} のアイコン`} width={68} height={68} class="feat__icon" />}
+      <h3 class="feat__title">{title}</h3>
+      {badge && <span class="feat__badge">{badge}</span>}
+    </div>
+    {hookLines.length > 0 ? (
+      <p class="feat__hook">{hookLines.map((l) => <span>{l}</span>)}</p>
+    ) : null}
+    <p class="feat__summary">{summary}</p>
+    <div class="feat__cta">
+      <a class="btn" href={url}>{cta}</a>
+      {extraLinks.map((l) => (
+        <a class="feat__sub" href={l.url}>
+          {l.label}
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      ))}
+    </div>
+  </div>
+  {demo && (
+    <div class="feat__art">
+      <video
+        data-lazyvideo
+        data-src={demo}
+        poster={demoPoster}
+        width="540"
+        height="960"
+        muted
+        loop
+        playsinline
+        preload="none"
+        aria-label={`${title} のデモ動画。`}
+      ></video>
+      <span class="feat__lantern" aria-hidden="true"></span>
+    </div>
+  )}
+</article>
+
+<style>
+  .feat {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 270px);
+    gap: clamp(1.2rem, 4vw, 2.2rem);
+    align-items: center;
+    /* 夜の海に浮かぶ一隻＝主役だけ深い紺のパネルにする */
+    background:
+      linear-gradient(150deg, rgba(31, 40, 84, 0.92) 0%, rgba(58, 74, 134, 0.88) 55%, rgba(120, 108, 190, 0.85) 100%);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: calc(var(--radius) + 6px);
+    padding: clamp(1.2rem, 3.6vw, 2rem);
+    box-shadow: 0 24px 60px -24px rgba(16, 22, 56, 0.7);
+    margin-bottom: clamp(1.6rem, 4vw, 2.6rem);
+    position: relative;
+    overflow: hidden;
+  }
+  /* うっすら星（水彩の夜空の名残り） */
+  .feat::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(1.6px 1.6px at 18% 24%, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1.4px 1.4px at 72% 16%, rgba(255,255,255,0.65), transparent),
+      radial-gradient(1.2px 1.2px at 44% 78%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.6px 1.6px at 88% 62%, rgba(255,255,255,0.55), transparent);
+    pointer-events: none;
+  }
+  .feat__body { position: relative; }
+  .feat__eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin: 0 0 0.7rem;
+    color: rgba(255, 255, 255, 0.72);
+  }
+  .feat__brand { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
+  .feat__icon { width: 52px; height: 52px; border-radius: 14px; box-shadow: 0 6px 18px -8px rgba(0,0,0,0.6); }
+  .feat__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    text-shadow: 0 2px 16px rgba(14, 20, 55, 0.5);
+  }
+  .feat__badge {
+    font-size: 0.7rem;
+    padding: 0.15em 0.7em;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  .feat__hook {
+    margin: 0.9rem 0 0.6rem;
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 2.8vw, 1.22rem);
+    line-height: 1.7;
+  }
+  .feat__hook span { display: block; }
+  .feat__summary {
+    margin: 0 0 1.2rem;
+    font-size: 0.92rem;
+    color: rgba(255, 255, 255, 0.86);
+    max-width: 44ch;
+  }
+  .feat__cta { display: flex; align-items: center; gap: 0.5rem 1rem; flex-wrap: wrap; }
+  .feat__sub {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .feat__sub:hover { color: #fff; }
+
+  .feat__art {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    line-height: 0;
+    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: #0d1330;
+  }
+  .feat__art video { width: 100%; height: auto; aspect-ratio: 9 / 16; object-fit: cover; }
+  /* 舷灯みたいな淡い光（ランタン） */
+  .feat__lantern {
+    position: absolute;
+    inset: auto -20% -25% auto;
+    width: 70%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(244, 166, 196, 0.35), transparent 70%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 760px) {
+    .feat { grid-template-columns: 1fr; }
+    .feat__art { max-width: 260px; margin-inline: auto; order: -1; }
+  }
+</style>

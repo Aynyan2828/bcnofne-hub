@@ -8,4 +8,5 @@ cta: noteを読む
 image: ../../assets/sns/art-note.png
 order: 45
 status: active
+tier: primary
 ---

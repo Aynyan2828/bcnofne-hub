@@ -10,12 +10,24 @@ interface Props {
   mist?: boolean;
   avatar?: ImageMetadata; // 見出しに添える丸いAYN
   avatarAlt?: string;
+  /** 到着演出の港名（例: APPS HARBOR）。指定すると「ARRIVING」の一行が一度だけ灯る。 */
+  harbor?: string;
 }
-const { id, eyebrow, title, lead, mist = false, avatar, avatarAlt } = Astro.props;
+const { id, eyebrow, title, lead, mist = false, avatar, avatarAlt, harbor } = Astro.props;
 ---
 <section id={id} class:list={['section', { 'section--mist': mist }]}>
   <div class="container">
     <div class="section-head">
+      {/* 到着演出: VoyageRail の IntersectionObserver が .is-arrived を付ける。
+          JS なし／動きを減らす設定なら最初から静かに見えとる状態で置いとく。 */}
+      {harbor && (
+        <p class="arrival" data-harbor>
+          <span class="arrival__rule" aria-hidden="true"></span>
+          <span class="arrival__tag">ARRIVING</span>
+          <span class="arrival__name">{harbor}</span>
+          <span class="arrival__rule" aria-hidden="true"></span>
+        </p>
+      )}
       {avatar && (
         <div class="section-avatar">
           <Image src={avatar} alt={avatarAlt ?? `${title}のAYN`} width={112} height={112} loading="lazy" />
@@ -45,4 +57,5 @@ const { id, eyebrow, title, lead, mist = false, avatar, avatarAlt } = Astro.prop
     height: 100%;
     object-fit: cover;
   }
+
 </style>

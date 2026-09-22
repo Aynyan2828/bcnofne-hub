@@ -11,6 +11,16 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const rigVer = Date.now().toString(36);
 const rigUrl = `${base}/ayn-rig/rig.json?v=${rigVer}`;
 const rigJs = `${base}/ayn-rig/rig.js?v=${rigVer}`;
+
+// 積荷（この船が何を作っとるか）。各港へのアンカーを兼ねる。
+// 新しいジャンルを始めたらここに1行足す。
+const CARGO = [
+  { en: 'Apps', ja: 'iPhoneアプリ', href: '#apps' },
+  { en: 'Radio', ja: '睡眠・作業BGM', href: '#listen' },
+  { en: 'Music', ja: '配信EP', href: '#music' },
+  { en: 'Art', ja: '水彩の情景', href: '#about' },
+  { en: 'AI', ja: '機関士AI AYN', href: '#about' },
+];
 ---
 <header class="hero" id="top">
   <div class="container hero__inner">
@@ -28,6 +38,18 @@ const rigJs = `${base}/ayn-rig/rig.js?v=${rigVer}`;
         <a class="btn" href="#apps">アプリを見る</a>
         <a class="btn btn--ghost" href={`${base}/angleon/`}>新作 Angleon（制作中）</a>
       </div>
+      <!-- 積荷マニフェスト: 初めて来た人が3秒で「何を作っとる場所か」分かる行 -->
+      <p class="hero__manifest-q">この船が積んどるもの</p>
+      <ul class="hero__manifest">
+        {CARGO.map((c) => (
+          <li>
+            <a href={c.href}>
+              <b>{c.en}</b>
+              <span>{c.ja}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
     <div class="hero__art">
       <div class="hero__rig" id="ayn-rig" data-rig={rigUrl} data-js={rigJs} title="タップすると喋るばい">
@@ -97,6 +119,50 @@ const rigJs = `${base}/ayn-rig/rig.js?v=${rigVer}`;
     color: rgba(255, 255, 255, 0.95);
   }
   .hero__cta { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  /* 積荷マニフェスト: 水彩の世界に、船の積荷リストが少しだけデジタルに混ざる感じ */
+  .hero__manifest-q {
+    margin: 1.4rem 0 0.5rem;
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.62);
+  }
+  .hero__manifest {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    padding-top: 0.7rem;
+  }
+  .hero__manifest a {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    padding: 0.32rem 0.7rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  }
+  .hero__manifest a:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+    text-decoration: none;
+  }
+  .hero__manifest b {
+    font-family: var(--font-display);
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    font-weight: 400;
+  }
+  .hero__manifest span { font-size: 0.66rem; color: rgba(255, 255, 255, 0.78); white-space: nowrap; }
   .hero__art { justify-self: center; position: relative; }
   /* 動く AYN: 円窓。読み込めたら画像の上に重ねて、画像は隠す */
   .hero__rig {
@@ -133,9 +199,22 @@ const rigJs = `${base}/ayn-rig/rig.js?v=${rigVer}`;
 
   @media (max-width: 720px) {
     .hero__inner { grid-template-columns: 1fr; text-align: center; }
+    .hero__manifest { justify-content: center; }
+    .hero__manifest a { align-items: center; }
     .hero__lead { margin-inline: auto; }
     .hero__cta { justify-content: center; }
     .hero__art { order: -1; }
+    /* スマホは縦に長くなるけん、「何を作っとる場所か」を見出しの直下に上げる。
+       初見の人が1画面で分かるようにする（順番だけ入れ替え・文言は同じ）。 */
+    .hero__copy { display: flex; flex-direction: column; }
+    .hero__eyebrow { order: 1; }
+    .hero__title { order: 2; }
+    .hero__manifest-q { order: 3; margin-top: 1rem; }
+    .hero__manifest { order: 4; }
+    .hero__lead { order: 5; margin-top: 1.2rem; margin-bottom: 1.4rem; }
+    .hero__cta { order: 6; }
+    /* AYN の円窓をほんの少し小さく＝1画面に収まる余地をつくる */
+    .hero__rig, .hero__img { width: min(62vw, 420px); }
   }
 </style>
 

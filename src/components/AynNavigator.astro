@@ -1,0 +1,263 @@
+---
+/**
+ * AYN ナビゲーション（操舵室のインターホン）
+ *
+ * 右下の小さな丸い AYN。押すと「今日はどこ行くと？」と行き先を出す。
+ * いまは**サイト内ナビだけ**（LLM チャットではない）。将来ほんとのチャットを
+ * 繋ぐときは、パネルの中身を差し替えるだけで済むように
+ *   window.AYN_NAV = { open, close, say(text), setStatus(text) }
+ * を公開しとる（下の script 末尾）。say() に文字を渡すと吹き出しが差し替わる。
+ *
+ * スマホ: 44px の丸だけ（文字なし）。safe-area を見て親指の邪魔にならん位置へ。
+ * prefers-reduced-motion: ふわっと出る動きをやめて即表示（global.css が transition を止める）。
+ */
+import { Image } from 'astro:assets';
+import aynOk from '../assets/ayn/ayn-ok.png';
+import { STATIONS } from '../lib/voyage';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// 行き先＝航路の寄港地（PORT を除く）＋ 港の外の用事
+const routes = [
+  ...STATIONS.filter((s) => s.id !== 'top').map((s) => ({
+    href: `#${s.id}`,
+    label: s.label,
+    note: s.note,
+    external: false,
+  })),
+  { href: `${base}/angleon/`, label: '新作 Angleon を見る', note: '制作中・事前登録', external: false },
+  { href: `${base}/shortcuts`, label: 'ショートカットをもらう', note: 'AYNにまかせんしゃい', external: false },
+  { href: '#contact', label: 'おたよりを出す', note: 'ぼくに直接届くばい', external: false },
+];
+---
+<div class="aynnav" data-aynnav>
+  <button
+    class="aynnav__btn"
+    type="button"
+    data-aynnav-toggle
+    aria-expanded="false"
+    aria-controls="aynnav-panel"
+  >
+    <span class="aynnav__face">
+      <Image src={aynOk} alt="" width={96} height={96} loading="lazy" />
+      <span class="aynnav__pulse" aria-hidden="true"></span>
+    </span>
+    <span class="aynnav__id" aria-hidden="true">
+      <b>AYN</b>
+      <span class="aynnav__status" data-aynnav-status>● ONLINE</span>
+    </span>
+    <span class="visually-hidden">AYN に行き先を聞く</span>
+  </button>
+
+  <div class="aynnav__panel" id="aynnav-panel" data-aynnav-panel role="dialog" aria-label="AYN の行き先案内" hidden>
+    <div class="aynnav__head">
+      <span class="aynnav__headname">AYN</span>
+      <span class="aynnav__headstatus" data-aynnav-status2>● ONLINE</span>
+      <button class="aynnav__close" type="button" data-aynnav-close aria-label="閉じる">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <p class="aynnav__say" data-aynnav-say aria-live="polite">今日はどこ行くと？</p>
+    <ul class="aynnav__routes">
+      {routes.map((r) => (
+        <li>
+          <a href={r.href} data-aynnav-go>
+            <span class="aynnav__label">{r.label}</span>
+            <span class="aynnav__note">{r.note}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="aynnav__foot">いまは行き先案内だけ。じきに、ここでぼくと直に話せるようにするばい。</p>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const root = document.querySelector('[data-aynnav]');
+    if (!root) return;
+    const btn = root.querySelector('[data-aynnav-toggle]');
+    const panel = root.querySelector('[data-aynnav-panel]');
+    const sayEl = root.querySelector('[data-aynnav-say]');
+    const closeBtn = root.querySelector('[data-aynnav-close]');
+    const statusEls = root.querySelectorAll('[data-aynnav-status], [data-aynnav-status2]');
+
+    // 時刻で第一声を変える（閲覧者のローカル時刻）
+    const greet = () => {
+      const h = new Date().getHours();
+      if (h >= 22 || h < 5) return 'まだ起きとると？ どこ行くと？';
+      if (h < 11) return 'おはよう。今日はどこ行くと？';
+      if (h < 17) return 'こんにちは。どこ行くと？';
+      return 'お疲れさん。今日はどこ行くと？';
+    };
+    sayEl.textContent = greet();
+
+    let open = false;
+    const setOpen = (v) => {
+      open = v;
+      panel.hidden = !v;
+      root.classList.toggle('is-open', v);
+      btn.setAttribute('aria-expanded', String(v));
+      if (v) {
+        sayEl.textContent = greet();
+        const first = panel.querySelector('[data-aynnav-go]');
+        if (first) first.focus({ preventScroll: true });
+      }
+    };
+
+    btn.addEventListener('click', () => setOpen(!open));
+    closeBtn.addEventListener('click', () => { setOpen(false); btn.focus({ preventScroll: true }); });
+    // 行き先を選んだら閉じる（スクロールの邪魔をせん）
+    for (const a of panel.querySelectorAll('[data-aynnav-go]')) {
+      a.addEventListener('click', () => setOpen(false));
+    }
+    addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && open) { setOpen(false); btn.focus({ preventScroll: true }); }
+    });
+    addEventListener('click', (e) => {
+      if (open && !root.contains(e.target)) setOpen(false);
+    });
+
+    // 将来の AI チャット差し替え用の口（ここに繋げばそのまま喋らせられる）
+    window.AYN_NAV = {
+      open: () => setOpen(true),
+      close: () => setOpen(false),
+      say: (text) => { sayEl.textContent = String(text); },
+      setStatus: (text) => { for (const el of statusEls) el.textContent = String(text); },
+    };
+  })();
+</script>
+
+<style>
+  .aynnav {
+    position: fixed;
+    right: max(0.8rem, env(safe-area-inset-right));
+    bottom: max(0.8rem, env(safe-area-inset-bottom));
+    z-index: 40;
+    font-size: 0.9rem;
+  }
+
+  /* ── 呼び出しボタン ─────────────────────────────────────────── */
+  .aynnav__btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.28rem 0.3rem;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 10px 26px -12px rgba(31, 37, 64, 0.5);
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--c-ink);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .aynnav__btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -12px rgba(31, 37, 64, 0.55); }
+  .aynnav__face {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--c-mist);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+  }
+  .aynnav__face :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .aynnav__pulse {
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #57c4a3;
+    border: 2px solid #fff;
+    animation: aynPulse 3.2s ease-in-out infinite;
+  }
+  @keyframes aynPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(87, 196, 163, 0.5); }
+    50% { box-shadow: 0 0 0 5px rgba(87, 196, 163, 0); }
+  }
+  .aynnav__id {
+    display: none;
+    line-height: 1.25;
+    padding-right: 0.55rem;
+    text-align: left;
+  }
+  .aynnav__id b { font-family: var(--font-display); font-size: 0.78rem; letter-spacing: 0.1em; font-weight: 400; display: block; }
+  .aynnav__status { font-size: 0.6rem; letter-spacing: 0.1em; color: #3f9c82; }
+  /* 文字は広い画面だけ（スマホは丸だけ＝邪魔せん） */
+  @media (min-width: 560px) { .aynnav__id { display: block; } }
+
+  /* ── パネル ─────────────────────────────────────────────────── */
+  .aynnav__panel {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 0.55rem);
+    width: min(76vw, 288px);
+    max-height: min(62vh, 460px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--c-line);
+    border-radius: 16px;
+    box-shadow: 0 20px 48px -18px rgba(31, 37, 64, 0.55);
+    padding: 0.7rem 0.8rem 0.6rem;
+    transform-origin: 100% 100%;
+    animation: aynNavIn 0.26s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  @keyframes aynNavIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.97); }
+    to { opacity: 1; transform: none; }
+  }
+  .aynnav__head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px dashed var(--c-line);
+  }
+  .aynnav__headname { font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.12em; }
+  .aynnav__headstatus { font-size: 0.6rem; letter-spacing: 0.1em; color: #3f9c82; }
+  .aynnav__close {
+    margin-left: auto;
+    border: 0;
+    background: transparent;
+    color: var(--c-ink-soft);
+    cursor: pointer;
+    padding: 0.2rem;
+    line-height: 0;
+    border-radius: 6px;
+  }
+  .aynnav__close:hover { color: var(--c-ink); }
+  .aynnav__say {
+    margin: 0.55rem 0 0.6rem;
+    font-size: 0.9rem;
+    color: var(--c-ink);
+  }
+  .aynnav__routes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.15rem; }
+  .aynnav__routes a {
+    display: block;
+    padding: 0.42rem 0.55rem;
+    border-radius: 10px;
+    color: var(--c-ink);
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+  .aynnav__routes a:hover { background: var(--c-mist); text-decoration: none; }
+  .aynnav__label { display: block; font-size: 0.88rem; }
+  .aynnav__note { display: block; font-size: 0.68rem; color: var(--c-ink-soft); }
+  .aynnav__foot {
+    margin: 0.6rem 0 0;
+    font-size: 0.64rem;
+    line-height: 1.5;
+    color: var(--c-ink-soft);
+    border-top: 1px dashed var(--c-line);
+    padding-top: 0.45rem;
+  }
+</style>

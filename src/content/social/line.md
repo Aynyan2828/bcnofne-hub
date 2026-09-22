@@ -7,4 +7,5 @@ cta: 友だち追加
 order: 50
 image: ../../assets/sns/art-line.png
 status: active
+tier: primary
 ---
