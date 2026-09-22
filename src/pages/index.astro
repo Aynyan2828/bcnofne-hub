@@ -235,25 +235,25 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
         </HScroll>
       </div>
 
+      {/* 横に流すようになったけん、もう畳まんでよか＝最初から中身を見せる。
+          カード（主な発信先）より一段小さいピルで、強さの差だけ残しとる。 */}
       {moreSocial.length > 0 && (
-        <details class="routes">
-          <summary>
-            <span class="routes__en">More Routes</span>
-            その他の航路（{moreSocial.length}）
-          </summary>
-          {/* 畳んだ中も横に流す＝開いても縦に伸びん */}
-          <div class="routes__shelf">
-            <HScroll label="その他の航路" size="pill">
-              {moreSocial.map((s) => (
-                <a class="routes__pill" href={s.data.url} target="_blank" rel="noopener noreferrer">
-                  <b>{s.data.title}</b>
-                  {s.data.handle && <span>{s.data.handle}</span>}
-                  <em>{s.data.summary}</em>
-                </a>
-              ))}
-            </HScroll>
-          </div>
-        </details>
+        <div class="routes" data-reveal="up">
+          <HScroll
+            label="その他の航路"
+            size="pill"
+            title="その他の航路"
+            hint={`More Routes・${moreSocial.length}件`}
+          >
+            {moreSocial.map((s) => (
+              <a class="routes__pill" href={s.data.url} target="_blank" rel="noopener noreferrer">
+                <b>{s.data.title}</b>
+                {s.data.handle && <span>{s.data.handle}</span>}
+                <em>{s.data.summary}</em>
+              </a>
+            ))}
+          </HScroll>
+        </div>
       )}
     </Section>
 
@@ -311,32 +311,14 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
   }
   .pins__pin--strong:hover { color: #fff; }
 
-  /* その他の航路（畳んどく・消さん） */
+  /* その他の航路（畳まん・カードより一段小さい扱い） */
   .routes {
-    max-width: 720px;
     margin: clamp(1.2rem, 3vw, 1.8rem) auto 0;
-    background: rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.55);
     border: 1px dashed var(--c-line);
     border-radius: 14px;
-    padding: 0.7rem 1rem;
+    padding: 0.8rem 0.9rem 0.3rem;
   }
-  .routes > summary {
-    cursor: pointer;
-    display: flex;
-    align-items: baseline;
-    gap: 0.6rem;
-    font-size: 0.9rem;
-    color: var(--c-ink-soft);
-  }
-  .routes > summary::marker { color: var(--c-blue); }
-  .routes__en {
-    font-family: var(--font-display);
-    font-size: 0.56rem;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--c-blue-deep);
-  }
-  .routes__shelf { margin-top: 0.8rem; }
   .routes__pill {
     display: flex;
     flex-direction: column;
