@@ -8,7 +8,8 @@ export const GET: APIRoute = async ({ site }) => {
   const base = site?.origin ?? 'https://bcnofne.com';
 
   const apps = (await getCollection('apps'))
-    .filter((entry) => entry.data.status === 'active')
+    // 制作中（App Store 未公開）はアプリ内の相互リンクに出さん（url が LP のため）
+    .filter((entry) => entry.data.status === 'active' && entry.data.price !== '制作中')
     .sort((a, b) => a.data.order - b.data.order)
     .map((entry) => ({
       // アプリ側の currentAppID と突き合わせる識別子。md の appId が無ければファイル名。
