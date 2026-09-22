@@ -1,5 +1,32 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-09-22 — 航海をもう一段ふかく（日誌スタンプ・潮・霧）
+前の「一隻の船」化の続き。演出は増やさず、深さを足した。
+
+### Added
+- **航海日誌スタンプ**: 寄った港を localStorage(`bcnofne_logbook`) に憶えて、
+  航路の点と AYN ナビのスタンプが灯る。全部回ると AYN が一度だけ労う。
+  VoyageRail が `bcnofne:voyage` (CustomEvent) を投げ、AynNavigator が拾う
+  ＝共有モジュールを持たん疎結合。localStorage が死んどっても落とさん。
+- **時刻連動の海(tide)**: 22〜6時は `<html data-tide="night">`。紙の白を少しだけ
+  青へ寄せて、背景の霧も青紫に沈む。ダークモードにはせん（本文のコントラストを守る）。
+  BaseLayout の head で決めるけんちらつかん。1分ごとに VoyageRail が見直す。
+- **港ごとの霧(depth/fog)**: 沖へ出るほど背景がうっすら霞む。VoyageRail が
+  港が変わった時だけ `<html data-depth="0..5">` を書き換え、CSS が 1.6s かけて
+  霧レイヤーの opacity だけ動かす（合成のみ・再レイアウトせん）。
+- **AYN に直接聞く窓口の口**: `AynNavigator.astro` の `ASK_ENDPOINT` に
+  bcnofne-edge のオリジンを入れると、パネルに入力欄が生えて `POST /ask {q}` →
+  `{answer}` を吹き出しに出す。**空のあいだは入力欄ごと出さん**（いまは空）。
+  家の Jarvis を直で公開せず、必ず Worker を挟む前提で書いとる。
+- `.claude/launch.json` に `bcnofne-hub-preview`（`astro preview` :4332）。
+  dev サーバーが別セッションに掴まれとる時に、**ビルド成果物で**確認するため。
+
+### 地雷メモ
+- `--fog: calc(var(--depth) / 5)` のような**入れ子の var を opacity に渡すと無効値**に
+  なって `opacity:1` に落ちる＝霧が全開になる。各段に素の数値を直書きすること。
+- dev サーバーが別セッションの古いモジュールを配っとることがある。
+  スタイルだけ効かん時は `npm run build` → `astro preview` で確かめる。
+
 ## 2026-09-22 — サイトを「一隻の船」にする（航海体験化）
 既存の水彩・夜の海・AYN・青〜紫〜ピンクはそのまま。UI 側を航海に寄せた。
 

@@ -22,8 +22,16 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <!-- JS ありを最初に宣言: 到着演出などを「JSがある時だけ伏せる」ため（ちらつき防止） -->
-    <script is:inline>document.documentElement.classList.add('has-js');</script>
+    <!-- JS ありを最初に宣言: 到着演出などを「JSがある時だけ伏せる」ため（ちらつき防止）。
+         ついでに潮（tide）も head で決める＝夜に来た人は最初から夜の海で迎える。
+         22〜6時＝night。Hero の AYN がパジャマに着替える時刻と同じ窓ばい。 -->
+    <script is:inline>
+      document.documentElement.classList.add('has-js');
+      (function () {
+        var h = new Date().getHours();
+        document.documentElement.dataset.tide = h >= 22 || h < 6 ? 'night' : 'day';
+      })();
+    </script>
     <link rel="icon" href={`${base}/favicon.png`} type="image/png" />
     <link rel="apple-touch-icon" href={`${base}/apple-touch-icon.png`} />
     <link rel="sitemap" href={`${base}/sitemap-index.xml`} />

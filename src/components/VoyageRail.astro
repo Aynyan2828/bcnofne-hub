@@ -101,6 +101,40 @@ import { STATIONS } from '../lib/voyage';
       nowTimer = setTimeout(() => nowEl.classList.remove('is-on'), reduce.matches ? 2600 : 1900);
     };
 
+    /* ── 3) 航海日誌: 寄った港を憶えとく ──────────────────────────
+       localStorage に港の id を貯める。全部回ったら 'bcnofne:voyage' の
+       detail.complete が true になって、AYN ナビが労いの一言を出す。
+       プライベートモード等で localStorage が死んどっても落とさん。 */
+    const LOG_KEY = 'bcnofne_logbook';
+    const readLog = () => {
+      try {
+        const v = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
+        return Array.isArray(v) ? v.filter((x) => typeof x === 'string') : [];
+      } catch (_) { return []; }
+    };
+    const writeLog = (list) => {
+      try { localStorage.setItem(LOG_KEY, JSON.stringify(list)); } catch (_) { /* 憶えられんでも進む */ }
+    };
+    let visited = readLog().filter((id) => sections.some((s) => s.id === id));
+    const paintLog = () => {
+      for (const s of sections) s.li.classList.toggle('is-visited', visited.includes(s.id));
+    };
+    const announce = (id) => {
+      document.dispatchEvent(
+        new CustomEvent('bcnofne:voyage', {
+          detail: {
+            id,
+            visited: visited.slice(),
+            total: sections.length,
+            complete: visited.length >= sections.length,
+          },
+        })
+      );
+    };
+    paintLog();
+    // 読み込み直後にも1回流す（AYN ナビが初期表示でスタンプを描けるように）
+    setTimeout(() => announce(null), 0);
+
     let current = '';
     const io = new IntersectionObserver(
       (entries) => {
@@ -121,10 +155,29 @@ import { STATIONS } from '../lib/voyage';
         for (const s of sections) s.li.classList.toggle('is-current', s.id === current);
         const code = next.li.querySelector('.rail__code');
         showNow(code ? code.textContent : '');
+
+        // 沖へ出るほど霧が濃くなる。港が変わった時だけ書き換える＝
+        // スクロール毎に :root を触らん（ページ全体の再計算を避ける）
+        document.documentElement.dataset.depth = String(sections.indexOf(next));
+
+        // 航海日誌に記帳（初めての港だけ）
+        if (!visited.includes(current)) {
+          visited.push(current);
+          writeLog(visited);
+          paintLog();
+        }
+        announce(current);
       },
       { rootMargin: '-18% 0px -45% 0px', threshold: [0, 0.01, 0.2] }
     );
     for (const s of sections) io.observe(s.el);
+
+    /* ── 4) 潮の更新: 22時をまたいでも夜の海に切り替わるように ────── */
+    const tide = () => {
+      const h = new Date().getHours();
+      document.documentElement.dataset.tide = h >= 22 || h < 6 ? 'night' : 'day';
+    };
+    setInterval(tide, 60000);
   })();
 </script>
 
@@ -231,6 +284,12 @@ import { STATIONS } from '../lib/voyage';
       transform: scale(1.22);
     }
     .rail__stop:hover .rail__dot { border-color: var(--c-purple); }
+    /* 一度寄った港＝灯りが残っとる（現在地ほど強くはせん） */
+    .rail__stop.is-visited .rail__dot {
+      border-color: var(--c-purple);
+      background: rgba(139, 123, 216, 0.28);
+    }
+    .rail__stop.is-visited.is-current .rail__dot { background: var(--grad-accent); }
   }
 
   /* ── スマホ／狭い画面: 最上部の航跡線 ───────────────────────────── */

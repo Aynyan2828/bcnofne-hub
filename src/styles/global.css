@@ -35,6 +35,30 @@
   --shadow-soft: 0 4px 16px -8px rgba(45, 60, 120, 0.22);
 }
 
+/* ── 潮（tide）と深さ（depth）─────────────────────────────────────
+   tide : 22〜6時は night。BaseLayout が head で <html data-tide> を決める。
+          夜は紙の白を少しだけ青に寄せる（ダークモードにはせん。本文の
+          コントラストを落とさんため、あくまで「夜の海の色味」程度）。
+   depth: いま何個目の港におるか（0=PORT 〜 5=AYN）。VoyageRail が
+          寄港地が変わった時だけ <html data-depth> を書き換える。
+          スクロールごとに :root のカスタムプロパティを触ると
+          ページ全体の再計算が走るけん、港が変わった時だけにしとる。 */
+/* --fog = 0〜1 の「沖へ出た度合い」。各段に**素の数値**を直接置く。
+   （calc(var(--depth)/5) のような入れ子 var は opacity で無効値になって
+     opacity:1 に落ちる＝霧が全開になる。踏んだ地雷。数値を直書きが安全） */
+:root { --fog: 0; }
+html[data-depth='1'] { --fog: 0.2; }
+html[data-depth='2'] { --fog: 0.4; }
+html[data-depth='3'] { --fog: 0.6; }
+html[data-depth='4'] { --fog: 0.8; }
+html[data-depth='5'] { --fog: 1; }
+
+html[data-tide='night'] {
+  --c-mist: #e4ebfa;
+  --c-cream: #f5f7ff;
+  --c-line: #d8e1f3;
+}
+
 * { box-sizing: border-box; }
 
 html {

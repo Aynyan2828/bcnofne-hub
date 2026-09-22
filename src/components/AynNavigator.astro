@@ -17,6 +17,16 @@ import { STATIONS } from '../lib/voyage';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
+/**
+ * AYN に直接聞ける窓口（本物の会話）。
+ * ここに bcnofne-edge のオリジンを入れると、パネルに入力欄が生える。
+ *   例: 'https://bcnofne-edge.aynbcnofne.workers.dev'  → POST {origin}/ask {q}
+ *       → Worker 側でレート制限して Jarvis(Funnel) へ中継し、{answer} を返す
+ * 空文字のあいだは入力欄ごと出さん＝いままで通りの行き先案内だけ。
+ * ※ 家の Jarvis を直で公開せんこと。必ず Worker を挟む（乱用とコストの盾）。
+ */
+const ASK_ENDPOINT = '';
+
 // 行き先＝航路の寄港地（PORT を除く）＋ 港の外の用事
 const routes = [
   ...STATIONS.filter((s) => s.id !== 'top').map((s) => ({
@@ -68,7 +78,32 @@ const routes = [
         </li>
       ))}
     </ul>
-    <p class="aynnav__foot">いまは行き先案内だけ。じきに、ここでぼくと直に話せるようにするばい。</p>
+
+    {ASK_ENDPOINT && (
+      <form class="aynnav__ask" data-aynnav-ask data-endpoint={ASK_ENDPOINT}>
+        <label class="visually-hidden" for="aynnav-q">AYN に聞く</label>
+        <input id="aynnav-q" type="text" name="q" maxlength="200" placeholder="ぼくに聞いてもよかよ" autocomplete="off" />
+        <button type="submit" aria-label="送る">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </form>
+    )}
+
+    {/* 航海日誌: 寄った港にスタンプが灯る。全部回ると AYN がひとこと言う */}
+    <div class="aynnav__log" data-aynnav-log hidden>
+      <span class="aynnav__stamps" aria-hidden="true">
+        {STATIONS.map((s) => (
+          <i data-stamp={s.id} title={s.code}></i>
+        ))}
+      </span>
+      <span class="aynnav__logcount" data-aynnav-logcount></span>
+    </div>
+
+    <p class="aynnav__foot">
+      {ASK_ENDPOINT
+        ? '答えはぼくの機関室から返しよる。うまく届かん時もあるけん、そこは許してほしか。'
+        : 'いまは行き先案内だけ。じきに、ここでぼくと直に話せるようにするばい。'}
+    </p>
   </div>
 </div>
 
@@ -92,6 +127,11 @@ const routes = [
     };
     sayEl.textContent = greet();
 
+    // 航海日誌の状態（setOpen から参照するけん先に宣言）
+    let pendingComplete = false;
+    let saidComplete = false;
+    const DONE_LINE = 'ぜんぶの港を回ったね。ありがとう、よか航海やった。';
+
     let open = false;
     const setOpen = (v) => {
       open = v;
@@ -99,7 +139,14 @@ const routes = [
       root.classList.toggle('is-open', v);
       btn.setAttribute('aria-expanded', String(v));
       if (v) {
-        sayEl.textContent = greet();
+        // 待たせとった労い（全港クリア）があればそっちを優先
+        if (pendingComplete && !saidComplete) {
+          pendingComplete = false;
+          saidComplete = true;
+          sayEl.textContent = DONE_LINE;
+        } else {
+          sayEl.textContent = greet();
+        }
         const first = panel.querySelector('[data-aynnav-go]');
         if (first) first.focus({ preventScroll: true });
       }
@@ -119,12 +166,64 @@ const routes = [
     });
 
     // 将来の AI チャット差し替え用の口（ここに繋げばそのまま喋らせられる）
-    window.AYN_NAV = {
+    const api = {
       open: () => setOpen(true),
       close: () => setOpen(false),
       say: (text) => { sayEl.textContent = String(text); },
       setStatus: (text) => { for (const el of statusEls) el.textContent = String(text); },
     };
+    window.AYN_NAV = api;
+
+    /* ── 航海日誌スタンプ ────────────────────────────────────────
+       VoyageRail が 'bcnofne:voyage' を投げてくる。寄った港が灯る。
+       全部回ったら一度だけ労う（閉じとる時に達成したら、次に開いた時に言う）。 */
+    const logEl = root.querySelector('[data-aynnav-log]');
+    const countEl = root.querySelector('[data-aynnav-logcount]');
+
+    document.addEventListener('bcnofne:voyage', (e) => {
+      const d = e.detail || {};
+      const visited = d.visited || [];
+      for (const i of logEl.querySelectorAll('[data-stamp]')) {
+        i.classList.toggle('is-on', visited.includes(i.getAttribute('data-stamp')));
+      }
+      countEl.textContent = `${visited.length} / ${d.total} の港`;
+      logEl.hidden = visited.length === 0;
+      if (d.complete) {
+        root.classList.add('is-complete');
+        if (!saidComplete) {
+          if (open) { saidComplete = true; api.say(DONE_LINE); }
+          else pendingComplete = true;
+        }
+      }
+    });
+
+    /* ── AYN に直接聞く（ASK_ENDPOINT がある時だけ DOM に居る）──── */
+    const askForm = root.querySelector('[data-aynnav-ask]');
+    if (askForm) {
+      const input = askForm.querySelector('input[name="q"]');
+      askForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const q = (input.value || '').trim();
+        if (q.length < 2) return;
+        const ep = askForm.getAttribute('data-endpoint');
+        api.setStatus('● THINKING');
+        api.say('ちょっと待っとって…');
+        input.value = '';
+        try {
+          const res = await fetch(ep + '/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ q }),
+          });
+          const data = await res.json().catch(() => ({}));
+          api.say(res.ok && data.answer ? data.answer : 'うまく届かんかった。もう一回頼む。');
+        } catch (_) {
+          api.say('通信がうまくいかんかった。あとでまた聞いてほしか。');
+        } finally {
+          api.setStatus('● ONLINE');
+        }
+      });
+    }
   })();
 </script>
 
@@ -252,6 +351,64 @@ const routes = [
   .aynnav__routes a:hover { background: var(--c-mist); text-decoration: none; }
   .aynnav__label { display: block; font-size: 0.88rem; }
   .aynnav__note { display: block; font-size: 0.68rem; color: var(--c-ink-soft); }
+  /* 航海日誌スタンプ */
+  .aynnav__log {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--c-line);
+  }
+  .aynnav__log[hidden] { display: none; }
+  .aynnav__stamps { display: flex; gap: 0.28rem; }
+  .aynnav__stamps i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid var(--c-line);
+    background: transparent;
+    transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+  }
+  .aynnav__stamps i.is-on {
+    background: var(--grad-accent);
+    border-color: transparent;
+    box-shadow: 0 0 6px -1px rgba(139, 123, 216, 0.8);
+  }
+  .aynnav__logcount { font-size: 0.64rem; color: var(--c-ink-soft); letter-spacing: 0.06em; }
+  /* 全部回った人の AYN には、小さな灯りが残る */
+  .aynnav.is-complete .aynnav__face { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.9), 0 0 0 2px rgba(244, 166, 196, 0.55); }
+
+  /* AYN に直接聞く欄（ASK_ENDPOINT を入れた時だけ出る） */
+  .aynnav__ask {
+    display: flex;
+    gap: 0.35rem;
+    margin-top: 0.6rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--c-line);
+  }
+  .aynnav__ask input {
+    flex: 1;
+    min-width: 0;
+    font-family: inherit;
+    font-size: 0.84rem;
+    color: var(--c-ink);
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--c-line);
+    border-radius: 10px;
+    background: var(--c-cream);
+  }
+  .aynnav__ask input:focus { outline: none; border-color: var(--c-blue); box-shadow: 0 0 0 3px rgba(106, 169, 224, 0.2); }
+  .aynnav__ask button {
+    border: 0;
+    border-radius: 10px;
+    padding: 0 0.6rem;
+    background: var(--grad-accent);
+    color: #fff;
+    cursor: pointer;
+    line-height: 0;
+  }
+
   .aynnav__foot {
     margin: 0.6rem 0 0;
     font-size: 0.64rem;

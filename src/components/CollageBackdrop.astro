@@ -53,6 +53,10 @@ const ITEMS = [
       <Image src={it.img} alt="" width={560} height={315} loading="lazy" />
     </div>
   ))}
+  <!-- 沖へ出るほど濃くなる霧。深さ(--fog)は VoyageRail が港ごとに更新する。
+       白ベールの上に重なる別レイヤーやけん、港0では opacity:0＝いまの見た目のまま。
+       動かすのは opacity だけ（合成のみ・再レイアウトせん）。 -->
+  <span class="pagecollage__fog"></span>
 </div>
 
 <style>
@@ -90,6 +94,32 @@ const ITEMS = [
       rgba(251, 252, 255, 0.56) 40%,
       rgba(247, 250, 255, 0.5) 100%
     );
+  }
+
+  /* 霧のレイヤー（白ベール z:4 より上） */
+  .pagecollage__fog {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(206, 220, 246, 0.9) 0%,
+      rgba(222, 230, 250, 0.75) 45%,
+      rgba(200, 212, 242, 0.85) 100%
+    );
+    opacity: calc(var(--fog, 0) * 0.42);
+    transition: opacity 1.6s ease;
+  }
+  /* 夜はもう少しだけ青紫に沈む */
+  html[data-tide='night'] .pagecollage__fog {
+    background: linear-gradient(
+      180deg,
+      rgba(196, 208, 242, 0.92) 0%,
+      rgba(210, 214, 246, 0.78) 45%,
+      rgba(190, 200, 238, 0.88) 100%
+    );
+    opacity: calc(0.08 + var(--fog, 0) * 0.46);
   }
 
   @media (max-width: 720px) {

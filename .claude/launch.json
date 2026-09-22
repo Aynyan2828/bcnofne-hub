@@ -4,8 +4,26 @@
     {
       "name": "bcnofne-hub",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "4330"],
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4330"
+      ],
       "port": 4330
+    },
+    {
+      "name": "bcnofne-hub-preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "preview",
+        "--",
+        "--port",
+        "4332"
+      ],
+      "port": 4332
     }
   ]
 }
