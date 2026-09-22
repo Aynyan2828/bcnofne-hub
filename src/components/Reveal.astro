@@ -10,17 +10,24 @@
  *
  * CSS は global.css 側（複数コンポーネントで使うけん）。
  * IntersectionObserver は1つだけ。出したら監視を外すけん残らん。
- * JS が無い時は最初から見えとる（global.css が html.has-js の時だけ伏せる）。
- * prefers-reduced-motion では動かさず、その場に静かに置いとく。
+ * ★方式: progressive enhancement。本文は**既定で見えとる**。
+ *   BaseLayout の head が「演出を動かせる」と判定した時だけ <html class="reveal-on">
+ *   を付け、その時だけ CSS が伏せる。判定を外す条件（IO 無し／動きを減らす設定／
+ *   読み込み時に画面が見えとらん）は BaseLayout 側に書いとる。
+ *   JS が落ちても・バンドルが届かんでも本文は読めるけん、検索エンジンに
+ *   「隠しテキスト」と取られる心配が無い。
  *
- * ★クローラー対策: 伏せる＝opacity:0 やけん、IO が動かん環境では本文が
- *   見えんままになる（＝検索エンジンに「隠しテキスト」と取られかねん）。
- *   そこで IO が一度も呼ばれんかったら 2.5 秒で演出を捨てて全部出す。
+ * ★それでも残る穴: `reveal-on` が付いた＝IO を作れた、でも
+ *   コールバックが一度も来ん、という環境が実在する（実測で踏んだ）。
+ *   そこだけ最後の保険として、2.5 秒で演出を捨てて全部出す。
  */
 ---
 <script>
   (() => {
     const init = () => {
+      // head が伏せる判断をせんかった＝本文はもう見えとる。何もせんでよか。
+      if (!document.documentElement.classList.contains('reveal-on')) return;
+
       const targets = document.querySelectorAll('[data-reveal], [data-reveal-stagger]');
       if (!targets.length) return;
 
@@ -31,12 +38,6 @@
           el.classList.add('is-in');
         }
       };
-
-      // 動きを減らす設定 / IO が無い環境: 伏せずに全部そのまま出す
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
-        showAll(targets);
-        return;
-      }
 
       // IO が一度でも呼ばれたか。呼ばれん環境＝伏せたままになるけん、
       // その時は演出を諦めて全部出す（クローラー対策としても重要）。
@@ -66,9 +67,9 @@
       );
       for (const el of targets) io.observe(el);
 
-      /* 保険1（最重要）: IO が一度も呼ばれん環境では、演出を丸ごと諦めて
-         全部そのまま出す。検索エンジンや AI クローラーの描画エンジン、
-         裏タブ、IO を潰す拡張などが該当する。
+      /* 保険（最後の1枚）: IO は作れたのにコールバックが一度も来ん環境がある。
+         head の判定（可視状態チェック）でほぼ潰しとるけど、IO を差し替える
+         拡張や変わった描画エンジンまでは読み切れん。
          「ページが真っ白に見える」より、演出が無い方が100倍よか。 */
       setTimeout(() => {
         if (ioAlive) return;
@@ -78,19 +79,6 @@
         for (const h of document.querySelectorAll('[data-harbor]')) h.classList.add('is-arrived');
       }, 2500);
 
-      /* 保険2: IO は動いとるけど、何かの拍子に取り残された要素があったら、
-         もう画面に届いとるものだけ静かに出す。 */
-      setTimeout(() => {
-        const stuck = [];
-        for (const el of targets) {
-          if (el.classList.contains('is-in')) continue;
-          if (el.getBoundingClientRect().top < innerHeight * 1.2) stuck.push(el);
-        }
-        if (stuck.length) {
-          showAll(stuck);
-          for (const el of stuck) io.unobserve(el);
-        }
-      }, 5000);
     };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
     else init();

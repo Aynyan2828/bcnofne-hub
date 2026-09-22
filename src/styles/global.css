@@ -131,40 +131,43 @@ h1, h2, h3 { line-height: 1.4; margin: 0; font-weight: 400; }
    既定は「見えとる」＝JS が無くても読める。JS がある時だけ伏せて、
    画面に入ったら Reveal.astro が .is-in を付けて灯す。
    水彩の静けさを壊さんよう、距離は小さめ・時間は長めにしとる。 */
-html.has-js [data-reveal],
-html.has-js [data-reveal-stagger] > * {
+/* 伏せるのは `reveal-on` が付いた時だけ。付く条件は BaseLayout の head を見て。
+   付かんかったら本文はそのまま見える＝JS が落ちても白紙にならん。 */
+html.reveal-on [data-reveal],
+html.reveal-on [data-reveal-stagger] > * {
   opacity: 0;
   transform: translateY(18px);
   transition: opacity 0.75s ease, transform 0.75s cubic-bezier(0.22, 0.61, 0.36, 1);
   will-change: opacity, transform;
 }
-html.has-js [data-reveal='left'] { transform: translateX(-28px); }
-html.has-js [data-reveal='right'] { transform: translateX(28px); }
-html.has-js [data-reveal].is-in,
-html.has-js [data-reveal-stagger] > *.is-in {
+html.reveal-on [data-reveal='left'] { transform: translateX(-28px); }
+html.reveal-on [data-reveal='right'] { transform: translateX(28px); }
+html.reveal-on [data-reveal].is-in,
+html.reveal-on [data-reveal-stagger] > *.is-in {
   opacity: 1;
   transform: none;
   will-change: auto;
 }
 /* 横から入るのは、画面が狭い時は横揺れになるけん下からに寄せる */
 @media (max-width: 760px) {
-  html.has-js [data-reveal='left'],
-  html.has-js [data-reveal='right'] { transform: translateY(18px); }
+  html.reveal-on [data-reveal='left'],
+  html.reveal-on [data-reveal='right'] { transform: translateY(18px); }
 }
 @media (prefers-reduced-motion: reduce) {
-  html.has-js [data-reveal],
-  html.has-js [data-reveal-stagger] > * { opacity: 1; transform: none; }
+  html.reveal-on [data-reveal],
+  html.reveal-on [data-reveal-stagger] > * { opacity: 1; transform: none; }
 }
 /* 印刷では演出を待たん（JS が動かん紙の上で真っ白にせんため） */
 @media print {
-  html.has-js [data-reveal],
-  html.has-js [data-reveal-stagger] > * { opacity: 1 !important; transform: none !important; }
+  html.reveal-on [data-reveal],
+  html.reveal-on [data-reveal-stagger] > * { opacity: 1 !important; transform: none !important; }
 }
 
 /* ── 到着演出（ARRIVING / APPS HARBOR）─────────────────────────────
    VoyageRail の IntersectionObserver が [data-harbor] に .is-arrived を付ける。
    既定は「見えとる」＝JS 無しでも読める。JS があるときだけ伏せて到着で灯す
-   （BaseLayout が <html class="has-js"> を head で付けるけん、ちらつかん）。
+   （BaseLayout が head で <html class="reveal-on"> を付けるけん、ちらつかん。
+     演出を動かせる確証がある時だけ付く＝それ以外は最初から見えとる）。
    Section.astro と About.astro の両方で使うけん、ここ（global）に置いとる。 */
 .arrival {
   display: flex;
@@ -174,8 +177,8 @@ html.has-js [data-reveal-stagger] > *.is-in {
   margin: 0 0 0.9rem;
   transition: opacity 0.9s ease, transform 0.9s ease;
 }
-html.has-js .arrival { opacity: 0; transform: translateY(6px); }
-html.has-js .arrival.is-arrived { opacity: 1; transform: none; }
+html.reveal-on .arrival { opacity: 0; transform: translateY(6px); }
+html.reveal-on .arrival.is-arrived { opacity: 1; transform: none; }
 .arrival__rule {
   height: 1px;
   width: clamp(18px, 8vw, 70px);
@@ -198,7 +201,7 @@ html.has-js .arrival.is-arrived { opacity: 1; transform: none; }
   white-space: nowrap;
 }
 @media (prefers-reduced-motion: reduce) {
-  html.has-js .arrival { opacity: 1; transform: none; }
+  html.reveal-on .arrival { opacity: 1; transform: none; }
 }
 
 /* Card grid */
