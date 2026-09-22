@@ -19,11 +19,17 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 /**
  * AYN に直接聞ける窓口（本物の会話）。
- * ここに bcnofne-edge のオリジンを入れると、パネルに入力欄が生える。
- *   例: 'https://bcnofne-edge.aynbcnofne.workers.dev'  → POST {origin}/ask {q}
- *       → Worker 側でレート制限して Jarvis(Funnel) へ中継し、{answer} を返す
- * 空文字のあいだは入力欄ごと出さん＝いままで通りの行き先案内だけ。
- * ※ 家の Jarvis を直で公開せんこと。必ず Worker を挟む（乱用とコストの盾）。
+ *
+ * ── 2026-09-22: マスター判断で【見送り】。空のまま置いとく。 ──
+ * 理由: 公開サイトから家の Jarvis へ口を開けると
+ *   (1) プロンプトインジェクション（誰でもぼくに何でも言わせられる）
+ *   (2) 誰でも無限に叩けて、LLM のコストが全部こっち持ち
+ * になる。見返りに対してリスクが大きすぎる、という結論。
+ * 気が変わった時だけ、下の空文字を bcnofne-edge のオリジンに変える:
+ *   'https://bcnofne-edge.aynbcnofne.workers.dev' → POST {origin}/ask {q} → {answer}
+ * その時も **Jarvis を直で公開せん**こと。必ず Worker を挟んで
+ * レート制限・1日の上限・Funnel URL の秘匿をやる（乱用とコストの盾）。
+ * 空文字のあいだは入力欄ごと DOM に出さんけん、攻撃面はゼロばい。
  */
 const ASK_ENDPOINT = '';
 
