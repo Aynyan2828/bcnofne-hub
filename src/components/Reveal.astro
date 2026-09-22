@@ -12,6 +12,10 @@
  * IntersectionObserver は1つだけ。出したら監視を外すけん残らん。
  * JS が無い時は最初から見えとる（global.css が html.has-js の時だけ伏せる）。
  * prefers-reduced-motion では動かさず、その場に静かに置いとく。
+ *
+ * ★クローラー対策: 伏せる＝opacity:0 やけん、IO が動かん環境では本文が
+ *   見えんままになる（＝検索エンジンに「隠しテキスト」と取られかねん）。
+ *   そこで IO が一度も呼ばれんかったら 2.5 秒で演出を捨てて全部出す。
  */
 ---
 <script>
@@ -34,8 +38,13 @@
         return;
       }
 
+      // IO が一度でも呼ばれたか。呼ばれん環境＝伏せたままになるけん、
+      // その時は演出を諦めて全部出す（クローラー対策としても重要）。
+      let ioAlive = false;
+
       const io = new IntersectionObserver(
         (entries) => {
+          ioAlive = true;
           for (const e of entries) {
             if (!e.isIntersecting) continue;
             const el = e.target;
@@ -57,9 +66,20 @@
       );
       for (const el of targets) io.observe(el);
 
-      /* 保険: 万一 IO が届かん環境でも、読み込みから少し経ったら
-         「もう画面に届いとるはずの要素」は問答無用で出す。
-         演出が一度も動かんより、静かに出とる方がずっとよか。 */
+      /* 保険1（最重要）: IO が一度も呼ばれん環境では、演出を丸ごと諦めて
+         全部そのまま出す。検索エンジンや AI クローラーの描画エンジン、
+         裏タブ、IO を潰す拡張などが該当する。
+         「ページが真っ白に見える」より、演出が無い方が100倍よか。 */
+      setTimeout(() => {
+        if (ioAlive) return;
+        showAll(targets);
+        io.disconnect();
+        // 港の到着演出（VoyageRail が動かす）も道連れにせん
+        for (const h of document.querySelectorAll('[data-harbor]')) h.classList.add('is-arrived');
+      }, 2500);
+
+      /* 保険2: IO は動いとるけど、何かの拍子に取り残された要素があったら、
+         もう画面に届いとるものだけ静かに出す。 */
       setTimeout(() => {
         const stuck = [];
         for (const el of targets) {
@@ -70,7 +90,7 @@
           showAll(stuck);
           for (const el of stuck) io.unobserve(el);
         }
-      }, 4000);
+      }, 5000);
     };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
     else init();

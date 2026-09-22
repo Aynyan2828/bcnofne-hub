@@ -1,5 +1,47 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-09-22 — クローラー到達性の調査と、演出のクローラー安全化
+
+「ChatGPT から bcnofne.com にアクセスできん」の調査。
+**結論: サーバー側は一切ブロックしとらんかった**（下の調査結果）。
+ただし調査の途中で、今日入れた出現演出に本物の穴が見つかったけん直した。
+
+### Fixed
+- `Reveal.astro` — 出現演出は `opacity: 0` で伏せてから IntersectionObserver で
+  灯す作り。**IO が呼ばれん環境では本文が見えんままになる**（＝検索エンジンに
+  「隠しテキスト」と取られかねん／AI の描画エンジンが空ページと判断し得る）。
+  IO が一度でも呼ばれたかを見て、2.5 秒たっても呼ばれんかったら演出を丸ごと
+  捨てて全部表示し、港の到着演出（`[data-harbor]`）も同時に復帰させる。
+  実機で「IO が動かん条件」を作って before/after を確認済み
+  （before: 表示 0 件・見出しの opacity 0 ／ after: 全件表示・opacity 1）。
+
+### Added
+- `public/llms.txt` — AI クローラー/ツール向けのサイト要約（llmstxt.org 形式）。
+  何を作っとるか・主要ページ・アプリ・チャンネルを機械可読で1枚に。
+  「Crypto Ocean は暗号資産サイトやなか」も明記しとる。
+- `public/robots.txt` — `User-agent: *` の全許可はそのままに、Googlebot /
+  bingbot / GPTBot / OAI-SearchBot / ChatGPT-User / ClaudeBot / PerplexityBot /
+  Applebot などを**明示的に許可**。意図がはっきりして、後から塞ぐのも楽になる。
+
+### 調査結果（ブロックは見つからんかった）
+- robots.txt: `Allow: /`・sitemap 宣言あり（200）
+- 全クローラー UA で **HTTP 200・同一バイト数**（Googlebot / GPTBot /
+  OAI-SearchBot / ChatGPT-User / ClaudeBot / bingbot / curl / UA無し）
+- GPTBot で連続30リクエスト → **30/30 が 200**（レート制限なし）
+- `X-Robots-Tag` なし・`<meta name="robots">` なし
+- http→https 301、www→non-www 301、証明書は Let's Encrypt（2026-11-30 まで）
+- sitemap-index / sitemap-0 ともに 200、収録4URL すべて到達可
+- **Cloudflare はプロキシしとらん**（DNS-only。`server: GitHub.com`・`cf-ray` 無し）
+  ＝ WAF も Bot Fight Mode も AI ボット遮断も経路に存在せん
+- GitHub Pages: public・https_enforced=true
+- 本文は静的 HTML に入っとる（JS 無しでも可読テキスト 3,795 字）
+- HEAD / Range / TLS1.2 / Accept ヘッダ無し、どれも正常応答
+
+### 残っとる任意の改善（未実施・要判断）
+- **AAAA レコードが無い**（Cloudflare DNS に A×4 のみ）。GitHub Pages は IPv6 も
+  配信しとるけん、`2606:50c0:8000::153` 〜 `8003::153` を DNS-only で足すと
+  IPv6 優先のクローラーに強くなる。いまは IPv4 で全員届いとるけん急がん。
+
 ## 2026-09-22 — 縦長をほどく（横に流す棚）＋ ふわっと出る演出
 
 スマホ幅 375px で **ページ全体の高さ 17,418px → 8,585px（約半分）**。

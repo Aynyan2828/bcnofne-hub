@@ -1,0 +1,38 @@
+# BCNOFNe〜ボクのフネ〜
+
+> 元・有明海の船乗りがひとりで作っとる個人プロジェクト。機関士AI「AYN（あゆにゃん）」を看板に、iPhone アプリ・睡眠/作業BGM・AIラジオ・音楽配信・水彩イラストを出しよる。サイトは日本語（一部に佐賀弁・博多弁）。
+
+「Crypto Ocean」は暗号資産の専門サイトという意味ではなく、AI・アプリ・音楽・創作が流れる情報の海を指す、このプロジェクト独自の言い回し。
+
+- 運営: BCNOFNe（個人）
+- キャラクター: AYN（あゆにゃん）＝機関士AI。水彩・青紫の髪・赤い丸メガネ
+- 言語: 日本語
+- 連絡: https://bcnofne.com/#contact
+
+## ページ
+
+- [トップ（公式ハブ）](https://bcnofne.com/): アプリ・ラジオ・音楽・SNS・AYN の紹介を1枚にまとめたページ
+- [Angleon（アングリオン）](https://bcnofne.com/angleon/): 制作中の iPhone アプリ。ぐちゃぐちゃの立体落書き線を回すと、決まった角度でだけ絵が浮かぶ。ブラウザで試せるデモと事前登録あり
+- [Angleon プライバシーポリシー](https://bcnofne.com/angleon/privacy/)
+- [AYNにまかせんしゃい（ショートカット配布）](https://bcnofne.com/shortcuts/): iPhone ショートカットの配布所
+- [公開中アプリの一覧（JSON）](https://bcnofne.com/apps.json): アプリ名・説明・ストアURLの機械可読リスト
+
+## 公開中の iPhone アプリ
+
+- [扶養メーター](https://apps.apple.com/jp/app/id6781950133): バイトの給料と扶養の上限を管理する無料アプリ
+- [ShiftWake](https://apps.apple.com/jp/app/id6785128543): カレンダーのシフト記号を読んで目覚ましを自動セットするアプリ
+
+## 聴く
+
+- [AYN Sleep Radio（YouTube）](https://www.youtube.com/@AYNSleepRadio): 睡眠用BGM
+- [AYN Work Radio（YouTube）](https://www.youtube.com/@AYNWorkRadio): 作業用BGM
+- [BCNOFNe Radio（YouTube）](https://www.youtube.com/@BCNOFNeRadio): AIラジオ
+- [AI RADIO（Apple Podcasts）](https://podcasts.apple.com/podcast/id1896926840): 毎朝のトークラジオ
+- [Spotify アーティストページ](https://open.spotify.com/intl-ja/artist/0fvizFlx3hEP1ODPBWfVzW): 配信中のEP
+
+## リンク
+
+- [全リンクまとめ（Litlink）](https://lit.link/aynyann)
+- [note（開発の裏話）](https://note.com/aynyan_sui_ice)
+- [GitHub](https://github.com/Aynyan2828)
+- [Bluesky](https://bsky.app/profile/aynyan.bsky.social)

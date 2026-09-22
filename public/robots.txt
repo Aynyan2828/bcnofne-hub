@@ -1,4 +1,52 @@
+# BCNOFNe〜ボクのフネ〜 — https://bcnofne.com
+# 公開サイト。検索エンジンにも AI クローラーにも開けとる。
+# 何かを塞ぎたくなった時は、ここに Disallow を足すだけでよか。
+
+# 既定: 全部のクローラーに全ページを許可
 User-agent: *
+Allow: /
+
+# ── 検索エンジン（明示しとくと意図がはっきりする）──────────────
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# ── AI クローラー ────────────────────────────────────────────
+# AYN の活動を AI からも見つけてもらいたいけん、明示的に許可しとる。
+# GPTBot=学習/索引 · OAI-SearchBot=ChatGPT の検索 · ChatGPT-User=人が開いた時の取得
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://bcnofne.com/sitemap-index.xml
