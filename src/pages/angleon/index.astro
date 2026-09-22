@@ -11,6 +11,12 @@ import aynExcited from '../../assets/ayn/ayn-excited.png';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
 const LINE_URL = 'https://lin.ee/V2sme7z';
+// テーマソング 3 曲（DistroKid HyperFollow＝配信前は Pre-save、9/29 以降は各ストアへのリンク集）
+const SONGS = [
+  { title: 'Angleon', note: 'メインテーマ・ハイパーポップ', url: 'https://distrokid.com/hyperfollow/bcnofne/angleon' },
+  { title: 'もつれ線', note: 'エモいバラード', url: 'https://distrokid.com/hyperfollow/bcnofne/qvB7QfyLD2Y' },
+  { title: 'Neon Drop (Angleon)', note: 'フォンク×EDM', url: 'https://distrokid.com/hyperfollow/bcnofne/neon-drop-angleon' },
+];
 const title = 'Angleon（アングリオン）｜回すと、絵が出る。';
 const description =
   'ぐちゃぐちゃの線の塊を指で回すと、決まった角度でだけ絵が浮かぶ iPhone アプリ。推しや自分の絵を「隠し絵」にして、光る壁紙や動画に。事前登録受付中。';
@@ -147,7 +153,17 @@ const description =
             元・有明海の機関士が作っとる <a href={`${base}/`}>BCNOFNe</a> のアプリ。最初の作品は機関士AI のぼく（AYN）の 10 ポーズ。
             テーマソングも 3 曲できて、<strong>9 月 29 日</strong>に Spotify・Apple Music で配信される。
           </p>
-          <p class="lp-proof__songs">「Angleon」「もつれ線」「Neon Drop (Angleon)」</p>
+          <ul class="lp-songs">
+            {SONGS.map((sng) => (
+              <li>
+                <a href={sng.url} target="_blank" rel="noopener noreferrer" data-cta="song">
+                  <span class="lp-songs__title">{sng.title}</span>
+                  <span class="lp-songs__note">{sng.note}</span>
+                  <span class="lp-songs__go">Pre-save →</span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
@@ -285,7 +301,12 @@ const description =
   .lp-proof__ayn { border-radius: 50%; }
   .section-head--left { text-align: left; margin-bottom: 0.8rem; }
   .lp-proof p { margin: 0 0 0.6rem; }
-  .lp-proof__songs { color: var(--c-ink-soft); }
+  .lp-songs { list-style: none; margin: 0.6rem 0 0; padding: 0; display: grid; gap: 0.5rem; }
+  .lp-songs a { display: grid; grid-template-columns: 1fr auto; column-gap: 0.8rem; align-items: center; padding: 0.7rem 1rem; background: var(--c-card); border: 1px solid var(--c-line); border-radius: 12px; text-decoration: none; color: var(--c-ink); box-shadow: var(--shadow-soft); }
+  .lp-songs a:hover { border-color: var(--c-purple); }
+  .lp-songs__title { grid-column: 1; grid-row: 1; font-family: var(--font-display); }
+  .lp-songs__note { grid-column: 1; grid-row: 2; font-size: 0.82rem; color: var(--c-ink-soft); }
+  .lp-songs__go { grid-column: 2; grid-row: 1 / span 2; font-size: 0.85rem; color: var(--c-blue-deep); white-space: nowrap; }
 
   .lp-join__grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
   .lp-join__card { background: var(--c-card); border: 1px solid var(--c-line); border-radius: var(--radius); padding: 1.4rem; box-shadow: var(--shadow-soft); }
