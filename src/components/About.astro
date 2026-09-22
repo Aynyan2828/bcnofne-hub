@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import profile from '../assets/ayn-profile.png';
 import ScenesStrip from './ScenesStrip.astro';
+import ShipStatus from './ShipStatus.astro';
 ---
 <section id="about" class="section section--mist">
   <div class="container">
@@ -44,6 +45,9 @@ import ScenesStrip from './ScenesStrip.astro';
         <div><dt>好きなもの</dt><dd>猫・ギター・アニメ</dd></div>
       </dl>
     </div>
+  </div>
+  <div class="container" data-reveal="up">
+    <ShipStatus />
   </div>
   <div class="container">
     <ScenesStrip />

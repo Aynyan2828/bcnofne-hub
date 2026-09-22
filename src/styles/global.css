@@ -95,8 +95,48 @@ h1, h2, h3 { line-height: 1.4; margin: 0; font-weight: 400; }
 }
 
 /* Section 見出し */
+/* ── 港の「紙だまり」──────────────────────────────────────────
+   背景のコラージュ写真はこのサイトの顔やけん消さん。
+   代わりに、本文がある帯だけ紙を濃く敷いて、上下の端に向けて
+   すっと引かせる。すると
+     セクションの中＝落ち着いて読める（港）
+     セクションとセクションの間＝写真が見える（航海）
+   というリズムが生まれる。
+   isolation で自前の重なり文脈を作っとるけん、z-index:-1 はこの
+   セクションの中だけで効く（最背面の固定コラージュは隠れん）。 */
 .section {
   padding-block: clamp(2.8rem, 7vw, 4.5rem);
+  position: relative;
+  isolation: isolate;
+}
+.section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(251, 252, 255, 0) 0%,
+      rgba(251, 252, 255, 0.62) 14%,
+      rgba(251, 252, 255, 0.72) 50%,
+      rgba(251, 252, 255, 0.62) 86%,
+      rgba(251, 252, 255, 0) 100%
+    );
+  transition: background 1.2s ease;
+}
+/* 夜の海では紙も少しだけ青に寄る */
+html[data-tide='night'] .section::before {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(243, 246, 255, 0) 0%,
+      rgba(243, 246, 255, 0.64) 14%,
+      rgba(243, 246, 255, 0.74) 50%,
+      rgba(243, 246, 255, 0.64) 86%,
+      rgba(243, 246, 255, 0) 100%
+    );
 }
 .section-head {
   margin-bottom: clamp(1.4rem, 4vw, 2.2rem);
@@ -122,8 +162,28 @@ h1, h2, h3 { line-height: 1.4; margin: 0; font-weight: 400; }
 }
 
 /* うっすら水彩の帯背景（交互・半透明で背後のコラージュを透かす） */
-.section--mist {
-  background: linear-gradient(180deg, rgba(234, 241, 251, 0.55) 0%, rgba(251, 252, 255, 0.25) 100%);
+/* 交互の霧の帯。紙だまりの上に薄く青を重ねる（端では一緒に引く） */
+.section--mist::before {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(234, 241, 251, 0) 0%,
+      rgba(234, 241, 251, 0.72) 14%,
+      rgba(238, 244, 253, 0.8) 50%,
+      rgba(234, 241, 251, 0.72) 86%,
+      rgba(234, 241, 251, 0) 100%
+    );
+}
+html[data-tide='night'] .section--mist::before {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(228, 235, 250, 0) 0%,
+      rgba(228, 235, 250, 0.74) 14%,
+      rgba(233, 239, 252, 0.82) 50%,
+      rgba(228, 235, 250, 0.74) 86%,
+      rgba(228, 235, 250, 0) 100%
+    );
 }
 
 /* ── ふわっと湧く／横から入る（Reveal）───────────────────────────
@@ -202,6 +262,46 @@ html.reveal-on .arrival.is-arrived { opacity: 1; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   html.reveal-on .arrival { opacity: 1; transform: none; }
+}
+
+/* ── 気分で変わる港の光（Music だけ）──────────────────────────
+   MoodPicker が <html data-mood="sleep|night|morning|focus"> を書く。
+   紙だまりの上に、ほんの少しだけ色を重ねる。狙いは「言われんと
+   気づかんけど、なんか空気が変わった」くらい。透明度は 0.1 未満。
+   1.2 秒かけて移るけん、切り替えた瞬間は分からん。 */
+#music::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease, background 1.2s ease;
+}
+html[data-mood='sleep'] #music::after {
+  /* 灯りを落とした夜の港。下から藍がにじむ */
+  background: radial-gradient(120% 80% at 50% 100%, rgba(61, 111, 180, 0.5), transparent 70%);
+  opacity: 0.16;
+}
+html[data-mood='night'] #music::after {
+  /* 凪いだ夜の海。紫の月あかり */
+  background: radial-gradient(110% 75% at 50% 15%, rgba(139, 123, 216, 0.55), transparent 72%);
+  opacity: 0.18;
+}
+html[data-mood='morning'] #music::after {
+  /* 夜明けのアクセル。上からピンク金の光が差す */
+  background: linear-gradient(180deg, rgba(244, 166, 196, 0.6), rgba(255, 224, 186, 0.28) 45%, transparent 78%);
+  opacity: 0.2;
+}
+html[data-mood='focus'] #music::after {
+  /* 手が止まらん時間。輪郭の澄んだ水色 */
+  background: linear-gradient(180deg, rgba(150, 214, 224, 0.42), transparent 62%);
+  opacity: 0.16;
+}
+/* 「ぜんぶ」に戻したら光も引く */
+html[data-mood='all'] #music::after { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  #music::after { transition: none; }
 }
 
 /* Card grid */

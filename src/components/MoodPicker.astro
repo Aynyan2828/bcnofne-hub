@@ -71,6 +71,9 @@ const MOODS = [
     const byKey = Object.fromEntries(MOODS.map((m) => [m.key, m]));
 
     const apply = (key) => {
+      // 選んだ気分を根っこに書く。Music の港の光だけが、ごくわずかに寄る。
+      // （global.css の html[data-mood=...] #music::before）
+      document.documentElement.dataset.mood = key;
       let shown = 0;
       for (const card of cards) {
         const tags = (card.getAttribute('data-moods') || '').split(/\s+/).filter(Boolean);

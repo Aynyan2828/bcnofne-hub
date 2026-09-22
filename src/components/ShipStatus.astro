@@ -1,0 +1,168 @@
+---
+/**
+ * 船内計器（SHIP STATUS）— AYN の港に置く、小さな機関室のパネル。
+ *
+ * 水彩の世界に、ほんの少しだけ機械の顔を混ぜる（水彩 95% / 計器 5%）。
+ * 飾りやなくて **表示はぜんぶ本物**:
+ *   TIDE    … いまが昼の海か夜の海か（<html data-tide>・22〜6時が夜）
+ *   HARBOR  … いまおる港（VoyageRail の 'bcnofne:voyage' から）
+ *   LOGBOOK … 今までに寄った港の数（航海日誌・localStorage）
+ *
+ * JS が動かん時は「—」のまま静かに置いとく（嘘の数字は出さん）。
+ * （港の名前は下の <script> 側で src/lib/voyage.ts から取る）
+ */
+---
+<aside class="ship" aria-label="船内計器">
+  <p class="ship__head">
+    <span class="ship__dot" aria-hidden="true"></span>
+    <span class="ship__title">BCNOFNe / SHIP STATUS</span>
+  </p>
+  <dl class="ship__grid">
+    <div class="ship__cell">
+      <dt>TIDE</dt>
+      <dd data-ship-tide>—</dd>
+    </div>
+    <div class="ship__cell">
+      <dt>HARBOR</dt>
+      <dd data-ship-harbor>—</dd>
+    </div>
+    <div class="ship__cell">
+      <dt>LOGBOOK</dt>
+      <dd><span data-ship-log>—</span> <i>の港</i></dd>
+    </div>
+  </dl>
+  <p class="ship__note">この計器はほんとに動きよる。いまの時刻と、きみが回った港をそのまま映しとるばい。</p>
+</aside>
+
+<script>
+  import { STATIONS } from '../lib/voyage';
+
+  (() => {
+    const root = document.querySelector('.ship');
+    if (!root) return;
+    const tideEl = root.querySelector('[data-ship-tide]');
+    const harborEl = root.querySelector('[data-ship-harbor]');
+    const logEl = root.querySelector('[data-ship-log]');
+    const byId = Object.fromEntries(STATIONS.map((s) => [s.id, s]));
+
+    const paintTide = () => {
+      const night = document.documentElement.dataset.tide === 'night';
+      tideEl.textContent = night ? '夜の海' : '昼の海';
+      root.classList.toggle('is-night', night);
+    };
+    paintTide();
+    // VoyageRail が1分ごとに潮を見直すけん、こっちも追従する
+    setInterval(paintTide, 60000);
+
+    // 現在地と航海日誌は VoyageRail からの便りで更新
+    document.addEventListener('bcnofne:voyage', (e) => {
+      const d = e.detail || {};
+      if (d.id && byId[d.id]) harborEl.textContent = byId[d.id].code;
+      const visited = (d.visited || []).length;
+      if (d.total) logEl.textContent = `${visited} / ${d.total}`;
+      root.classList.toggle('is-complete', !!d.complete);
+    });
+  })();
+</script>
+
+<style>
+  .ship {
+    margin-top: clamp(1.4rem, 4vw, 2rem);
+    padding: 0.85rem 1rem 0.75rem;
+    border-radius: 14px;
+    /* すりガラスの計器板。紙の上に置いた薄い板、くらいの存在感に留める */
+    background: rgba(255, 255, 255, 0.62);
+    border: 1px solid var(--c-line);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    overflow: hidden;
+  }
+  /* 上辺の細い光の線＝これが「5%」の機械っぽさ */
+  .ship::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: var(--grad-accent);
+    opacity: 0.75;
+  }
+
+  .ship__head {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0 0 0.6rem;
+  }
+  .ship__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #57c4a3;
+    flex: none;
+    animation: shipBreathe 3.6s ease-in-out infinite;
+  }
+  @keyframes shipBreathe {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 1; }
+  }
+  .ship__title {
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    color: var(--c-ink-soft);
+  }
+
+  .ship__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin: 0;
+  }
+  .ship__cell {
+    border-left: 1px solid var(--c-line);
+    padding-left: 0.7rem;
+    min-width: 0;
+  }
+  .ship__cell:first-child { border-left: 0; padding-left: 0; }
+  .ship__cell dt {
+    font-family: var(--font-display);
+    font-size: 0.54rem;
+    letter-spacing: 0.2em;
+    color: var(--c-blue-deep);
+    opacity: 0.8;
+    margin-bottom: 0.15rem;
+  }
+  .ship__cell dd {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--c-ink);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ship__cell dd i { font-style: normal; font-size: 0.66rem; color: var(--c-ink-soft); }
+
+  .ship__note {
+    margin: 0.7rem 0 0;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--c-line);
+    font-size: 0.7rem;
+    line-height: 1.6;
+    color: var(--c-ink-soft);
+  }
+
+  /* 夜は計器の灯りがすこし青に寄る */
+  .ship.is-night { background: rgba(247, 249, 255, 0.66); }
+  .ship.is-night .ship__title { color: var(--c-blue-deep); }
+  /* 全港まわった人の計器には、小さな灯が残る */
+  .ship.is-complete .ship__dot { background: var(--c-pink); }
+
+  @media (max-width: 420px) {
+    .ship__grid { gap: 0.4rem; }
+    .ship__cell { padding-left: 0.5rem; }
+    .ship__cell dd { font-size: 0.84rem; }
+  }
+</style>

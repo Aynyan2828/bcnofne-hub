@@ -31,16 +31,13 @@ interface Props {
 }
 const { label, size = 'card', title, hint, trackAttr } = Astro.props;
 
-// 1枚の幅。スマホでは「次がちょっと覗く」幅にして、横に続くのを分からせる。
-const WIDTH: Record<string, string> = {
-  card: 'min(72vw, 248px)',
-  wide: 'min(84vw, 330px)',
-  video: 'min(52vw, 186px)',
-  pill: 'min(56vw, 200px)',
-};
+// 1枚の幅は CSS 側（下の style）で端末ごとに決める。
+// min() 1本では書けん: スマホは vw の式、タブレット以上は固定 px にしたいけど、
+// 式の値は画面が広いほど大きくなるけん min() やと**スマホでも固定値が勝ってしまう**。
+// （実際それで覗きが 96px になった）。だから素直にメディアクエリで分ける。
 const trackProps = trackAttr ? { [trackAttr]: true } : {};
 ---
-<div class="hs" data-hscroll style={`--hs-item: ${WIDTH[size] ?? WIDTH.card};`}>
+<div class="hs" data-hscroll data-hs-size={size}>
   {(title || hint) && (
     <p class="hs__head">
       {title && <span class="hs__title">{title}</span>}
@@ -62,7 +59,18 @@ const trackProps = trackAttr ? { [trackAttr]: true } : {};
 </div>
 
 <style>
-  .hs { position: relative; }
+  .hs {
+    position: relative;
+    /* 本文の左右余白と同じ値。棚だけこのぶん外へはみ出して、
+       カードが画面の端から端まで流れるようにする（アプリっぽい手触り） */
+    --hs-gutter: clamp(1.1rem, 4vw, 2rem);
+  }
+  /* 広い画面では本文の外に余白があるけん、はみ出さん方が収まりがよか。
+     （この打ち消しは必ず上の定義より後ろに置くこと。同じ詳細度やけん
+       順番が逆やと効かん。一度やらかした） */
+  @media (min-width: 1140px) {
+    .hs { --hs-gutter: 0px; }
+  }
   .hs__head {
     display: flex;
     align-items: baseline;
@@ -89,7 +97,6 @@ const trackProps = trackAttr ? { [trackAttr]: true } : {};
   }
 
   .hs__frame { position: relative; }
-
   .hs__track {
     display: flex;
     gap: clamp(0.7rem, 2vw, 1.1rem);
@@ -97,15 +104,48 @@ const trackProps = trackAttr ? { [trackAttr]: true } : {};
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
-    /* カードの影が切れんよう上下に余白。左右は画面端まで流れて見えるように */
-    padding: 4px 4px 0.9rem;
+    /* カードの影が切れんよう上下に余白 */
+    padding-block: 4px 0.9rem;
+    /* 左右は本文の外までこぼして、中身は本文の位置から始める */
+    margin-inline: calc(-1 * var(--hs-gutter));
+    padding-inline: var(--hs-gutter);
+    /* スナップ位置も本文の左端に揃える（1枚目が半端に止まらん） */
+    scroll-padding-inline-start: var(--hs-gutter);
     scrollbar-width: thin;
     scrollbar-color: var(--c-line) transparent;
+  }
+  /* 指でめくる端末では、きっちり吸い付く方が気持ちよか。
+     マウスのホイール横スクロールでは緩い方が自然やけん proximity のまま。 */
+  @media (pointer: coarse) {
+    .hs__track {
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hs__track { scroll-behavior: auto; }
   }
   .hs__track::-webkit-scrollbar { height: 6px; }
   .hs__track::-webkit-scrollbar-thumb { background: var(--c-line); border-radius: 999px; }
   .hs__track::-webkit-scrollbar-track { background: transparent; }
   .hs__track:focus-visible { outline: 3px solid var(--c-purple); outline-offset: 2px; border-radius: 10px; }
+
+  /* ── 1枚の幅 ────────────────────────────────────────────────
+     スマホ（既定）: 画面幅から「手前の余白＋隙間＋覗かせる量」を引く。
+       覗き ≒ 50px。次があると分かって、かつ中途半端に見えん量。
+       375px なら 375 - 17.6(余白) - 11(隙間) - 50(覗き) ≒ 296px。
+       画面幅に応じて伸び縮みするけん、SE でも Plus でも覗きは 50px 前後。
+     560px 以上: 1画面に何枚も入るようになるけん、固定幅に切り替える。 */
+  .hs[data-hs-size='card']  { --hs-item: calc(100vw - 4.95rem); }
+  .hs[data-hs-size='wide']  { --hs-item: calc(100vw - 3.6rem); }
+  .hs[data-hs-size='video'] { --hs-item: calc(52vw - 0.5rem); }
+  .hs[data-hs-size='pill']  { --hs-item: calc(62vw - 0.5rem); }
+  @media (min-width: 560px) {
+    .hs[data-hs-size='card']  { --hs-item: 250px; }
+    .hs[data-hs-size='wide']  { --hs-item: 330px; }
+    .hs[data-hs-size='video'] { --hs-item: 186px; }
+    .hs[data-hs-size='pill']  { --hs-item: 210px; }
+  }
 
   /* 棚に入れた要素は1枚ぶんの幅で固定（縮まん・伸びん） */
   .hs__track > :global(*) {
@@ -128,11 +168,11 @@ const trackProps = trackAttr ? { [trackAttr]: true } : {};
     z-index: 2;
   }
   .hs__frame::before {
-    left: 0;
+    left: calc(-1 * var(--hs-gutter));
     background: linear-gradient(90deg, rgba(251, 252, 255, 0.92), rgba(251, 252, 255, 0));
   }
   .hs__frame::after {
-    right: 0;
+    right: calc(-1 * var(--hs-gutter));
     background: linear-gradient(270deg, rgba(251, 252, 255, 0.92), rgba(251, 252, 255, 0));
   }
   .hs[data-at='middle'] .hs__frame::before,

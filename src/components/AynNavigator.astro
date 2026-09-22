@@ -65,6 +65,12 @@ const routes = [
     <span class="visually-hidden">AYN に行き先を聞く</span>
   </button>
 
+  {/* 初回だけ出る小さな吹き出し。ここに AYN が居って案内役やと分かってもらう。
+      2回目以降は出さん（localStorage に1回だけ印を付ける）。 */}
+  <p class="aynnav__hint" data-aynnav-hint hidden aria-hidden="true">
+    どこ行くか、聞いてもよかよ
+  </p>
+
   <div class="aynnav__panel" id="aynnav-panel" data-aynnav-panel role="dialog" aria-label="AYN の行き先案内" hidden>
     <div class="aynnav__head">
       <span class="aynnav__headname">AYN</span>
@@ -158,7 +164,39 @@ const routes = [
       }
     };
 
-    btn.addEventListener('click', () => setOpen(!open));
+    /* ── 初回だけの吹き出し ──────────────────────────────────
+       右下の丸が「ただの絵」に見えんように、初めての人にだけ一声かける。
+       一度出したら localStorage に印を付けて、二度と出さん。
+       押された／パネルを開いた時点でも引っ込める（邪魔せん）。 */
+    const hintEl = root.querySelector('[data-aynnav-hint]');
+    const HINT_KEY = 'bcnofne_aynnav_greeted';
+    let hintTimer = 0;
+    const hideHint = () => {
+      if (!hintEl || hintEl.hidden) return;
+      hintEl.classList.remove('is-on');
+      clearTimeout(hintTimer);
+      hintTimer = setTimeout(() => { hintEl.hidden = true; }, 500);
+    };
+    const maybeGreet = () => {
+      if (!hintEl) return;
+      try {
+        if (localStorage.getItem(HINT_KEY)) return; // もう会うたことがある
+        localStorage.setItem(HINT_KEY, '1');
+      } catch (_) {
+        // 憶えられん環境（プライベートモード等）では、毎回出すと鬱陶しいけん出さん
+        return;
+      }
+      hintEl.hidden = false;
+      // 表示を挟んでからクラスを付けて、ふわっと出す。
+      // rAF は描画が止まっとる環境（裏タブ・描画エンジン）で呼ばれんけん使わん。
+      // ここで点かんと吹き出しが opacity:0 のまま居座るだけになる。
+      setTimeout(() => hintEl.classList.add('is-on'), 30);
+      hintTimer = setTimeout(hideHint, 6500);
+    };
+    // 読み込み直後やと目が向いとらんけん、少し落ち着いてから
+    setTimeout(maybeGreet, 2600);
+
+    btn.addEventListener('click', () => { hideHint(); setOpen(!open); });
     closeBtn.addEventListener('click', () => { setOpen(false); btn.focus({ preventScroll: true }); });
     // 行き先を選んだら閉じる（スクロールの邪魔をせん）
     for (const a of panel.querySelectorAll('[data-aynnav-go]')) {
@@ -167,6 +205,8 @@ const routes = [
     addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && open) { setOpen(false); btn.focus({ preventScroll: true }); }
     });
+    // だいぶスクロールされたら、見てもらえんかったということで静かに引っ込める
+    addEventListener('scroll', () => { if (scrollY > innerHeight * 1.6) hideHint(); }, { passive: true });
     addEventListener('click', (e) => {
       if (open && !root.contains(e.target)) setOpen(false);
     });
@@ -296,6 +336,48 @@ const routes = [
   .aynnav__status { font-size: 0.6rem; letter-spacing: 0.1em; color: #3f9c82; }
   /* 文字は広い画面だけ（スマホは丸だけ＝邪魔せん） */
   @media (min-width: 560px) { .aynnav__id { display: block; } }
+
+  /* ── 初回だけの吹き出し ──────────────────────────────────────── */
+  .aynnav__hint {
+    position: absolute;
+    right: 46px;
+    bottom: 6px;
+    margin: 0;
+    max-width: min(52vw, 210px);
+    padding: 0.42rem 0.8rem;
+    border-radius: 14px 14px 4px 14px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid var(--c-line);
+    box-shadow: 0 10px 24px -14px rgba(31, 37, 64, 0.6);
+    color: var(--c-ink);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+    pointer-events: none;
+  }
+  .aynnav__hint.is-on { opacity: 1; transform: none; }
+  .aynnav__hint[hidden] { display: none; }
+  /* 吹き出しの尻尾（AYN の方を向く小さな三角） */
+  .aynnav__hint::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    bottom: 8px;
+    width: 9px;
+    height: 9px;
+    background: inherit;
+    border-right: 1px solid var(--c-line);
+    border-bottom: 1px solid var(--c-line);
+    transform: rotate(-45deg);
+    border-radius: 0 0 3px 0;
+  }
+  /* 文字が大きい端末で折り返しても崩れんように */
+  @media (max-width: 360px) {
+    .aynnav__hint { white-space: normal; }
+  }
 
   /* ── パネル ─────────────────────────────────────────────────── */
   .aynnav__panel {
