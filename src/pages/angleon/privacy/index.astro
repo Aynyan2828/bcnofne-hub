@@ -3,15 +3,22 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Footer from '../../../components/Footer.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
-<BaseLayout title="Angleon 事前登録のプライバシーポリシー" description="Angleon の事前登録で受け取るメールアドレスの扱い。">
+<BaseLayout title="Angleon プライバシーポリシー" description="Angleon アプリ本体（課金を含む）と事前登録で扱う情報。">
   <main id="main" class="section">
     <div class="container" style="max-width: 720px;">
       <div class="section-head section-head--left" style="text-align:left">
         <span class="eyebrow">Privacy</span>
-        <h2>Angleon 事前登録のプライバシーポリシー</h2>
+        <h2>Angleon プライバシーポリシー</h2>
       </div>
       <p>最終更新：2026-09-22 ／ 運営者：BCNOFNe（aynyan）</p>
-      <h3>受け取る情報</h3>
+
+      <h3>アプリ本体（iOS「Angleon」）</h3>
+      <p>作品・線画・書き出した動画や Live Photo は、すべて端末の中だけに保存される。BCNOFNe のサーバーへ送ることはない。写真ライブラリへのアクセスは「取り込む画像を選ぶ」「書き出しを保存する」時にだけ使う。アカウント登録は無い。</p>
+      <h3>アプリ内課金（Angleon PRO）</h3>
+      <p>購入・復元の処理は Apple の App Store と、課金管理サービス RevenueCat（RevenueCat, Inc.）を通して行う。RevenueCat には匿名の利用者 ID・購入した商品・購入日時・端末の種類と OS 版数が送られ、購入状態の確認と復元に使われる。氏名・メールアドレス・支払い情報は BCNOFNe にも RevenueCat にも渡らん（支払いは Apple が処理する）。詳しくは <a href="https://www.revenuecat.com/privacy" rel="noopener" target="_blank">RevenueCat のプライバシーポリシー</a>。</p>
+      <p>サブスクリプションの解約は iPhone の「設定 ＞ Apple アカウント ＞ サブスクリプション」から。利用規約は <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" rel="noopener" target="_blank">Apple 標準の EULA</a> に従う。</p>
+
+      <h3>事前登録（メール）で受け取る情報</h3>
       <p>事前登録フォームで入力されたメールアドレス、登録日時、登録元（ページ）。名前や電話番号は受け取らん。</p>
       <h3>使う目的</h3>
       <p>Angleon の公開のお知らせ、先行ベータ（TestFlight）の案内、それに関する連絡のみ。</p>
