@@ -164,6 +164,27 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
     };
 
     /* ── 1フレーム ──────────────────────────────────────────── */
+    /* ── 港に入ると船は速度を落とす ─────────────────────────────
+       港の入口(HarborGate)に近づくほど calm が 1 に寄って、
+       波の行進が緩み・波が落ち着き・視点が少し上がり・靄が増える。
+       外洋（港と港のあいだ）では calm=0 で、いつもの速さで進む。
+
+       ★時間で進む位相は **必ず足し込みで** 持つ。`t * 速さ` の形で
+       速さを変えると、t が大きいほど位置が飛ぶ（60秒後に速さを1割変えると
+       波が百数十px ワープする）。rate を変えたいなら位相を積分すること。 */
+    let marchPhase = 0;   // 奥行き方向の行進（0〜1 で1周）
+    let flowPhase = 0;    // 横に流れるぶん
+    let lastT = 0;
+    let gates = [];
+    let gateTick = 0;
+    const measureGates = () => {
+      gates = Array.from(document.querySelectorAll('[data-gate]'), (g) => {
+        const r = g.getBoundingClientRect();
+        return scrollY + r.top + r.height / 2;
+      });
+    };
+    addEventListener('resize', measureGates);
+
     const draw = (t) => {
       const sc = scrollY;
       ctx.clearRect(0, 0, W, H);
@@ -178,10 +199,25 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
       const maxScroll = Math.max(1, document.documentElement.scrollHeight - innerHeight);
       const journey = Math.min(1, Math.max(0, sc / maxScroll));
       const descend = Math.pow(journey, 0.8);          // 前半でぐっと降りる
-      // 水平線: 俯瞰(0.34) → 海面すれすれ(0.56)
-      const horizon = H * (0.34 + descend * 0.22);
+
+      // 経った時間（秒）。画像の読み込みで draw(0) が飛んでくるけん上限を付ける
+      const dt = Math.min(0.1, Math.max(0, t - lastT));
+      lastT = t;
+
+      // 港との距離 → calm(0=外洋 / 1=港のまん中)
+      if (gateTick-- <= 0) { measureGates(); gateTick = 30; }  // 1秒に1回だけ測る
+      const eye = sc + H / 2;
+      let near = 0;
+      for (const gy of gates) {
+        const d = Math.abs(eye - gy) / (H * 0.75);
+        if (d < 1) near = Math.max(near, 1 - d);
+      }
+      const calm = near * near * (3 - 2 * near);   // 角を取る(smoothstep)
+
+      // 水平線: 俯瞰(0.34) → 海面すれすれ(0.56)。港では少しだけ視点が上がる
+      const horizon = H * (0.34 + descend * 0.22) - H * 0.018 * calm;
       // 近づくほど波も大きく見える（視点が低いと手前の波が立ちはだかる）
-      const zoom = 0.72 + descend * 0.6;
+      const zoom = (0.72 + descend * 0.6) * (1 - calm * 0.1);
 
       // 0. 遠景の目印。水平線の向こうに置いて、ゆっくり左へ流す。
       //    ここに何か在るだけで「どこへ向かっとるか」が分かる。
@@ -237,7 +273,10 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
          近いほど **下に来て・大きくなって・速く流れる**（遠近法）。
          画面の下を通り過ぎた波は、水平線の向こうへ戻して使い回す。 */
       const ROWS = 9;
-      const march = sc * 0.00042 + t * 0.022;   // 進む速さ
+      const speed = 1 - calm * 0.62;            // 港では6割ほど減速
+      marchPhase += dt * 0.022 * speed;
+      flowPhase += dt * speed;
+      const march = sc * 0.00042 + marchPhase;  // 進む速さ
       const waveImgs = [art.wave_far, art.wave_mid, art.wave_near];
       let boatDrawn = false;
       for (let i = ROWS - 1; i >= 0; i--) {
@@ -256,12 +295,12 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
           boatDrawn = true;
         }
         // 近いほど横にも速く流れる（真正面に進んどるんやなく、少し斜めに渡る）
-        band(waveImgs[i % 3], y, h, sc * (0.05 + k * 0.5) + t * (3 + k * 26), a);
+        band(waveImgs[i % 3], y, h, sc * (0.05 + k * 0.5) + flowPhase * (3 + k * 26), a);
       }
       if (!boatDrawn) drawBoat(t, horizon + (H - horizon) * Math.pow(0.42, 2.3), H * 0.052 * zoom);
 
       // 5. 霧。航海が深まるほど濃くなる（深夜の海）
-      const fog = Math.min(0.5, Math.max(0, (journey - 0.35) * 0.9));
+      const fog = Math.min(0.62, Math.max(0, (journey - 0.35) * 0.9) + calm * 0.22);
       if (fog > 0.01) {
         band(art.mist_loop, horizon - H * 0.04, H * 0.22, sc * 0.12 + t * 6, fog);
       }

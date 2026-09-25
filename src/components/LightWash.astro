@@ -50,7 +50,12 @@
        overlay は明暗を保ったまま色だけ乗るけん、**字は黒いまま色が寄る**。
        読みやすさを守りながら、通過が分かる。 */
     mix-blend-mode: overlay;
-    opacity: 0.9;
+    opacity: 0.72;
+    /* ★上下の端をぼかす。四角いまま重ねると、海の上に**半透明の長方形**が
+       貼ってあるように見えとった（実機のスクショで判明）。
+       帯の役目は「照り返しが横切る」ことで、枠を見せることやない。 */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
     /* スクロールで OceanField が --wash を書き換える（-1 〜 2 くらい） */
     transform: translate3d(calc(var(--wash, 0) * 42%), calc(var(--wash, 0) * -12%), 0);
     will-change: transform;
@@ -70,7 +75,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .section > .wash { transform: none; opacity: 0.45; }
+    .section > .wash { transform: none; opacity: 0.4; }
   }
 </style>
 

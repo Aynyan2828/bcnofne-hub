@@ -7,6 +7,7 @@
  *   data-reveal="left"   左からすーっと入る
  *   data-reveal="right"  右からすーっと入る
  *   data-reveal-stagger  子要素を1枚ずつ順に湧かせる（カードの束に）
+ *   data-sweep           色の帯が一回だけ走って文字が残る（SweepText が付ける）
  *
  * CSS は global.css 側（複数コンポーネントで使うけん）。
  * IntersectionObserver は1つだけ。出したら監視を外すけん残らん。
@@ -28,7 +29,7 @@
       // head が伏せる判断をせんかった＝本文はもう見えとる。何もせんでよか。
       if (!document.documentElement.classList.contains('reveal-on')) return;
 
-      const targets = document.querySelectorAll('[data-reveal], [data-reveal-stagger]');
+      const targets = document.querySelectorAll('[data-reveal], [data-reveal-stagger], [data-sweep]');
       if (!targets.length) return;
 
       // 演出なしで、その場に静かに置く
