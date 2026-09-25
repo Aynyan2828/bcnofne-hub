@@ -28,7 +28,8 @@
  */
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const PARTS = ['cloud_loop', 'wave_far', 'wave_mid', 'wave_near',
-               'ship_hull', 'ship_sail', 'ship_lantern'];
+               'ship_hull', 'ship_sail', 'ship_lantern',
+               'moon', 'cape_lighthouse', 'isle_a', 'isle_b', 'mist_loop'];
 const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`]));
 ---
 <canvas class="ocean" data-ocean data-srcs={JSON.stringify(srcs)} aria-hidden="true"></canvas>
@@ -167,8 +168,30 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
       const sc = scrollY;
       ctx.clearRect(0, 0, W, H);
 
-      // 水平線は画面の下寄り。海は「下の帯」に留めて、空(＝水彩の写真)を潰さん
-      const horizon = H * 0.46;   // 奥行きを取るぶん、水平線は少し上げる
+      /* ── カメラ ── みさととが「空から町へ降りて絵の中に入る」のと同じで、
+         こっちは **空の高みから海面へ降りていく**。
+         ページ全体の進み(0→1)で視点の高さが下がる:
+           高い … 水平線が低く見えて、海が広く、波は小さく遠い（俯瞰）
+           低い … 水平線が上がって、波が大きく迫る（海面すれすれ）
+         横に流すだけの視差やなく、**視点そのものが動く**けん
+         「世界の中に入っていく」感じが出る。 */
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+      const journey = Math.min(1, Math.max(0, sc / maxScroll));
+      const descend = Math.pow(journey, 0.8);          // 前半でぐっと降りる
+      // 水平線: 俯瞰(0.34) → 海面すれすれ(0.56)
+      const horizon = H * (0.34 + descend * 0.22);
+      // 近づくほど波も大きく見える（視点が低いと手前の波が立ちはだかる）
+      const zoom = 0.72 + descend * 0.6;
+
+      // 0. 遠景の目印。水平線の向こうに置いて、ゆっくり左へ流す。
+      //    ここに何か在るだけで「どこへ向かっとるか」が分かる。
+      //    月 → 島影 → 灯台のある岬、の順で近づいてくる。
+      part(art.moon, W * (0.78 - journey * 0.1), H * (0.12 + descend * 0.06),
+           H * 0.11 * (0.9 + descend * 0.2), 0, 0.8);
+      const farDrift = (u) => ((u - sc * 0.00018) % 1.6 + 1.6) % 1.6 * W - W * 0.3;
+      part(art.isle_a, farDrift(0.55), horizon - H * 0.012, H * 0.05 * zoom, 0, 0.55);
+      part(art.isle_b, farDrift(1.15), horizon - H * 0.008, H * 0.035 * zoom, 0, 0.5);
+      part(art.cape_lighthouse, farDrift(0.05), horizon - H * 0.018, H * 0.055 * zoom, 0, 0.6);
 
       // 1. 雲の帯（いちばん奥・いちばんゆっくり）
       // 雲も少しだけ手前に流す（上へ抜けていく＝自分が進んどる）
@@ -222,20 +245,26 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
         const k = 1 - z;                         // 0=遠 → 1=近
         const ease = Math.pow(k, 2.3);           // 遠くほど詰まって見える
         const y = horizon + (H - horizon) * ease;
-        const h = H * (0.028 + 0.30 * Math.pow(k, 1.9));
+        const h = H * (0.028 + 0.30 * Math.pow(k, 1.9)) * zoom;
         // 水平線際でふわっと湧いて、手前で少し薄れる（唐突に出入りさせん）
         const a = Math.min(1, k * 7) * (1 - Math.pow(k, 6)) * 0.95;
         if (a <= 0.01) continue;
 
         // 小舟は「ある深さ」に居る。その深さの波を跨ぐ手前で描く＝波間に沈む
         if (!boatDrawn && k > 0.42) {
-          drawBoat(t, horizon + (H - horizon) * Math.pow(0.42, 2.3), H * 0.052);
+          drawBoat(t, horizon + (H - horizon) * Math.pow(0.42, 2.3), H * 0.052 * zoom);
           boatDrawn = true;
         }
         // 近いほど横にも速く流れる（真正面に進んどるんやなく、少し斜めに渡る）
         band(waveImgs[i % 3], y, h, sc * (0.05 + k * 0.5) + t * (3 + k * 26), a);
       }
-      if (!boatDrawn) drawBoat(t, horizon + (H - horizon) * Math.pow(0.42, 2.3), H * 0.052);
+      if (!boatDrawn) drawBoat(t, horizon + (H - horizon) * Math.pow(0.42, 2.3), H * 0.052 * zoom);
+
+      // 5. 霧。航海が深まるほど濃くなる（深夜の海）
+      const fog = Math.min(0.5, Math.max(0, (journey - 0.35) * 0.9));
+      if (fog > 0.01) {
+        band(art.mist_loop, horizon - H * 0.04, H * 0.22, sc * 0.12 + t * 6, fog);
+      }
     };
 
     /* ── 背景コラージュの視差 ＋ 照り返しの帯（同じループで動かす）──
@@ -275,6 +304,11 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
       im.onload = () => { art[name] = im; draw(0); };
       im.src = url;
     }
+
+    // 検証用の口。裏タブ・描画エンジンでは rAF が来んけん、スクロールを変えても
+    // 絵が描き直されん＝目でも測定でも確かめられん。手で1コマ描けるようにしとく。
+    // （関数の参照を1つ置くだけ。挙動には影響せん）
+    window.__oceanDraw = (t) => { draw(t || 0); parallax(); };
 
     draw(0);
     parallax();

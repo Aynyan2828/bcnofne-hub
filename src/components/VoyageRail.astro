@@ -42,6 +42,16 @@ import { STATIONS } from '../lib/voyage';
   </ol>
 </nav>
 
+<!-- 次の港へ進める矢印（みさととの下向き矢印と同じ役目）。
+     航海を前に進める合図。最後の港では「港へ戻る」に変わる。 -->
+<button class="onward" data-onward type="button" hidden>
+  <span class="onward__label" data-onward-label>次の港へ</span>
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+       stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 5v14M6 13l6 6 6-6"/>
+  </svg>
+</button>
+
 <!-- スマホ／狭い画面: 最上部の航跡線＋到着時だけ出る港名 -->
 <div class="railbar" data-railbar aria-hidden="true" hidden>
   <span class="railbar__wake"></span>
@@ -171,6 +181,39 @@ import { STATIONS } from '../lib/voyage';
       { rootMargin: '-18% 0px -45% 0px', threshold: [0, 0.01, 0.2] }
     );
     for (const s of sections) io.observe(s.el);
+
+    /* ── 次の港へ ─────────────────────────────────────────────
+       いまの現在地から次の寄港地へ送る。最後まで来たら港へ戻す。
+       現在地は上の IntersectionObserver が持っとるけん、それを使う。 */
+    const onward = document.querySelector('[data-onward]');
+    const onwardLabel = document.querySelector('[data-onward-label]');
+    if (onward) {
+      onward.hidden = false;
+      const nextOf = () => {
+        const i = sections.findIndex((s) => s.id === current);
+        return i < 0 ? sections[1] : sections[i + 1] || sections[0];
+      };
+      const refresh = () => {
+        const n = nextOf();
+        const last = sections.findIndex((s) => s.id === current) === sections.length - 1;
+        onwardLabel.textContent = last ? '港へもどる' : '次の港へ';
+        onward.setAttribute('aria-label',
+          (last ? '港へもどる' : '次の港へ') + (n ? `（${n.li.querySelector('.rail__code').textContent}）` : ''));
+      };
+      refresh();
+      document.addEventListener('bcnofne:voyage', refresh);
+      onward.addEventListener('click', () => {
+        const n = nextOf();
+        if (n && n.el) n.el.scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth' });
+      });
+      // だいぶ下まで来て、もう自分で進んどる人には引っ込む
+      let hideTimer = 0;
+      addEventListener('scroll', () => {
+        onward.classList.add('is-quiet');
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => onward.classList.remove('is-quiet'), 900);
+      }, { passive: true });
+    }
 
     /* ── 4) 潮の更新: 22時をまたいでも夜の海に切り替わるように ────── */
     const tide = () => {
@@ -334,8 +377,45 @@ import { STATIONS } from '../lib/voyage';
     .railbar__now.is-on { opacity: 1; transform: none; }
   }
 
+  /* ── 次の港へ ──────────────────────────────────────────────── */
+  .onward {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: max(0.9rem, env(safe-area-inset-bottom));
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--c-line);
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 10px 26px -14px rgba(31, 37, 64, 0.6);
+    color: var(--c-ink);
+    font-family: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .onward[hidden] { display: none !important; }
+  .onward svg { color: var(--c-blue-deep); animation: onwardNudge 2.6s ease-in-out infinite; }
+  @keyframes onwardNudge {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+  }
+  /* スクロール中は薄れて邪魔せん */
+  .onward.is-quiet { opacity: 0.25; }
+  /* 右下の AYN と重ならんよう、狭い画面では少し左に寄せる */
+  @media (max-width: 560px) {
+    .onward { left: calc(50% - 26px); font-size: 0.76rem; padding: 0.42rem 0.8rem; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .rail__ship { display: none; }
+    .onward svg { animation: none; }
     .rail__wake,
     .railbar__wake,
     .railbar__now { transition: none; }
