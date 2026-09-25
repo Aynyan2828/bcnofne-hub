@@ -448,7 +448,8 @@ html[data-mood='all'] #music::after { opacity: 0; }
 }
 
 /* Focus（アクセシビリティ） */
-:where(a, button):focus-visible {
+/* video: 再生ボタンを付けたら Tab で止まるようになった。ブラウザ標準のオレンジやなくサイトの紫に揃える */
+:where(a, button, video, summary, input, textarea, select):focus-visible {
   outline: 3px solid var(--c-purple);
   outline-offset: 3px;
   border-radius: 6px;
