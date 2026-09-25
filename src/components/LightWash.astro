@@ -1,0 +1,67 @@
+---
+/**
+ * LightWash — 海の照り返しが、文字とカードの上を撫でていく。
+ *
+ * whatever.co の「色の面が本文の上を通り過ぎて、その下の文字の色が変わる」を
+ * BCNOFNe の世界に翻訳したもの。あっちは原色のベタ面やけど、こっちは
+ * **水面の照り返し**として、青〜紫〜桃の帯がゆっくり流れる形にする。
+ *
+ * 作り: 各セクションの上に薄い帯を1枚ずつ敷いて、スクロール量に応じて
+ * 斜めに動かす。帯は mix-blend-mode で下の文字と混ざるけん、文字の色が
+ * 通過のたびに少しだけ寄る。文字そのものの色は触っとらん。
+ *
+ * ★読みやすさが最優先: 濃さは 0.1 前後に抑えて、帯の中心が本文に長く
+ *   居座らんようにしとる。これは演出であって、情報を邪魔したらいかん。
+ *
+ * ・DOM は section あたり1枚だけ。canvas も監視も増やさん。
+ * ・**帯を差し込むのも動かすのも OceanField 側**でやる。
+ *   ここで差し込むと、OceanField が帯を集める時にまだ存在せん、という
+ *   順番の事故が起きる（実際それで動かんかった）。ここは見た目だけ持つ。
+ * ・prefers-reduced-motion では動かさず、ごく淡い一枚だけ置く。
+ */
+---
+<style is:global>
+  /* 照り返しの帯。セクションの紙だまり(.section::before)より上、本文より下。 */
+  .section > .wash {
+    position: absolute;
+    inset: -10% -20%;
+    /* ★本文の**上**に置く。下に置くと紙だけ染めて、文字の色は変わらん。
+       whatever.co のあれは色の面が文字の上を通るけん字の色が寄る。
+       そのかわり濃さは抑える（読みやすさが最優先）。 */
+    z-index: 2;
+    pointer-events: none;
+    background:
+      linear-gradient(
+        104deg,
+        transparent 0%,
+        rgba(106, 169, 224, 0.42) 18%,
+        rgba(139, 123, 216, 0.36) 38%,
+        rgba(244, 166, 196, 0.30) 56%,
+        transparent 78%
+      );
+    /* 下の文字と混ざる＝通過したところだけ色が寄る */
+    mix-blend-mode: soft-light;
+    opacity: 0.42;
+    /* スクロールで OceanField が --wash を書き換える（-1 〜 2 くらい） */
+    transform: translate3d(calc(var(--wash, 0) * 42%), calc(var(--wash, 0) * -12%), 0);
+    will-change: transform;
+  }
+
+  /* 見出しの上の小さな色チップ。whatever.co のあれの水彩版。
+     eyebrow(APPS / MUSIC …)の上に、海の色の細い帯が乗る。 */
+  .section-head .eyebrow::before {
+    content: '';
+    display: block;
+    width: 34px;
+    height: 4px;
+    margin: 0 auto 0.5rem;
+    border-radius: 999px;
+    background: var(--grad-accent);
+    opacity: 0.9;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .section > .wash { transform: none; opacity: 0.3; }
+  }
+</style>
+

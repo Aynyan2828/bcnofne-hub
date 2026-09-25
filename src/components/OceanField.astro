@@ -238,14 +238,33 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
       if (!boatDrawn) drawBoat(t, horizon + (H - horizon) * Math.pow(0.42, 2.3), H * 0.052);
     };
 
-    /* ── 背景コラージュの視差（同じループで動かす）──────────── */
+    /* ── 背景コラージュの視差 ＋ 照り返しの帯（同じループで動かす）──
+       ループを2本持たんために、ここで両方まとめて動かす。 */
     const layers = Array.from(document.querySelectorAll('[data-par]'))
       .map((el) => ({ el, d: parseFloat(el.dataset.par) || 0 }));
+    // 照り返しの帯は**ここで差し込む**。別コンポーネントで差し込むと、
+    // 集める時にまだ存在せん、という順番の事故が起きる（実際それで動かんかった）。
+    for (const sec of document.querySelectorAll('.section')) {
+      if (sec.querySelector(':scope > .wash')) continue;
+      const w = document.createElement('span');
+      w.className = 'wash';
+      w.setAttribute('aria-hidden', 'true');
+      sec.appendChild(w);
+    }
+    const washes = Array.from(document.querySelectorAll('.section > .wash'))
+      .map((el) => ({ el, sec: el.parentElement }));
     function parallax() {
-      if (!layers.length) return;
       const y = scrollY;
       for (const l of layers) {
         l.el.style.transform = `translate3d(0, ${(-y * l.d).toFixed(1)}px, 0)`;
+      }
+      // 照り返し: そのセクションが画面を通り過ぎる間に -1 → 1 へ動く。
+      // 画面に入っとるセクションだけ触る（全部毎フレーム触ると無駄）。
+      for (const w of washes) {
+        const r = w.sec.getBoundingClientRect();
+        if (r.bottom < -40 || r.top > innerHeight + 40) continue;
+        const pos = (innerHeight - r.top) / (innerHeight + r.height); // 0→1
+        w.el.style.setProperty('--wash', (pos * 2 - 1).toFixed(3));
       }
     }
 
