@@ -52,6 +52,7 @@ html[data-depth='2'] { --fog: 0.4; }
 html[data-depth='3'] { --fog: 0.6; }
 html[data-depth='4'] { --fog: 0.8; }
 html[data-depth='5'] { --fog: 1; }
+html[data-depth='6'] { --fog: 1; }
 
 html[data-tide='night'] {
   --c-mist: #e4ebfa;
@@ -92,6 +93,9 @@ html[data-depth='2'] { --sky: linear-gradient(180deg, #1e2550 0%, #2f3566 34%, #
 html[data-depth='3'] { --sky: linear-gradient(180deg, #131a3e 0%, #1d2550 32%, #2b3468 64%, #3c4682 88%, #4e5796 100%); }
 html[data-depth='4'] { --sky: linear-gradient(180deg, #171e42 0%, #232c58 32%, #35406f 62%, #4b5688 84%, #6f79a6 100%); }
 html[data-depth='5'] { --sky: linear-gradient(180deg, #1b2348 0%, #2a3360 30%, #454d80 58%, #6e6a9c 80%, #b58fa0 100%); }
+/* 最後の港＝夜明け。★段は港の数だけ要る。港を増やしたらここも足すこと
+   （足さんと data-depth が定義の外に出て、空が既定の「夕べ」に巻き戻る） */
+html[data-depth='6'] { --sky: linear-gradient(180deg, #223055 0%, #3a4370 28%, #5f5f93 54%, #96789f 78%, #d8a4a4 100%); }
 @media (prefers-reduced-motion: reduce) {
   html { transition: none; }
 }

@@ -172,7 +172,10 @@ import { STATIONS } from '../lib/voyage';
 
         // 沖へ出るほど霧が濃くなる。港が変わった時だけ書き換える＝
         // スクロール毎に :root を触らん（ページ全体の再計算を避ける）
-        document.documentElement.dataset.depth = String(sections.indexOf(next));
+        // ★CSS に用意した段(0..6)からはみ出さんよう止める。はみ出すと --sky が
+        //   既定に戻って、奥まで来たのに空が「夕べ」に巻き戻る。
+        document.documentElement.dataset.depth =
+          String(Math.min(6, sections.indexOf(next)));
 
         // 航海日誌に記帳（初めての港だけ）
         if (!visited.includes(current)) {
