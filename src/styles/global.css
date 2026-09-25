@@ -133,7 +133,10 @@ h1, h2, h3 { line-height: 1.4; margin: 0; font-weight: 400; }
    isolation で自前の重なり文脈を作っとるけん、z-index:-1 はこの
    セクションの中だけで効く（最背面の固定コラージュは隠れん）。 */
 .section {
-  padding-block: clamp(2.8rem, 7vw, 4.5rem);
+  /* 港と港の間はたっぷり空ける。ここが「航海しとる時間」になる＝
+     海と空だけの帯ができて、次の港に着いた感じが出る。
+     （2.8→5.5rem / 7→13vw / 4.5→9rem に広げた） */
+  padding-block: clamp(5.5rem, 13vw, 9rem);
   position: relative;
   isolation: isolate;
 }

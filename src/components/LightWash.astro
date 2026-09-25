@@ -10,8 +10,11 @@
  * 斜めに動かす。帯は mix-blend-mode で下の文字と混ざるけん、文字の色が
  * 通過のたびに少しだけ寄る。文字そのものの色は触っとらん。
  *
- * ★読みやすさが最優先: 濃さは 0.1 前後に抑えて、帯の中心が本文に長く
- *   居座らんようにしとる。これは演出であって、情報を邪魔したらいかん。
+ * ★濃さの振り方（2026-09-25 に直した）: 最初 soft-light の 0.42 で出したら
+ *   白い紙の上でほぼ消えて「反映されとらん」と言われた。保守的すぎた。
+ *   overlay に変えて 0.9 へ。overlay は**明暗を保ったまま色だけ乗る**けん、
+ *   字は黒いまま・紙だけ色が寄る＝読めるのに通過が分かる。
+ *   幅も絞って輪郭を持たせた（ぼんやり広げると何も起きとらんように見える）。
  *
  * ・DOM は section あたり1枚だけ。canvas も監視も増やさん。
  * ・**帯を差し込むのも動かすのも OceanField 側**でやる。
@@ -30,18 +33,24 @@
        そのかわり濃さは抑える（読みやすさが最優先）。 */
     z-index: 2;
     pointer-events: none;
+    /* 光の帯。ぼんやり広げると「何も起きとらん」に見えるけん、
+       ★幅を絞って輪郭を持たせる。1本の光が横切る形にする。 */
     background:
       linear-gradient(
         104deg,
         transparent 0%,
-        rgba(106, 169, 224, 0.42) 18%,
-        rgba(139, 123, 216, 0.36) 38%,
-        rgba(244, 166, 196, 0.30) 56%,
-        transparent 78%
+        transparent 12%,
+        rgba(106, 169, 224, 0.85) 26%,
+        rgba(139, 123, 216, 0.75) 40%,
+        rgba(244, 166, 196, 0.62) 52%,
+        transparent 68%,
+        transparent 100%
       );
-    /* 下の文字と混ざる＝通過したところだけ色が寄る */
-    mix-blend-mode: soft-light;
-    opacity: 0.42;
+    /* ★soft-light やと白い紙の上でほぼ消える（0.42 では見えんかった）。
+       overlay は明暗を保ったまま色だけ乗るけん、**字は黒いまま色が寄る**。
+       読みやすさを守りながら、通過が分かる。 */
+    mix-blend-mode: overlay;
+    opacity: 0.9;
     /* スクロールで OceanField が --wash を書き換える（-1 〜 2 くらい） */
     transform: translate3d(calc(var(--wash, 0) * 42%), calc(var(--wash, 0) * -12%), 0);
     will-change: transform;
@@ -61,7 +70,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .section > .wash { transform: none; opacity: 0.3; }
+    .section > .wash { transform: none; opacity: 0.45; }
   }
 </style>
 
