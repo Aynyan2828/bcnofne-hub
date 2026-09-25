@@ -1,0 +1,248 @@
+---
+// 機関室 — AYN の機関日誌（Prompt241）。
+// 中身は src/content/worklog/*.md（1 日 1 枚）。ayn-jarvis が下書き→マスターの「よかよ」で追加。
+// 見た目: 上だけ HUD の計器（紺の海＋金とティールの細線）、日誌は水彩の紙。数字は出さん約束。
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+import aynThinking from '../../assets/ayn/ayn-thinking.png';
+import { getWorklog, fmtLogDate, logAnchor, logLines } from '../../lib/worklog';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const logs = await getWorklog();
+const title = '機関室｜AYN の機関日誌 — BCNOFNe〜ボクのフネ〜';
+const description =
+  '機関士AI AYN が、フネ（BCNOFNe）の毎日の整備を書きとめる機関日誌。アプリや AI の手入れの様子を、進みがあった日だけ残しとるばい。';
+---
+<BaseLayout title={title} description={description}>
+  <link slot="head" rel="alternate" type="application/rss+xml" title="AYN の機関日誌" href={`${base}/engine-room/rss.xml`} />
+  <main id="main" class="er">
+    <header class="er-hero">
+      <div class="er-hero__gauge" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="container er-hero__inner">
+        <div class="er-hero__avatar">
+          <Image src={aynThinking} alt="考えごとをする AYN" width={120} height={120} />
+        </div>
+        <p class="er-hero__code">ENGINE ROOM</p>
+        <h1 class="er-hero__title">機関室</h1>
+        <p class="er-hero__lead">
+          ここはフネの心臓部。機関士AI のぼく（AYN）が、毎日の整備を<br class="br-wide" />
+          <strong>「AYN の機関日誌」</strong>に書きとめとるよ。進みがあった日だけ、ね。
+        </p>
+        <div class="er-hero__links">
+          <a class="er-pill" href={`${base}/`}>← 港にもどる</a>
+          <a class="er-pill" href={`${base}/engine-room/rss.xml`}>RSS で追いかける</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="section er-log" aria-label="AYN の機関日誌">
+      <div class="container">
+        {logs.length === 0 ? (
+          <p class="er-empty">まだ日誌は白紙ばい。最初の整備が済んだら、ここに書くけんね。</p>
+        ) : (
+          <ol class="er-list">
+            {logs.map((e) => (
+              <li class="er-entry" id={logAnchor(e.data.date)}>
+                <div class="er-entry__mark" aria-hidden="true">⚙</div>
+                <article class="er-entry__card">
+                  <p class="er-entry__date">
+                    <time datetime={e.data.date.toISOString()}>{fmtLogDate(e.data.date)}</time>
+                  </p>
+                  <h2 class="er-entry__title">{e.data.title}</h2>
+                  <div class="er-entry__body">
+                    {logLines(e).map((l) => <p>{l}</p>)}
+                  </div>
+                  {e.data.image && (
+                    <Image
+                      class="er-entry__img"
+                      src={e.data.image}
+                      alt={e.data.imageAlt ?? `${fmtLogDate(e.data.date)} の整備のようす`}
+                      width={720}
+                      loading="lazy"
+                    />
+                  )}
+                  {e.data.projects.length > 0 && (
+                    <ul class="er-entry__tags">
+                      {e.data.projects.map((p) => <li>#{p}</li>)}
+                    </ul>
+                  )}
+                </article>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* ── 上の計器（HUD の世界観だけ借りる・下は水彩の紙のまま） ── */
+  .er-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--grad-hero);
+    color: #fff;
+    text-align: center;
+    padding: clamp(3rem, 9vw, 5.5rem) 0 clamp(2.4rem, 7vw, 4rem);
+  }
+  .er-hero__gauge {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .er-hero__gauge span {
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e8c46a 30%, #5fd4c8 70%, transparent);
+    opacity: 0.45;
+  }
+  .er-hero__gauge span:nth-child(1) { top: 22%; }
+  .er-hero__gauge span:nth-child(2) { top: 50%; opacity: 0.18; }
+  .er-hero__gauge span:nth-child(3) { bottom: 16%; }
+  .er-hero__inner { position: relative; }
+  .er-hero__avatar :global(img) {
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 0 6px rgba(95, 212, 200, 0.18);
+    margin: 0 auto 1rem;
+    display: block;
+    background: #fff;
+  }
+  .er-hero__code {
+    margin: 0;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: #e8c46a;
+  }
+  .er-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 7vw, 3rem);
+    margin: 0.2rem 0 0.8rem;
+    color: #fff;
+  }
+  .er-hero__lead {
+    max-width: 34em;
+    margin: 0 auto;
+    line-height: 1.9;
+    color: rgba(255, 255, 255, 0.92);
+  }
+  .er-hero__lead strong { color: #fff; }
+  .er-hero__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1.4rem;
+  }
+  .er-pill {
+    font-size: 0.85rem;
+    padding: 0.42em 1em;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .er-pill:hover { background: rgba(255, 255, 255, 0.18); text-decoration: none; }
+  @media (max-width: 560px) { .br-wide { display: none; } }
+
+  /* ── 日誌（新しい順・左に歯車の航跡） ── */
+  .er-list {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 720px;
+    position: relative;
+  }
+  .er-list::before {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 2px;
+    background: linear-gradient(var(--c-blue), var(--c-purple), transparent);
+    opacity: 0.35;
+  }
+  .er-entry {
+    position: relative;
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 0.8rem;
+    margin-bottom: clamp(1.2rem, 4vw, 1.8rem);
+    scroll-margin-top: 1.5rem;
+  }
+  .er-entry__mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--c-card);
+    border: 1px solid var(--c-line);
+    color: var(--c-blue-deep);
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    z-index: 1;
+  }
+  .er-entry__card {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    padding: 1rem 1.1rem 0.9rem;
+  }
+  .er-entry__date {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    color: var(--c-blue-deep);
+  }
+  .er-entry__title {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    margin: 0.25rem 0 0.6rem;
+    color: var(--c-ink);
+  }
+  .er-entry__body p {
+    margin: 0 0 0.35rem;
+    line-height: 1.85;
+    color: var(--c-ink);
+  }
+  .er-entry__img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin-top: 0.6rem;
+    border: 1px solid var(--c-line);
+  }
+  .er-entry__tags {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding: 0;
+    margin: 0.7rem 0 0;
+  }
+  .er-entry__tags li {
+    font-size: 0.72rem;
+    padding: 0.15em 0.7em;
+    border-radius: 999px;
+    background: var(--c-mist);
+    color: var(--c-ink-soft);
+  }
+  .er-empty {
+    text-align: center;
+    color: var(--c-ink-soft);
+  }
+</style>

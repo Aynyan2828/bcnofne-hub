@@ -27,5 +27,6 @@ export const STATIONS: Station[] = [
   { id: 'listen', code: 'RADIO', harbor: 'RADIO HARBOR', label: '眠る・作業する', note: '睡眠BGM／作業BGM／ラジオ' },
   { id: 'music', code: 'MUSIC', harbor: 'MUSIC HARBOR', label: '音楽を聴く', note: '気分から選べるばい' },
   { id: 'sns', code: 'SOCIAL', harbor: 'SIGNAL HARBOR', label: '航海日誌を見る', note: 'SNS・note の更新' },
+  { id: 'engine', code: 'ENGINE', harbor: 'ENGINE ROOM', label: '機関室をのぞく', note: 'AYN の機関日誌' },
   { id: 'about', code: 'AYN', harbor: "AYN'S HARBOR", label: 'ぼくのことを知る', note: '機関士AI AYN と水彩の世界' },
 ];

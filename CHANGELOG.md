@@ -1,5 +1,17 @@
 # CHANGELOG — bcnofne-hub
 
+
+## 2026-09-25 — 機関室「AYN の機関日誌」（Prompt241）
+
+### Added
+- **`/engine-room/`（機関室）**: 機関士AI AYN の作業日誌を新しい順に並べるページ。上だけ HUD の計器（紺の海＋金とティールの細線）、日誌は水彩の紙。1 本 = 日付・見出し・佐賀弁 3〜5 行・任意で画像 1 枚・プロジェクト名タグ。**数字は出さん約束**。
+- **`worklog` コレクション**（`src/content/worklog/YYYY-MM-DD.md`・1 日 1 枚）と共通読み出し `src/lib/worklog.ts`（日付は常に JST 表示）。
+- **`/engine-room/rss.xml`**（手書き RSS 2.0・依存追加なし）。bcnofne-edge の `/feed` がこれを読んでトップの「最新の航海日誌」に ⚙ で流す。
+- トップに寄港地 **ENGINE / ENGINE ROOM**（`voyage.ts` に 1 行 → 航路レール・AYN ナビも追従）と、日誌の新しい 3 本の予告欄。
+- `BaseLayout` に `head` スロット（ページごとに `<link rel="alternate">` 等を足せる）。
+- 最初の 1 本: `2026-09-24`（HUD に 3D の脳が付いた話）。
+- 追加の経路: ayn-jarvis の `worklog_publish` だけ（マスターの「よかよ」を通った時に md を 1 枚書いて、その 1 枚だけ commit→push）。手で足してもよか。
+
 ## 2026-09-23 — スマホの手触りを磨き込む（世界観は据え置き）
 
 作り直しやなくて、いまの形を完成形に近づけるための調整。

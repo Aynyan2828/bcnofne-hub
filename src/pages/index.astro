@@ -23,6 +23,8 @@ import aynOk from '../assets/ayn/ayn-ok.png';
 import aynNight from '../assets/ayn/ayn-night.png';
 import aynExcited from '../assets/ayn/ayn-excited.png';
 import aynSmile from '../assets/ayn/ayn-smile.png';
+import aynThinking from '../assets/ayn/ayn-thinking.png';
+import { getWorklog, fmtLogDate, logAnchor } from '../lib/worklog';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -45,6 +47,9 @@ const otherApps = apps.filter((a) => a !== featured);
 const pinned = social.filter((s) => s.data.tier === 'pinned');
 const primarySocial = social.filter((s) => s.data.tier === 'primary');
 const moreSocial = social.filter((s) => s.data.tier === 'more');
+
+// 機関室の予告（AYN の機関日誌の新しい 3 本だけ。全部は /engine-room/）
+const recentLogs = (await getWorklog()).slice(0, 3);
 ---
 <BaseLayout>
   <VoyageRail />
@@ -258,6 +263,34 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
       )}
     </Section>
 
+    <Section
+      id="engine"
+      harbor="ENGINE ROOM"
+      eyebrow="Engine Room"
+      title="機関室"
+      lead="フネの心臓部。ぼくが毎日の整備を「AYN の機関日誌」に書きとめとるよ。"
+      avatar={aynThinking}
+      avatarAlt="考えごとをするAYN"
+    >
+      <div class="enginelog" data-reveal="up">
+        {recentLogs.length > 0 ? (
+          <ul class="enginelog__list">
+            {recentLogs.map((e) => (
+              <li>
+                <a href={`${base}/engine-room/#${logAnchor(e.data.date)}`}>
+                  <span class="enginelog__date">⚙ {fmtLogDate(e.data.date)}</span>
+                  <span class="enginelog__title">{e.data.title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="enginelog__empty">日誌はまだ白紙ばい。</p>
+        )}
+        <a class="pins__pin pins__pin--strong enginelog__more" href={`${base}/engine-room/`}>機関室に入る</a>
+      </div>
+    </Section>
+
     <About />
     <Contact />
   </main>
@@ -347,6 +380,41 @@ const moreSocial = social.filter((s) => s.data.tier === 'more');
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  /* 機関室の予告（日誌の新しい 3 本） */
+  .enginelog {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .enginelog__list {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+    background: var(--c-card);
+    border: 1px solid var(--c-line);
+    border-radius: 16px;
+    box-shadow: var(--shadow-soft);
+    text-align: left;
+  }
+  .enginelog__list li + li { border-top: 1px dashed var(--c-line); }
+  .enginelog__list a {
+    display: flex;
+    gap: 0.8rem;
+    align-items: baseline;
+    padding: 0.75rem 1rem;
+    color: var(--c-ink);
+  }
+  .enginelog__list a:hover { text-decoration: none; color: var(--c-blue-deep); }
+  .enginelog__date {
+    flex: none;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    color: var(--c-blue-deep);
+  }
+  .enginelog__title { min-width: 0; }
+  .enginelog__empty { color: var(--c-ink-soft); }
+  .enginelog__more { display: inline-block; }
 
   /* 横に流す動画棚 */
   .shelf { margin-top: clamp(1.4rem, 4vw, 2.2rem); }

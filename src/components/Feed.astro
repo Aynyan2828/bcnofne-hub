@@ -19,7 +19,7 @@ const LIMIT = 8;
     const list = wrap.querySelector('[data-feed-list]');
     const EP = wrap.getAttribute('data-endpoint');
     const LIMIT = parseInt(wrap.getAttribute('data-limit') || '8', 10);
-    const ICON = { youtube: '▶', podcast: '🎙', note: '✎', bluesky: '🦋' };
+    const ICON = { youtube: '▶', podcast: '🎙', note: '✎', bluesky: '🦋', worklog: '⚙' };
     const fmtDate = (iso) => {
       const d = new Date(iso || '');
       if (isNaN(d.getTime())) return '';

@@ -61,6 +61,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Yomogi&family=Yusei+Magic&display=swap" rel="stylesheet" />
     <SEO title={title} description={description} {...(ogImage ? { ogImage } : {})} />
+    <slot name="head" />
   </head>
   <body>
     <CollageBackdrop />

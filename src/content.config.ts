@@ -82,4 +82,20 @@ const social = defineCollection({
     }),
 });
 
-export const collections = { apps, channels, music, social };
+// AYN の機関日誌（/engine-room/）。1 日 1 枚 = src/content/worklog/YYYY-MM-DD.md。
+// ayn-jarvis が下書き→マスターの「よかよ」でだけ追加される（手で足してもよか）。
+// 数字（DL 数・売上・コミット数など）は書かん約束。中身の話だけ。
+const worklog = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/worklog' }),
+  schema: ({ image }) =>
+    z.object({
+      date: z.coerce.date(),
+      title: z.string(), // 一行見出し（RSS・トップの航海日誌にはこれが出る）
+      projects: z.array(z.string()).default([]), // 許可リストのプロジェクト名タグ
+      image: image().optional(),
+      imageAlt: z.string().optional(),
+      status: z.enum(['active', 'draft', 'hidden']).default('active'),
+    }),
+});
+
+export const collections = { apps, channels, music, social, worklog };
