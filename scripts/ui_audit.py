@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-"""bcnofne.com の UI/UX 点検（UI UX Pro Max の Quick Reference §1〜§6 を数字で測る）
+"""サイトの UI/UX を数字で点検する（UI UX Pro Max の Quick Reference §1〜§6 を実測）
 
-    ~/bcnofne/ayn-sleep-radio/.venv/bin/python scripts/ui_audit.py https://bcnofne.com/ /tmp/ui_audit.json
+★正本はスキル ~/.claude/skills/site-ui-audit/scripts/ui_audit.py（まとめ表示の summarize.py もそっち）。
+  ここは写し。直す時はスキル側を直して写すこと。
+
+    ~/bcnofne/ayn-sleep-radio/.venv/bin/python ~/.claude/skills/site-ui-audit/scripts/ui_audit.py <URL> <out.json>
+
+（Playwright と Pillow が入った Python なら何でもよか。上の venv には両方入っとる）
 
 測るもの: 文字と背景のコントラスト（文字を透明にした画面を撮って、後ろの色を実測）/
 12px 未満の文字 / 押せる所の大きさ / 画像の alt / 見出しの順番 / 横はみ出し（375・320・横向き・PC）/
@@ -13,7 +18,9 @@ import io, json, math, sys
 from playwright.sync_api import sync_playwright
 from PIL import Image
 
-URL = sys.argv[1] if len(sys.argv) > 1 else "https://bcnofne.com/"
+if len(sys.argv) < 2:
+    sys.exit("使い方: ui_audit.py <URL> [out.json]")
+URL = sys.argv[1]
 OUT = sys.argv[2] if len(sys.argv) > 2 else "ui_audit.json"
 R = {}
 
@@ -61,11 +68,23 @@ with sync_playwright() as p:
       const els = [...document.querySelectorAll('a[href], button, [role=button], input, select, textarea, summary')];
       return els.map(e => {
         const r = e.getBoundingClientRect(); const cs = getComputedStyle(e);
-        const vis = (e.offsetParent !== null || cs.position === 'fixed') && cs.visibility !== 'hidden' && r.width > 0 && r.height > 0;
-        const name = (e.getAttribute('aria-label') || e.textContent || e.getAttribute('title') || e.getAttribute('alt') || e.querySelector('img')?.alt || '').replace(/\\s+/g,' ').trim();
+        // 画面の外に逃がした隠し欄（ロボット避けなど）や aria-hidden の中は数えん
+        const offscreen = r.right < 0 || r.left > innerWidth + 50 || !!e.closest('[aria-hidden=true]') || e.type === 'hidden';
+        const vis = !offscreen && (e.offsetParent !== null || cs.position === 'fixed') && cs.visibility !== 'hidden' && r.width > 0 && r.height > 0;
+        // 名前: aria-label → 中の文字 → title/alt → 包んどる／for で結んだ label
+        const lab = e.labels && e.labels.length ? [...e.labels].map(l => l.textContent).join(' ') : '';
+        const name = (e.getAttribute('aria-label') || e.textContent || e.getAttribute('title') || e.getAttribute('alt') || e.querySelector('img')?.alt || lab || e.getAttribute('placeholder') || '').replace(/\\s+/g,' ').trim();
+        // 押せる範囲: 見えん板(::after / ::before を absolute で敷く)で広げとる分も数える
+        let hw = r.width, hh = r.height;
+        for (const pe of ['::after', '::before']) {
+          const ps = getComputedStyle(e, pe);
+          if (ps.content && ps.content !== 'none' && ps.position === 'absolute') {
+            hw = Math.max(hw, parseFloat(ps.width) || 0); hh = Math.max(hh, parseFloat(ps.height) || 0);
+          }
+        }
         return {tag: e.tagName.toLowerCase(), cls: (e.className && e.className.baseVal === undefined ? e.className : '').toString().split(' ')[0],
-                name: name.slice(0,28), w: Math.round(r.width), h: Math.round(r.height), vis, display: cs.display,
-                inline: cs.display === 'inline', inText: !!e.closest('p')};
+                name: name.slice(0,28), w: Math.round(r.width), h: Math.round(r.height), hitW: Math.round(hw), hitH: Math.round(hh),
+                vis, display: cs.display, inline: cs.display === 'inline', inText: !!e.closest('p')};
       }).filter(t => t.vis);
     }""")
 
@@ -107,7 +126,7 @@ with sync_playwright() as p:
     todo = sorted(items, key=lambda i: i["y"])
     y = 0
     while y < H and todo:
-        pg.evaluate(f"window.scrollTo(0,{y})"); pg.wait_for_timeout(250)
+        pg.evaluate(f"window.scrollTo({{top:{y},behavior:'instant'}})"); pg.wait_for_timeout(250)
         shot = Image.open(io.BytesIO(pg.screenshot())).convert("RGB")
         boxes = pg.evaluate("""(ids) => ids.map(id => { const e = document.querySelector(`[data-aid="${id}"]`);
             const r = e.getBoundingClientRect(); return [id, r.left, r.top, r.width, r.height]; })""", [i["id"] for i in todo])
@@ -150,7 +169,7 @@ with sync_playwright() as p:
     lcp = pg.evaluate("window.__lcp")
     cls_load = pg.evaluate("window.__cls")
     for yy in range(0, H, 500):
-        pg.evaluate(f"window.scrollTo(0,{yy})"); pg.wait_for_timeout(120)
+        pg.evaluate(f"window.scrollTo({{top:{yy},behavior:'instant'}})"); pg.wait_for_timeout(120)
     pg.wait_for_timeout(1000)
     R["perf"] = {"lcp_ms": round(lcp), "cls_load": round(cls_load, 3), "cls_after_scroll": round(pg.evaluate("window.__cls"), 3)}
     by = {}
@@ -162,7 +181,7 @@ with sync_playwright() as p:
     R["perf"]["requests"] = len(sizes)
 
     # キーボード: Tab で進めて、フォーカス枠が見えるか
-    pg.evaluate("window.scrollTo(0,0)"); pg.wait_for_timeout(300)
+    pg.evaluate("window.scrollTo({top:0,behavior:'instant'})"); pg.wait_for_timeout(300)
     foc = []
     for i in range(14):
         pg.keyboard.press("Tab"); pg.wait_for_timeout(80)
