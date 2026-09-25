@@ -15,12 +15,15 @@ interface Props {
   harbor?: string;
   /** 港の入口に出す日本語の一行（例: アプリの港） */
   harborLabel?: string;
+  /** 港で迎える AYN の絵の名前（public/world/<harborAyn>.webp） */
+  harborAyn?: string;
 }
-const { id, eyebrow, title, lead, mist = false, avatar, avatarAlt, harbor, harborLabel } = Astro.props;
+const { id, eyebrow, title, lead, mist = false, avatar, avatarAlt,
+        harbor, harborLabel, harborAyn } = Astro.props;
 ---
 {/* 港の入口。海と空だけの一画面を挟んで「着いた」を作る。
     紙だまりの外に置くけん、ここだけ背景（海・空・月）が素で見える。 */}
-{harbor && <HarborGate harbor={harbor} label={harborLabel} />}
+{harbor && <HarborGate harbor={harbor} label={harborLabel} ayn={harborAyn} />}
 
 <section id={id} class:list={['section', { 'section--mist': mist }]}>
   <div class="container">
