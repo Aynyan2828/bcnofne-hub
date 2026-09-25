@@ -5,7 +5,7 @@
  * Framer Motion の素の JS 版（`motion`）の **バネの計算だけ** を借りとる。
  * React は載せとらん（Astro＋素の JS のまま＝軽さはそのまま）。
  *
- *   1. 押した手応え … カード・ボタンを押すと少し沈んで、離すとバネでぽよんと戻る
+ *   1. 押した手応え … リンク・ボタン・カードを押すと沈んで、離すとバネでぽよんと戻る
  *   2. 棚のドラッグ … マウスで横の棚を掴んで投げると、慣性で流れて近くのカードで止まる
  *   3. 気分の絞り込み … 外れるカードは縮んで消え、残りはバネで詰め、新顔はふわっと出る
  *                      （MoodPicker が window.BCN_FX.moodSwap を呼ぶ。無ければ従来どおり）
@@ -28,27 +28,66 @@
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (!reduce) {
-    /* ── 1. 押した手応え ─────────────────────────────────────── */
-    const PRESS = '.card, .btn, .feat__sub, .moods__chips [data-mood], .hs__nav';
-    const state = new WeakMap(); // el → { v: 今の大きさ, anim }
+    /* ── 1. 押した手応え（リンク・ボタンは全部）─────────────────────
+       ★「沈んだ」に見せるには縮めるだけでは足りん。少し下へ動かすと押し込んだ感じが出る。
+       バネは「押し込み具合 p（0=元 / 1=底）」を1本だけ動かして、大きさと沈みを両方決める。
+       離す時は p が少しマイナスまで行き過ぎる＝一瞬ふくらんで浮く＝ぽよん。 */
+    const CARD = '.card';
+    const LINKISH = 'a[href], button, [role="button"], summary, .moods__chips [data-mood]';
+    const state = new WeakMap(); // el → { p, anim, depth, sink, inline, setPos }
 
+    const measure = (el) => {
+      if (getComputedStyle(el).display === 'inline') {
+        // 文中のリンク: 縮めると文章の行がずれるけん、下に沈めて少し薄くする
+        return { inline: true, depth: 0, sink: 2 };
+      }
+      if (el.matches(CARD)) return { depth: 0.06, sink: 3 };          // カード 0.94
+      const r = el.getBoundingClientRect();
+      const big = r.width > window.innerWidth * 0.8 || r.height > 260;
+      return big ? { depth: 0.04, sink: 2 } : { depth: 0.12, sink: 2 }; // 大きい塊 0.96 / ボタン 0.88
+    };
+    const render = (el, s) => {
+      const p = s.p;
+      if (s.inline) {
+        el.style.top = `${(s.sink * p).toFixed(2)}px`;
+        el.style.opacity = String(1 - 0.35 * Math.max(0, p));
+      } else {
+        el.style.scale = String(1 - s.depth * p);
+        el.style.translate = `0 ${(s.sink * p).toFixed(2)}px`;
+      }
+    };
+    const clear = (el, s) => {
+      if (s.inline) {
+        el.style.top = ''; el.style.opacity = '';
+        if (s.setPos) el.style.position = '';
+      } else {
+        el.style.scale = ''; el.style.translate = '';
+      }
+    };
     const springTo = (el, to, opts) => {
-      const s = state.get(el) || { v: 1, anim: null };
+      let s = state.get(el);
+      if (!s) {
+        s = { p: 0, anim: null, ...measure(el) };
+        if (s.inline && getComputedStyle(el).position === 'static') {
+          el.style.position = 'relative'; s.setPos = true;       // top を効かせるため
+        }
+        state.set(el, s);
+      }
       s.anim?.stop();
-      s.anim = springNum(s.v, to, {
+      s.anim = springNum(s.p, to, {
         ...opts,
-        onUpdate: (v) => { s.v = v; el.style.scale = String(v); },
-        onComplete: () => { if (to === 1) el.style.scale = ''; },
+        onUpdate: (p) => { s.p = p; render(el, s); },
+        onComplete: () => { if (to === 0) { clear(el, s); state.delete(el); } },
       });
-      state.set(el, s);
     };
     // 沈むのは速く・硬めに。戻る時はやわらかく少し行き過ぎる＝ぽよん
-    const press = (el) => springTo(el, el.matches('.card') ? 0.965 : 0.93, { stiffness: 620, damping: 32 });
-    const release = (el) => springTo(el, 1, { stiffness: 340, damping: 11 });
+    const press = (el) => springTo(el, 1, { stiffness: 700, damping: 34 });
+    const release = (el) => springTo(el, 0, { stiffness: 360, damping: 12 });
 
     document.addEventListener('pointerdown', (e) => {
       if (e.button !== 0) return;
-      const el = e.target.closest(PRESS);
+      // カードは中のリンクより「カード丸ごと」を沈める（中身だけ縮むと枠の中で浮いて見える）
+      const el = e.target.closest(CARD) || e.target.closest(LINKISH);
       if (!el) return;
       let pressed = false;
       let timer = 0;
