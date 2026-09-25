@@ -116,7 +116,9 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
       let x = -(((offset % period) + period) % period);
       ctx.globalAlpha = alpha;
       let flip = 0;
-      while (x < W) {
+      // 遠い帯は1枚が小さくなって枚数が増える。万一に備えて上限を置く
+      const MAX_TILES = 40;
+      while (x < W && flip < MAX_TILES) {
         if (flip % 2 === 0) {
           ctx.drawImage(im, x, y, w, h);
         } else {
@@ -145,16 +147,34 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
       ctx.globalAlpha = 1;
     };
 
+    /* ── 小舟（部品を別々に動かす）────────────────────────────
+       船体が波で傾き、帆はワンテンポ遅れて大きく揺れ、ランタンだけ
+       別のリズムで点滅する。部品に割った甲斐がここ。 */
+    const drawBoat = (t, by, hullH) => {
+      const bx = W * 0.24;
+      const roll = Math.sin(t * 0.9) * 0.05;
+      const lag = Math.sin(t * 0.9 - 0.55) * 0.075;
+      const bob = Math.sin(t * 1.3) * hullH * 0.18;
+      const y = by + bob;
+      part(art.ship_sail, bx + hullH * 0.05, y - hullH * 1.15, hullH * 2.2, lag, 0.9);
+      part(art.ship_hull, bx, y, hullH, roll, 0.95);
+      const flick = 0.72 + 0.28 * Math.sin(t * 3.1) * Math.sin(t * 1.7);
+      part(art.ship_lantern, bx + hullH * 0.9, y - hullH * 0.55, hullH * 1.1, roll, flick);
+    };
+
     /* ── 1フレーム ──────────────────────────────────────────── */
     const draw = (t) => {
       const sc = scrollY;
       ctx.clearRect(0, 0, W, H);
 
       // 水平線は画面の下寄り。海は「下の帯」に留めて、空(＝水彩の写真)を潰さん
-      const horizon = H * 0.60;
+      const horizon = H * 0.46;   // 奥行きを取るぶん、水平線は少し上げる
 
       // 1. 雲の帯（いちばん奥・いちばんゆっくり）
-      band(art.cloud_loop, H * 0.02, H * 0.26, sc * 0.05 + t * 3, 0.5);
+      // 雲も少しだけ手前に流す（上へ抜けていく＝自分が進んどる）
+      const cz = ((sc * 0.00022 + t * 0.012) % 1 + 1) % 1;
+      band(art.cloud_loop, horizon - H * (0.30 + cz * 0.26), H * (0.22 + cz * 0.14),
+           sc * 0.06 + t * 3, 0.5 * (1 - cz) + 0.12);
 
       // 2. 粒子（データの粒）＋星座線
       const pts = [];
@@ -185,26 +205,37 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
       }
       ctx.globalAlpha = 1;
 
-      // 3. 波。奥ほどゆっくり・手前ほど速い＝奥行き
-      band(art.wave_far, horizon - H * 0.02, H * 0.14, sc * 0.08 + t * 4, 0.75);
-      const midY = horizon + H * 0.06;
-      band(art.wave_mid, midY, H * 0.15, sc * 0.16 + t * 9, 0.85);
+      /* 3. 波 ── ★「前に進んどる」の作り方 ─────────────────────
+         横に流すと「景色が横に動く」だけで、進んどるように見えん。
+         奥行きは **水平線から手前へ迫らせる** ことで出す:
+           z = 1 … 水平線のすぐ向こう（遠い）
+           z = 0 … 画面の下（目の前）
+         スクロールすると z が減る＝波が自分に向かってくる。
+         近いほど **下に来て・大きくなって・速く流れる**（遠近法）。
+         画面の下を通り過ぎた波は、水平線の向こうへ戻して使い回す。 */
+      const ROWS = 9;
+      const march = sc * 0.00042 + t * 0.022;   // 進む速さ
+      const waveImgs = [art.wave_far, art.wave_mid, art.wave_near];
+      let boatDrawn = false;
+      for (let i = ROWS - 1; i >= 0; i--) {
+        let z = ((i / ROWS - march) % 1 + 1) % 1;
+        const k = 1 - z;                         // 0=遠 → 1=近
+        const ease = Math.pow(k, 2.3);           // 遠くほど詰まって見える
+        const y = horizon + (H - horizon) * ease;
+        const h = H * (0.028 + 0.30 * Math.pow(k, 1.9));
+        // 水平線際でふわっと湧いて、手前で少し薄れる（唐突に出入りさせん）
+        const a = Math.min(1, k * 7) * (1 - Math.pow(k, 6)) * 0.95;
+        if (a <= 0.01) continue;
 
-      // 4. 小舟（中の波と手前の波で挟む＝波間に沈んで見える）
-      //    船体が波で傾き、帆はワンテンポ遅れて揺れる。部品に割った甲斐がここ。
-      const bx = W * 0.22;
-      const roll = Math.sin(t * 0.9) * 0.05;            // 船体の傾き
-      const lag = Math.sin(t * 0.9 - 0.55) * 0.075;     // 帆は遅れて大きめに
-      const bob = Math.sin(t * 1.3) * H * 0.006;
-      const by = midY + H * 0.05 + bob;
-      const hullH = Math.max(18, H * 0.035);
-      part(art.ship_sail, bx + hullH * 0.05, by - hullH * 1.15, hullH * 2.2, lag, 0.9);
-      part(art.ship_hull, bx, by, hullH, roll, 0.95);
-      // ランタンだけ点滅する
-      const flick = 0.72 + 0.28 * Math.sin(t * 3.1) * Math.sin(t * 1.7);
-      part(art.ship_lantern, bx + hullH * 0.9, by - hullH * 0.55, hullH * 1.1, roll, flick);
-
-      band(art.wave_near, horizon + H * 0.15, H * 0.22, sc * 0.28 + t * 16, 0.9);
+        // 小舟は「ある深さ」に居る。その深さの波を跨ぐ手前で描く＝波間に沈む
+        if (!boatDrawn && k > 0.42) {
+          drawBoat(t, horizon + (H - horizon) * Math.pow(0.42, 2.3), H * 0.052);
+          boatDrawn = true;
+        }
+        // 近いほど横にも速く流れる（真正面に進んどるんやなく、少し斜めに渡る）
+        band(waveImgs[i % 3], y, h, sc * (0.05 + k * 0.5) + t * (3 + k * 26), a);
+      }
+      if (!boatDrawn) drawBoat(t, horizon + (H - horizon) * Math.pow(0.42, 2.3), H * 0.052);
     };
 
     /* ── 背景コラージュの視差（同じループで動かす）──────────── */
