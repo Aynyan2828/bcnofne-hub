@@ -40,6 +40,9 @@
     if (!targets.length) return;
 
     // JIZURA の SCRAMBLE_POOL を海の字に寄せたもの
+    // まとめて書き始める単位（カード・主役アプリ・計器など）
+    const GROUP = '.card, .feat, .ship, .feed, .latest';
+
     const POOL =
       'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン' +
       '海波星月船灯風空夜光潮帆錨汐碧★◆●01ABCDEFGHJKLMNPRSTUVWXYZ';
@@ -196,10 +199,18 @@
         alive = true;
         for (const e of entries) {
           if (!e.isIntersecting) continue;
+          // ★カードは1枚まるごと一緒に書き始める。行ごとに見張ると、画面の端で
+          //   「名前は出たのにボタンは白いまま」の書きかけカードができた。
+          //   順番（名前→説明→ボタン）は各行の data-type-delay が作る。
+          const group = e.target.closest(GROUP);
+          const els = group ? group.querySelectorAll('[data-type]') : [e.target];
+          for (const el of els) {
+            if (el.classList.contains('is-in')) continue;
+            io.unobserve(el);
+            el.classList.add('is-in');
+            if (el.dataset.type === 'scramble') scramble(el);
+          }
           const el = e.target;
-          io.unobserve(el);
-          el.classList.add('is-in');
-          if (el.dataset.type === 'scramble') scramble(el);
           // 港の名前が見えたら、その入口の AYN と水平線も一緒に灯す。
           // ★前は「その港の中身が今いる港になったら」灯しとって、最初の港の前に
           //   外洋を足したら、名前は出とるのに AYN が出てこん時間ができた。

@@ -42,12 +42,13 @@ const thumbRatio = image
       )}
       <div class="card__body">
         <div class="card__meta">
-          <h3 class="card__title">{title}</h3>
+          <h3 class="card__title" data-type data-type-delay="120" data-type-step="45">{title}</h3>
           {badge && <span class="card__badge">{badge}</span>}
         </div>
-        {handle && <p class="card__handle">{handle}</p>}
-        <p class="card__summary">{summary}</p>
-        <span class="card__cta">
+        {handle && <p class="card__handle" data-type data-type-delay="380" data-type-step="30">{handle}</p>}
+        {/* 説明は長いけん速め。カードが何枚並んでも 1.5 秒ほどで書き終わる */}
+        <p class="card__summary" data-type data-type-delay="480" data-type-step="14">{summary}</p>
+        <span class="card__cta" data-type data-type-delay="900" data-type-step="40">
           {cta}
           <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>

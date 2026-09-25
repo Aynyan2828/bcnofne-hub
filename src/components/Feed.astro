@@ -6,8 +6,8 @@ const LIMIT = 8;
 ---
 <div class="feedwrap" data-feed data-endpoint={EDGE} data-limit={LIMIT} hidden>
   <div class="feed__head">
-    <span class="feed__badge">最新の航海日誌</span>
-    <span class="feed__sub">YouTube・AI RADIO・note・Bluesky の更新をまとめて</span>
+    <span class="feed__badge" data-type data-type-step="50">最新の航海日誌</span>
+    <span class="feed__sub" data-type data-type-delay="500" data-type-step="20">YouTube・AI RADIO・note・Bluesky の更新をまとめて</span>
   </div>
   <ul class="feed" data-feed-list></ul>
   <a class="feed__rss" href={`${EDGE}/feed?format=rss`} target="_blank" rel="noopener noreferrer">RSSで購読する</a>

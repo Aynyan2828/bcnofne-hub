@@ -51,7 +51,7 @@ const hookLines = (hook ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
     {hookLines.length > 0 ? (
       <p class="feat__hook" data-type data-type-delay="700" data-type-step="40">{hookLines.map((l) => <span>{l}</span>)}</p>
     ) : null}
-    <p class="feat__summary">{summary}</p>
+    <p class="feat__summary" data-type data-type-delay="1100" data-type-step="14">{summary}</p>
     <div class="feat__cta">
       <a class="btn" href={url}>{cta}</a>
       {extraLinks.map((l) => (
