@@ -25,6 +25,9 @@ const PATHS: Record<string, string> = {
   wrench: '<path d="M14.8 6.2a4 4 0 0 0-5.3 5.3l-6 6a1.8 1.8 0 0 0 2.5 2.5l6-6a4 4 0 0 0 5.3-5.3l-2.5 2.5-2.4-.6-.6-2.4z"/>',
   // 上下にスクロールできる
   updown: '<path d="M12 3.5v17M8 7.5l4-4 4 4M8 16.5l4 4 4-4"/>',
+  // 動画を止める／もう一回流す
+  pause: '<path d="M9 6.5v11M15 6.5v11" stroke-width="2.4"/>',
+  resume: '<path d="M8.5 6.3v11.4l9.2-5.7z" fill="currentColor" stroke="none"/>',
   // どれにも当てはまらん時
   dot: '<circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/>',
 };

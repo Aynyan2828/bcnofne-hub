@@ -1,39 +1,103 @@
 ---
 /**
- * 動画は「押した時だけ」読み込む（1ページに1つ置くだけの裏方コンポーネント）
+ * 動画の読み込みと再生（1ページに1つ置くだけの裏方コンポーネント）
  *
- * `<video data-lazyvideo data-src="/media/xxx.mp4" poster="..." preload="none">` を、
- *   - 表紙の絵（poster）だけ出して、スマホ標準の再生ボタンを付ける
- *   - 再生ボタンを押した時に初めて動画を読み込む（preload="none"）
- *   - 画面の外に出たら一時停止
- * にする。
+ * ふつうの動画（data-lazyvideo）:
+ *   表紙の絵だけ出して、再生ボタンを押した時に初めて読み込む（preload="none"）。
+ *   ★前は画面の手前で読み込み→自動再生で、スクロールしきると 4 本 約 17.5MB 使っとった。
  *
- * ★前は「画面の1つ手前で読み込み開始→見えとる間は自動再生」やった。スクロールしきると
- *   動画 4 本で約 17.5MB を勝手に使っとった（スマホの通信量）。UI UX Pro Max §3
- *   （重いメディアは必要になるまで読まん）に合わせて、押した人だけが読み込む形にした。
+ * 主役の動画（data-lazyvideo data-autoplay）… マスター指定で自動で流す:
+ *   ・画面の1つ手前で読み込み始め、見えとる間だけ音なしで流す（muted / playsinline）
+ *   ・画面の外に出たら止める
+ *   ・「止める」ボタンを出す（勝手に動き続けるものには止める手段が要る・WCAG 2.2.2）
+ *     止めたら、スクロールで戻ってきても勝手に再開せん（本人の選択を優先）
+ *   ・動きを減らす設定／データセーバーの人には流さず、ふつうの動画と同じ扱いにする
  */
 ---
 <script>
   (() => {
     const vids = Array.from(document.querySelectorAll('video[data-lazyvideo]'));
     if (!vids.length) return;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const saveData = !!(navigator.connection && navigator.connection.saveData);
+    const canAuto = !reduce && !saveData && 'IntersectionObserver' in window;
 
+    const autos = [];
     for (const v of vids) {
-      v.setAttribute('controls', '');
-      v.preload = 'none';                 // 再生を押すまで 1 バイトも取りに行かん
-      if (v.dataset.src && !v.getAttribute('src')) v.src = v.dataset.src;
+      if (canAuto && v.hasAttribute('data-autoplay')) {
+        v.muted = true;
+        v.removeAttribute('controls');
+        autos.push(v);
+      } else {
+        v.setAttribute('controls', '');
+        v.preload = 'none';               // 再生を押すまで 1 バイトも取りに行かん
+        if (v.dataset.src && !v.getAttribute('src')) v.src = v.dataset.src;
+      }
+    }
+
+    // 止める／流すボタン（自動で流す動画にだけ出す）
+    for (const v of autos) {
+      const btn = v.parentElement && v.parentElement.querySelector('[data-video-toggle]');
+      if (!btn) continue;
+      const showPlaying = btn.querySelector('[data-when="playing"]');
+      const showPaused = btn.querySelector('[data-when="paused"]');
+      const sync = () => {
+        const playing = !v.paused;
+        if (showPlaying) showPlaying.hidden = !playing;
+        if (showPaused) showPaused.hidden = playing;
+        btn.setAttribute('aria-label', playing ? 'デモ動画を止める' : 'デモ動画を流す');
+      };
+      v.addEventListener('play', sync);
+      v.addEventListener('pause', sync);
+      btn.addEventListener('click', () => {
+        if (v.paused) {
+          v.dataset.userPaused = '';
+          const p = v.play();
+          if (p && p.catch) p.catch(() => {});
+        } else {
+          v.dataset.userPaused = '1';
+          v.pause();
+        }
+      });
+      btn.hidden = false;
+      sync();
     }
 
     if (!('IntersectionObserver' in window)) return;
-    // 見えんところで鳴り続けんよう、画面の外に出たら止める
-    const io = new IntersectionObserver(
+
+    // 主役の動画: 画面の1つ手前で読み込みだけ始める
+    const preloader = new IntersectionObserver(
       (es) => {
         for (const e of es) {
-          if (!e.isIntersecting && !e.target.paused) e.target.pause();
+          if (!e.isIntersecting) continue;
+          const v = e.target;
+          if (v.dataset.src && !v.getAttribute('src')) { v.preload = 'auto'; v.src = v.dataset.src; }
+          preloader.unobserve(v);
         }
       },
-      { threshold: 0.1 }
+      { rootMargin: '100% 0px' }
     );
-    for (const v of vids) io.observe(v);
+    for (const v of autos) preloader.observe(v);
+
+    // 見えとる間だけ流す（自動の動画）／画面の外に出たら止める（全部）
+    const player = new IntersectionObserver(
+      (es) => {
+        for (const e of es) {
+          const v = e.target;
+          const auto = autos.includes(v);
+          if (e.isIntersecting) {
+            if (auto && v.dataset.userPaused !== '1') {
+              if (v.dataset.src && !v.getAttribute('src')) v.src = v.dataset.src;
+              const p = v.play();
+              if (p && p.catch) p.catch(() => { /* 自動再生が拒否されたら静かに諦める */ });
+            }
+          } else if (!v.paused) {
+            v.pause();
+          }
+        }
+      },
+      { threshold: 0.25 }
+    );
+    for (const v of vids) player.observe(v);
   })();
 </script>

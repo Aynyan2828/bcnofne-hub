@@ -7,6 +7,7 @@
  * 動画は public/ 配下のパス（frontmatter の demo / demoPoster）。
  * 見えるまで読み込まん（data-lazyvideo）ので、重い動画を置いても初速は落ちん。
  */
+import Icon from './Icon.astro';
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
@@ -64,8 +65,11 @@ const hookLines = (hook ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
   </div>
   {demo && (
     <div class="feat__art" data-reveal="right">
+      {/* 主役だけは自動で流す（マスター指定 2026-09-26）。音なし・画面内再生・画面外で停止。
+          動きを減らす設定／データセーバーの人には流さん（LazyVideos が判断） */}
       <video
         data-lazyvideo
+        data-autoplay
         data-src={demo}
         poster={demoPoster}
         width="540"
@@ -76,6 +80,12 @@ const hookLines = (hook ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
         preload="none"
         aria-label={`${title} のデモ動画。`}
       ></video>
+      {/* 勝手に動き続けるものには「止める手段」が要る（WCAG 2.2.2・UI UX Pro Max §1）。
+          自動再生する時だけ JS が出す */}
+      <button class="feat__pause" type="button" data-video-toggle hidden aria-label="デモ動画を止める">
+        <span data-when="playing"><Icon name="pause" /></span>
+        <span data-when="paused" hidden><Icon name="resume" /></span>
+      </button>
       <span class="feat__lantern" aria-hidden="true"></span>
     </div>
   )}
@@ -158,6 +168,27 @@ const hookLines = (hook ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
   }
   .feat__sub:hover { color: #fff; }
 
+  .feat__pause {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(13, 19, 48, 0.6);
+    color: #fff;
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+  .feat__pause[hidden] { display: none; }
+  .feat__pause::after { content: ''; position: absolute; inset: -4px; }   /* 押せる範囲 44px */
   .feat__art {
     position: relative;
     border-radius: var(--radius);
