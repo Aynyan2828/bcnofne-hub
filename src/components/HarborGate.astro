@@ -28,13 +28,15 @@ interface Props {
   label?: string;
   /** 港で迎える AYN の絵（public/world/<ayn>.webp）。無ければ出さん */
   ayn?: string;
-  /** 港の色（帯と文字）。Section から降りてくる */
+  /** 港の色（文字）。Section から降りてくる */
   tone?: string;
+  /** 港の id。背景の海に、この港の目印(public/world/port_<id>.webp)が浮かぶ */
+  port?: string;
 }
-const { harbor, label, ayn, tone } = Astro.props;
+const { harbor, label, ayn, tone, port } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
-<div data-gate data-tone={tone} class:list={["gate", ayn && "has-ayn"]}>
+<div data-gate data-port={port} data-tone={tone} class:list={["gate", ayn && "has-ayn"]}>
   <div class="gate__inner">
     <p class="gate__tag">ARRIVING</p>
     <TypeText as="p" class="gate__name" text={harbor} />

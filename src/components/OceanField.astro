@@ -29,7 +29,10 @@
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const PARTS = ['cloud_loop', 'wave_far', 'wave_mid', 'wave_near',
                'ship_hull', 'ship_sail', 'ship_lantern',
-               'moon', 'cape_lighthouse', 'isle_a', 'isle_b', 'mist_loop'];
+               'moon', 'cape_lighthouse', 'isle_a', 'isle_b', 'mist_loop',
+               // 港の目印。港の id と同じ名前（port_<Section の id>）。
+               // 港を増やす時は絵を1枚足して、ここに1行足すだけ。
+               'port_apps', 'port_listen', 'port_music', 'port_sns', 'port_engine'];
 const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`]));
 ---
 <canvas class="ocean" data-ocean data-srcs={JSON.stringify(srcs)} aria-hidden="true"></canvas>
@@ -166,7 +169,7 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
     /* ── 1フレーム ──────────────────────────────────────────── */
     /* ── 港に入ると船は速度を落とす ─────────────────────────────
        港の入口(HarborGate)に近づくほど calm が 1 に寄って、
-       波の行進が緩み・波が落ち着き・視点が少し上がり・靄が増える。
+       波の行進が緩み・波が落ち着き・視点が少し上がり・靄が晴れる。
        外洋（港と港のあいだ）では calm=0 で、いつもの速さで進む。
 
        ★時間で進む位相は **必ず足し込みで** 持つ。`t * 速さ` の形で
@@ -178,9 +181,9 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
     let gates = [];
     let gateTick = 0;
     const measureGates = () => {
-      gates = Array.from(document.querySelectorAll('[data-gate]'), (g) => {
+      gates = Array.from(document.querySelectorAll('[data-gate]'), (g, idx) => {
         const r = g.getBoundingClientRect();
-        return scrollY + r.top + r.height / 2;
+        return { y: scrollY + r.top + r.height / 2, port: g.dataset.port || '', idx };
       });
     };
     addEventListener('resize', measureGates);
@@ -208,8 +211,8 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
       if (gateTick-- <= 0) { measureGates(); gateTick = 30; }  // 1秒に1回だけ測る
       const eye = sc + H / 2;
       let near = 0;
-      for (const gy of gates) {
-        const d = Math.abs(eye - gy) / (H * 0.75);
+      for (const g of gates) {
+        const d = Math.abs(eye - g.y) / (H * 0.75);
         if (d < 1) near = Math.max(near, 1 - d);
       }
       const calm = near * near * (3 - 2 * near);   // 角を取る(smoothstep)
@@ -272,6 +275,35 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
          スクロールすると z が減る＝波が自分に向かってくる。
          近いほど **下に来て・大きくなって・速く流れる**（遠近法）。
          画面の下を通り過ぎた波は、水平線の向こうへ戻して使い回す。 */
+      /* 2.5 港の目印 ── みさとと式の「決まった場所に、その土地の物が在る」。
+         港の入口に着く2画面ほど手前で水平線の向こうに現れて、近づくほど
+         大きく手前に寄り、通り過ぎると後ろへ抜けていく。
+         港ごとに左右を振る（右に見えた次は左）＝すれ違う感じが出る。
+         深さ(kd)を波と同じ物差しで持って、**その深さの波より奥**に描く
+         （手前の波が目印の足元を隠す＝海に浮いて見える）。 */
+      const marks = [];
+      for (const g of gates) {
+        const im = art['port_' + g.port];
+        if (!im) continue;
+        const rel = (eye - g.y) / (H * 2.4);      // -1=まだ先 / 0=港 / + =通過
+        if (rel < -1 || rel > 0.75) continue;
+        const k = Math.min(1, Math.max(0, (rel + 1) / 1.35));
+        const kd = 0.12 + k * 0.6;                // 波の物差しでの深さ
+        const y = horizon + (H - horizon) * Math.pow(kd, 2.3);
+        const h = H * (0.05 + 0.24 * Math.pow(k, 1.6)) * zoom;
+        const side = g.idx % 2 === 0 ? 1 : -1;
+        const x = W * (0.5 + side * (0.2 + k * 0.2));
+        const fadeIn = Math.min(1, (rel + 1) * 3);
+        const fadeOut = rel > 0.35 ? Math.max(0, 1 - (rel - 0.35) / 0.4) : 1;
+        const a = fadeIn * fadeOut * 0.95;
+        if (a > 0.01) marks.push({ im, x, y, h, a, kd, drawn: false });
+      }
+      const drawMark = (m) => {
+        // 画像のまん中が cy。足元(下端)が水面より少し沈むように置く
+        part(m.im, m.x, m.y - m.h * 0.42, m.h, 0, m.a);
+        m.drawn = true;
+      };
+
       const ROWS = 9;
       const speed = 1 - calm * 0.62;            // 港では6割ほど減速
       marchPhase += dt * 0.022 * speed;
@@ -279,15 +311,26 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
       const march = sc * 0.00042 + marchPhase;  // 進む速さ
       const waveImgs = [art.wave_far, art.wave_mid, art.wave_near];
       let boatDrawn = false;
-      for (let i = ROWS - 1; i >= 0; i--) {
-        let z = ((i / ROWS - march) % 1 + 1) % 1;
-        const k = 1 - z;                         // 0=遠 → 1=近
+      /* ★奥から手前の順に並べ直してから描く。i の順のままやと、行が1周して
+         戻るところで順番が「近→最も近→（折り返し）→遠」になって、
+         **水平線際の遠い波が、手前にあるはずの港の目印や小舟の上に塗られる**
+         （目印が水平線に貼り付いたまま沈んで消えた原因）。 */
+      const rows = [];
+      for (let i = 0; i < ROWS; i++) {
+        const z = ((i / ROWS - march) % 1 + 1) % 1;
+        rows.push({ i, k: 1 - z });              // 0=遠 → 1=近
+      }
+      rows.sort((a, b) => a.k - b.k);
+      for (const { i, k } of rows) {
         const ease = Math.pow(k, 2.3);           // 遠くほど詰まって見える
         const y = horizon + (H - horizon) * ease;
         const h = H * (0.028 + 0.30 * Math.pow(k, 1.9)) * zoom;
         // 水平線際でふわっと湧いて、手前で少し薄れる（唐突に出入りさせん）
         const a = Math.min(1, k * 7) * (1 - Math.pow(k, 6)) * 0.95;
         if (a <= 0.01) continue;
+
+        // 港の目印も同じ。自分より手前の波が来る前に描く
+        for (const m of marks) if (!m.drawn && k > m.kd) drawMark(m);
 
         // 小舟は「ある深さ」に居る。その深さの波を跨ぐ手前で描く＝波間に沈む
         if (!boatDrawn && k > 0.42) {
@@ -297,10 +340,14 @@ const srcs = Object.fromEntries(PARTS.map((n) => [n, `${base}/world/${n}.webp`])
         // 近いほど横にも速く流れる（真正面に進んどるんやなく、少し斜めに渡る）
         band(waveImgs[i % 3], y, h, sc * (0.05 + k * 0.5) + flowPhase * (3 + k * 26), a);
       }
+      for (const m of marks) if (!m.drawn) drawMark(m);
       if (!boatDrawn) drawBoat(t, horizon + (H - horizon) * Math.pow(0.42, 2.3), H * 0.052 * zoom);
 
       // 5. 霧。航海が深まるほど濃くなる（深夜の海）
-      const fog = Math.min(0.62, Math.max(0, (journey - 0.35) * 0.9) + calm * 0.22);
+      // ★港では靄が**晴れる**。前は逆に濃くしとって、いちばん見せたい
+      //   港の目印を靄が上から塗りつぶしとった（港のまん中で目印が消えた）。
+      //   港に入ったら視界が開ける方が、見た目も理屈も合う。
+      const fog = Math.min(0.5, Math.max(0, (journey - 0.35) * 0.9)) * (1 - calm * 0.75);
       if (fog > 0.01) {
         band(art.mist_loop, horizon - H * 0.04, H * 0.22, sc * 0.12 + t * 6, fog);
       }

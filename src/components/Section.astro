@@ -31,7 +31,7 @@ const leadParts = lead ? lead.split(/(?<=。)/).filter(Boolean) : [];
 ---
 {/* 港の入口。海と空だけの一画面を挟んで「着いた」を作る。
     紙だまりの外に置くけん、ここだけ背景（海・空・月）が素で見える。 */}
-{harbor && <HarborGate harbor={harbor} label={harborLabel} ayn={harborAyn} tone={tone} />}
+{harbor && <HarborGate harbor={harbor} label={harborLabel} ayn={harborAyn} tone={tone} port={id} />}
 
 <section id={id} data-tone={tone} class:list={['section', { 'section--mist': mist }]}>
   <div class="container">
