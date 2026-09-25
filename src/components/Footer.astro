@@ -32,7 +32,9 @@ const links = [
 
 <style>
   .footer {
-    background: var(--grad-hero);
+    /* ★Hero と同じグラデ(--grad-hero)は下の端が明るい水色(#9fb6e6)で、一番下の
+       著作権表示（白）が 2.9〜3.5 しか出とらんかった。フッターは下まで夜の紺のまま */
+    background: radial-gradient(120% 120% at 50% 0%, #2a3566 0%, #3a4a86 45%, #46569a 100%);
     color: #fff;
     padding-top: clamp(2.4rem, 6vw, 3.4rem);
     margin-top: 2rem;
@@ -58,5 +60,5 @@ const links = [
     border-top: 1px solid rgba(255,255,255,0.16);
     padding-block: 1rem;
   }
-  .footer__bar small { opacity: 0.75; font-size: 0.82rem; }
+  .footer__bar small { opacity: 0.92; font-size: 0.82rem; }   /* 0.75 やと 2.9 しか出とらんかった */
 </style>

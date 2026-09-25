@@ -13,6 +13,7 @@ import Featured from '../components/Featured.astro';
 import MoodPicker from '../components/MoodPicker.astro';
 import HScroll from '../components/HScroll.astro';
 import Reveal from '../components/Reveal.astro';
+import Icon from '../components/Icon.astro';
 import About from '../components/About.astro';
 import Contact from '../components/Contact.astro';
 import Feed from '../components/Feed.astro';
@@ -116,7 +117,6 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
                 poster={`${base}/media/shiftwake_promo_poster.jpg`}
                 width="720"
                 height="1280"
-                muted
                 loop
                 playsinline
                 controls
@@ -130,7 +130,6 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
                 poster={`${base}/media/fuyo_promo_poster.webp`}
                 width="720"
                 height="1280"
-                muted
                 loop
                 playsinline
                 controls
@@ -304,7 +303,7 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
             {recentLogs.map((e) => (
               <li>
                 <a href={`${base}/engine-room/#${logAnchor(e.data.date)}`}>
-                  <span class="enginelog__date">⚙ {fmtLogDate(e.data.date)}</span>
+                  <span class="enginelog__date"><Icon name="wrench" /> {fmtLogDate(e.data.date)}</span>
                   <span class="enginelog__title">{e.data.title}</span>
                 </a>
               </li>
@@ -314,7 +313,7 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
         ) : (
           <p class="enginelog__empty">日誌はまだ白紙ばい。</p>
         )}
-        {logScrolls && <p class="enginelog__hint" aria-hidden="true">↕ 窓の中をスクロールすると、前の日誌も読めるばい</p>}
+        {logScrolls && <p class="enginelog__hint" aria-hidden="true"><Icon name="updown" /> 窓の中をスクロールすると、前の日誌も読めるばい</p>}
         <a class="pins__pin pins__pin--strong enginelog__more" href={`${base}/engine-room/`}>
           機関室に入る{allLogs.length > LOG_WINDOW_MAX ? '（ぜんぶの日誌）' : ''}
         </a>
@@ -353,10 +352,10 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
     margin: 0 0 clamp(0.9rem, 2.5vw, 1.3rem);
   }
   .subhead__en {
-    font-size: 0.58rem;
+    font-size: 0.75rem;
     letter-spacing: 0.26em;
     text-transform: uppercase;
-    color: var(--c-blue-deep);
+    color: var(--sw-ink-strong, var(--c-blue-deep));   /* 紙の上で 4.0 しか出とらんかった */
     opacity: 0.85;
   }
 
@@ -380,7 +379,7 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
   }
   .pins__pin:hover { transform: translateY(-2px); border-color: var(--c-blue); color: var(--c-blue-deep); text-decoration: none; }
   .pins__pin--strong {
-    background: var(--grad-accent);
+    background: var(--grad-ink);
     color: #fff;
     border-color: transparent;
   }
@@ -410,10 +409,10 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
   }
   .routes__pill:hover { border-color: var(--c-blue); transform: translateY(-2px); text-decoration: none; }
   .routes__pill b { font-size: 0.88rem; font-weight: 600; }
-  .routes__pill span { font-size: 0.7rem; color: var(--c-ink-soft); font-family: var(--font-display); }
+  .routes__pill span { font-size: 0.75rem; color: var(--c-ink-soft); font-family: var(--font-display); }
   .routes__pill em {
     font-style: normal;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--c-ink-soft);
     margin-top: 0.2rem;
     display: -webkit-box;

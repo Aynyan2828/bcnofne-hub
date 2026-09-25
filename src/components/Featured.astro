@@ -89,7 +89,8 @@ const hookLines = (hook ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
     align-items: center;
     /* 夜の海に浮かぶ一隻＝主役だけ深い紺のパネルにする */
     background:
-      linear-gradient(150deg, rgba(31, 40, 84, 0.92) 0%, rgba(58, 74, 134, 0.88) 55%, rgba(120, 108, 190, 0.85) 100%);
+      linear-gradient(150deg, rgba(31, 40, 84, 0.94) 0%, rgba(52, 66, 124, 0.92) 55%, rgba(84, 74, 150, 0.92) 100%);
+    /* ★右下が薄い紫(120,108,190)で、白の小さい文字が 3.5 しか出とらんかった */
     color: #fff;
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: calc(var(--radius) + 6px);
@@ -114,11 +115,11 @@ const hookLines = (hook ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
   .feat__body { position: relative; }
   .feat__eyebrow {
     font-family: var(--font-display);
-    font-size: 0.62rem;
+    font-size: 0.75rem;
     letter-spacing: 0.3em;
     text-transform: uppercase;
     margin: 0 0 0.7rem;
-    color: rgba(255, 255, 255, 0.72);
+    color: #fff;
   }
   .feat__brand { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
   .feat__icon { width: 52px; height: 52px; border-radius: 14px; box-shadow: 0 6px 18px -8px rgba(0,0,0,0.6); }
@@ -128,7 +129,7 @@ const hookLines = (hook ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
     text-shadow: 0 2px 16px rgba(14, 20, 55, 0.5);
   }
   .feat__badge {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     padding: 0.15em 0.7em;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.18);
@@ -144,7 +145,7 @@ const hookLines = (hook ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
   .feat__summary {
     margin: 0 0 1.2rem;
     font-size: 0.92rem;
-    color: rgba(255, 255, 255, 0.86);
+    color: rgba(255, 255, 255, 0.94);
     max-width: 44ch;
   }
   .feat__cta { display: flex; align-items: center; gap: 0.5rem 1rem; flex-wrap: wrap; }

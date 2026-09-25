@@ -8,7 +8,9 @@
   --c-ink: #1f2540;          /* 本文（深いネイビー） */
   --c-ink-soft: #4a4f6a;     /* 補助テキスト */
   --c-blue: #6aa9e0;         /* AYNの髪ベース・空 */
-  --c-blue-deep: #3d6fb4;
+  /* ★#3d6fb4 → #2d5a96（UI UX Pro Max §1 color-contrast）。紙だまりの上で 4.3 しかなく、
+     見出しの英字・バッジ・リンクが基準 4.5 を割っとった。色味（青）はそのまま一段深く */
+  --c-blue-deep: #2d5a96;
   --c-purple: #8b7bd8;       /* グラデ紫 */
   --c-pink: #f4a6c4;         /* ハート装飾ピンク */
   --c-mist: #eaf1fb;         /* うっすら青の霧 */
@@ -19,6 +21,9 @@
   /* グラデ（夜空〜海） */
   --grad-hero: radial-gradient(120% 120% at 50% 0%, #2a3566 0%, #3a4a86 38%, #5f6fb8 70%, #9fb6e6 100%);
   --grad-accent: linear-gradient(120deg, var(--c-blue) 0%, var(--c-purple) 55%, var(--c-pink) 100%);
+  /* 白い文字を乗せる所はこっち。上の淡いグラデは白文字で 1.9〜3.6 しか出ん（桃色の所が最悪）。
+     並び（水色→紫→桃）はそのまま、白文字がどこでも 5.5 以上になる濃さ。線や点の飾りは淡い方のまま */
+  --grad-ink: linear-gradient(120deg, #2f64a8 0%, #5e4db8 55%, #a8457a 100%);
 
   /* Typography */
   /* 手書き風：本文=Yomogi(ゆる丸手書き) / 見出し=Yusei Magic(マーカー風)。
@@ -153,7 +158,12 @@ h1, h2, h3 { line-height: 1.4; margin: 0; font-weight: 400; }
 /* ★港の入口とその港の中身は「同じ港」。入口のすぐ下から中身を始める
    （マスター: APPS HARBOR と「つくったアプリ」の間は空けんでよか）。
    港と港の間（=外洋）は上の padding がそのまま効く。 */
-.gate + .section { padding-top: clamp(0.5rem, 2vw, 1.25rem); }
+.gate + .section {
+  padding-top: clamp(0.5rem, 2vw, 1.25rem);
+  /* ★入口の直後は見出しがすぐ始まるけん、紙だまりのぼかし(13%)の中に見出しが入って
+     海が透け、「つくったアプリ」が 2.8 しか出とらんかった。ぼかしを短くする */
+  --pool-in: 3%;
+}
 
 /* ★最初の港はいきなり来ん。ようこその後に外洋を一区間挟む
    （マスター: いきなり ARRIVING APPS HARBOR はおかしい）。
@@ -183,7 +193,7 @@ html[data-tide='night'] .section::before {
     linear-gradient(
       180deg,
       rgba(243, 246, 255, 0) 0%,
-      rgba(243, 246, 255, 0.88) 13%,
+      rgba(243, 246, 255, 0.88) var(--pool-in, 13%),
       rgba(243, 246, 255, 0.94) 50%,
       rgba(243, 246, 255, 0.88) 87%,
       rgba(243, 246, 255, 0) 100%
@@ -232,7 +242,7 @@ html[data-tide='night'] .section::before {
 }
 /* 一行説明は文ごとに色を変える。1文目は普通の墨、2文目からその港の色。
    全部に色を付けると読み物として落ち着かんけん、交互にしとる。 */
-.section-head p .s-odd { color: var(--sw-ink, var(--c-ink)); }
+.section-head p .s-odd { color: var(--sw-ink-strong, var(--c-ink)); }
 
 /* うっすら水彩の帯背景（交互・半透明で背後のコラージュを透かす） */
 /* 交互の霧の帯。紙だまりの上に薄く青を重ねる（端では一緒に引く） */
@@ -241,7 +251,7 @@ html[data-tide='night'] .section::before {
     linear-gradient(
       180deg,
       rgba(234, 241, 251, 0) 0%,
-      rgba(234, 241, 251, 0.88) 13%,
+      rgba(234, 241, 251, 0.88) var(--pool-in, 13%),
       rgba(238, 244, 253, 0.95) 50%,
       rgba(234, 241, 251, 0.88) 87%,
       rgba(234, 241, 251, 0) 100%
@@ -252,7 +262,7 @@ html[data-tide='night'] .section--mist::before {
     linear-gradient(
       180deg,
       rgba(228, 235, 250, 0) 0%,
-      rgba(228, 235, 250, 0.90) 13%,
+      rgba(228, 235, 250, 0.90) var(--pool-in, 13%),
       rgba(233, 239, 252, 0.96) 50%,
       rgba(228, 235, 250, 0.90) 87%,
       rgba(228, 235, 250, 0) 100%
@@ -337,6 +347,9 @@ html.reveal-on [data-reveal-stagger] > *.is-in {
   justify-content: center;
   gap: 0.6rem;
   margin: 0 0 0.9rem;
+  /* ★海の上に直に乗っとって、字が 2.7〜3.2 しか出とらんかった。港の入口と同じ光だまり */
+  padding: 0.7rem 0;
+  background: radial-gradient(closest-side, rgba(251, 252, 255, 0.9), rgba(251, 252, 255, 0.55) 60%, rgba(251, 252, 255, 0));
   transition: opacity 0.9s ease, transform 0.9s ease;
 }
 html.reveal-on .arrival { opacity: 0; transform: translateY(6px); }
@@ -350,14 +363,13 @@ html.reveal-on .arrival.is-arrived { opacity: 1; transform: none; }
 .arrival__rule:last-child { background: linear-gradient(90deg, var(--c-blue), transparent); }
 .arrival__tag {
   font-family: var(--font-display);
-  font-size: 0.56rem;
+  font-size: 0.75rem;
   letter-spacing: 0.28em;
-  color: var(--c-ink-soft);
-  opacity: 0.75;
+  color: var(--c-ink);
 }
 .arrival__name {
   font-family: var(--font-display);
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   letter-spacing: 0.22em;
   color: var(--c-blue-deep);
   white-space: nowrap;
@@ -422,7 +434,7 @@ html[data-mood='all'] #music::after { opacity: 0; }
   border-radius: 999px;
   font-weight: 600;
   font-size: 0.95rem;
-  background: var(--grad-accent);
+  background: var(--grad-ink);
   color: #fff;
   box-shadow: var(--shadow-soft);
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
@@ -484,5 +496,13 @@ html, body { overflow-x: clip; }
   width: max(100%, 44px);
   height: max(100%, 44px);
   translate: -50% -50%;
+}
+
+/* 線のアイコン（src/lib/icons.ts）。文字と同じ大きさ・同じ色で並びに収まる */
+.ico {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  vertical-align: -0.14em;
 }
 

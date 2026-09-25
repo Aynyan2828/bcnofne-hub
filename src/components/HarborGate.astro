@@ -70,8 +70,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     border-radius: 50%;
     background: radial-gradient(
       closest-side,
-      rgba(251, 252, 255, 0.72),
-      rgba(251, 252, 255, 0.34) 55%,
+      rgba(251, 252, 255, 0.92),   /* 0.72→0.92: 文字の後ろを明るく（コントラスト） */
+      rgba(251, 252, 255, 0.5) 55%,
       rgba(251, 252, 255, 0) 100%
     );
     pointer-events: none;
@@ -112,10 +112,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .gate__tag {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 0.66rem;
+    font-size: 0.75rem;
     letter-spacing: 0.34em;
-    color: var(--c-blue-deep);
-    opacity: 0.95;
+    color: var(--sw-ink-strong, var(--c-ink));   /* 海の上で 2.0〜2.6 しか出とらんかった */
+    opacity: 1;
     text-shadow:
       0 0 10px rgba(255, 255, 255, 0.95),
       0 0 22px rgba(255, 255, 255, 0.85);

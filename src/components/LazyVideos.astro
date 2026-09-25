@@ -1,71 +1,39 @@
 ---
 /**
- * 動画の遅延読み込み（1ページに1つ置くだけの裏方コンポーネント）
+ * 動画は「押した時だけ」読み込む（1ページに1つ置くだけの裏方コンポーネント）
  *
  * `<video data-lazyvideo data-src="/media/xxx.mp4" poster="..." preload="none">` を、
- *   - 画面に近づいたら src を入れて読み込み開始
- *   - 見えとるあいだだけ再生、画面外に出たら一時停止
- * にする。ポスター画像だけ先に出るけん、初速は軽い（動画 Nx MB を前借りせん）。
+ *   - 表紙の絵（poster）だけ出して、スマホ標準の再生ボタンを付ける
+ *   - 再生ボタンを押した時に初めて動画を読み込む（preload="none"）
+ *   - 画面の外に出たら一時停止
+ * にする。
  *
- * prefers-reduced-motion / データセーバー（save-data）では自動再生せず、
- * ネイティブの再生コントロールを出して「押したら再生」に切り替える。
+ * ★前は「画面の1つ手前で読み込み開始→見えとる間は自動再生」やった。スクロールしきると
+ *   動画 4 本で約 17.5MB を勝手に使っとった（スマホの通信量）。UI UX Pro Max §3
+ *   （重いメディアは必要になるまで読まん）に合わせて、押した人だけが読み込む形にした。
  */
 ---
 <script>
   (() => {
     const vids = Array.from(document.querySelectorAll('video[data-lazyvideo]'));
     if (!vids.length) return;
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const saveData = !!(navigator.connection && navigator.connection.saveData);
-    const manual = reduce || saveData;
 
-    // 自動再生せん設定のときは、手で押せるようにしとく
-    if (manual) for (const v of vids) v.setAttribute('controls', '');
-
-    const load = (v) => {
-      if (v.dataset.loaded) return;
-      v.dataset.loaded = '1';
-      if (v.dataset.src) v.src = v.dataset.src;
-    };
-
-    if (!('IntersectionObserver' in window)) {
-      // 古い環境: とりあえず src を入れて、あとはブラウザ任せ
-      for (const v of vids) load(v);
-      return;
-    }
-
-    // 少し手前（一画面分）で読み込みだけ始める
-    const preloader = new IntersectionObserver(
-      (es) => {
-        for (const e of es) {
-          if (!e.isIntersecting) continue;
-          load(e.target);
-          preloader.unobserve(e.target);
-        }
-      },
-      { rootMargin: '100% 0px' }
-    );
-    // 見えとるあいだだけ再生
-    const player = new IntersectionObserver(
-      (es) => {
-        for (const e of es) {
-          const v = e.target;
-          if (e.isIntersecting) {
-            load(v);
-            if (!manual) {
-              const p = v.play();
-              if (p && p.catch) p.catch(() => { /* 自動再生が拒否されたら静かに諦める */ });
-            }
-          } else if (!v.paused) {
-            v.pause();
-          }
-        }
-      },
-      { threshold: 0.25 }
-    );
     for (const v of vids) {
-      preloader.observe(v);
-      player.observe(v);
+      v.setAttribute('controls', '');
+      v.preload = 'none';                 // 再生を押すまで 1 バイトも取りに行かん
+      if (v.dataset.src && !v.getAttribute('src')) v.src = v.dataset.src;
     }
+
+    if (!('IntersectionObserver' in window)) return;
+    // 見えんところで鳴り続けんよう、画面の外に出たら止める
+    const io = new IntersectionObserver(
+      (es) => {
+        for (const e of es) {
+          if (!e.isIntersecting && !e.target.paused) e.target.pause();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    for (const v of vids) io.observe(v);
   })();
 </script>

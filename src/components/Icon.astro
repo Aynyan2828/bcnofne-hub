@@ -1,0 +1,11 @@
+---
+/**
+ * 線のアイコン。中身は src/lib/icons.ts が正本（JS で組み立てる所と同じ形を使う）。
+ *   <Icon name="wrench" />            … 飾り（読み上げん）
+ *   <Icon name="play" label="再生" /> … 意味がある時だけ label を付ける
+ */
+import { iconSvg } from '../lib/icons';
+interface Props { name: string; label?: string }
+const { name, label } = Astro.props;
+---
+<Fragment set:html={iconSvg(name, label)} />

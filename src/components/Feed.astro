@@ -14,12 +14,14 @@ const LIMIT = 8;
 </div>
 
 <script>
+  import { iconSvg } from '../lib/icons';
   const wrap = document.querySelector('[data-feed]');
   if (wrap) {
     const list = wrap.querySelector('[data-feed-list]');
     const EP = wrap.getAttribute('data-endpoint');
     const LIMIT = parseInt(wrap.getAttribute('data-limit') || '8', 10);
-    const ICON = { youtube: '▶', podcast: '🎙', note: '✎', bluesky: '🦋', worklog: '⚙' };
+    // ★前は絵文字（▶🎙✎🦋⚙）やった。端末で見た目が変わるけん線のアイコンに（UI UX Pro Max §4）
+    const ICON = { youtube: 'play', podcast: 'mic', note: 'pen', bluesky: 'chat', worklog: 'wrench' };
     const fmtDate = (iso) => {
       const d = new Date(iso || '');
       if (isNaN(d.getTime())) return '';
@@ -40,7 +42,9 @@ const LIMIT = 8;
           a.className = 'feed__link';
           const src = document.createElement('span');
           src.className = `feed__src feed__src--${it.source}`;
-          src.textContent = `${ICON[it.source] || '•'} ${it.label}`;
+          // アイコンは手元の決まった SVG、ラベルは外から来る文字＝必ず文字として入れる
+          src.innerHTML = iconSvg(ICON[it.source] || 'dot');
+          src.append(document.createTextNode(` ${it.label}`));
           const title = document.createElement('span');
           title.className = 'feed__title';
           title.textContent = it.title;
@@ -70,8 +74,8 @@ const LIMIT = 8;
   }
   .feedwrap .feed__head { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
   .feedwrap .feed__badge {
-    font-size: 0.72rem; font-weight: 700; color: #fff;
-    background: var(--grad-accent); padding: 0.15em 0.6em; border-radius: 999px;
+    font-size: 0.75rem; font-weight: 700; color: #fff;
+    background: var(--grad-ink); padding: 0.15em 0.6em; border-radius: 999px;
   }
   .feedwrap .feed__sub { font-size: 0.78rem; color: var(--c-ink-soft); }
   .feedwrap .feed { list-style: none; margin: 0; padding: 0; }
@@ -89,14 +93,14 @@ const LIMIT = 8;
   }
   .feedwrap .feed__link:hover { background: var(--c-mist); text-decoration: none; border-radius: 8px; }
   .feedwrap .feed__src {
-    flex-shrink: 0; font-size: 0.7rem; font-weight: 700; white-space: nowrap;
+    flex-shrink: 0; font-size: 0.75rem; font-weight: 700; white-space: nowrap;
     padding: 0.1em 0.55em; border-radius: 999px; color: var(--c-blue-deep);
     background: var(--c-mist); border: 1px solid var(--c-line);
   }
   .feedwrap .feed__src--youtube { color: #b3261e; background: #fdeeed; border-color: #f6d3d0; }
   .feedwrap .feed__src--podcast { color: #7a4fb8; background: #f3eefb; border-color: #e2d7f5; }
-  .feedwrap .feed__src--note   { color: #2d8f6f; background: #eaf7f2; border-color: #cdebde; }
-  .feedwrap .feed__src--bluesky{ color: #1d6fd1; background: #eaf2fd; border-color: #cfe0f7; }
+  .feedwrap .feed__src--note   { color: #1e6e55; background: #eaf7f2; border-color: #cdebde; }
+  .feedwrap .feed__src--bluesky{ color: #1a5fb4; background: #eaf2fd; border-color: #cfe0f7; }
   .feedwrap .feed__title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
   .feedwrap .feed__date { flex-shrink: 0; font-size: 0.75rem; color: var(--c-ink-soft); font-variant-numeric: tabular-nums; }
   .feedwrap .feed__rss { display: inline-block; margin-top: 0.5rem; font-size: 0.75rem; color: var(--c-ink-soft); }

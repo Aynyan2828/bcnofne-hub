@@ -5,6 +5,7 @@
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Footer from '../../components/Footer.astro';
+import Icon from '../../components/Icon.astro';
 import aynThinking from '../../assets/ayn/ayn-thinking.png';
 import { getWorklog, fmtLogDate, logAnchor, logLines } from '../../lib/worklog';
 
@@ -46,7 +47,7 @@ const description =
           <ol class="er-list">
             {logs.map((e) => (
               <li class="er-entry" id={logAnchor(e.data.date)}>
-                <div class="er-entry__mark" aria-hidden="true">⚙</div>
+                <div class="er-entry__mark" aria-hidden="true"><Icon name="wrench" /></div>
                 <article class="er-entry__card">
                   <p class="er-entry__date">
                     <time datetime={e.data.date.toISOString()}>{fmtLogDate(e.data.date)}</time>
@@ -120,7 +121,7 @@ const description =
   }
   .er-hero__code {
     margin: 0;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     letter-spacing: 0.4em;
     color: #e8c46a;
   }
@@ -235,7 +236,7 @@ const description =
     margin: 0.7rem 0 0;
   }
   .er-entry__tags li {
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     padding: 0.15em 0.7em;
     border-radius: 999px;
     background: var(--c-mist);
