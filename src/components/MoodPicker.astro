@@ -74,13 +74,19 @@ const MOODS = [
       // 選んだ気分を根っこに書く。Music の港の光だけが、ごくわずかに寄る。
       // （global.css の html[data-mood=...] #music::before）
       document.documentElement.dataset.mood = key;
-      let shown = 0;
-      for (const card of cards) {
+      const isHit = (card) => {
         const tags = (card.getAttribute('data-moods') || '').split(/\s+/).filter(Boolean);
         // タグ無し＝常設カード（どの気分でも出す）
-        const hit = key === 'all' || tags.length === 0 || tags.includes(key);
-        card.hidden = !hit;
-        if (hit) shown++;
+        return key === 'all' || tags.length === 0 || tags.includes(key);
+      };
+      const shown = cards.filter(isHit).length;
+      // MotionFx があれば、外れるカードは縮んで消え・残りはバネで詰める（FLIP）。
+      // 無い（動きを減らす設定・スクリプト未着）なら、今までどおりパッと出し分ける。
+      const fx = window.BCN_FX && window.BCN_FX.moodSwap;
+      if (fx) {
+        fx(grid, cards, isHit);
+      } else {
+        for (const card of cards) card.hidden = !isHit(card);
       }
       for (const b of picker.querySelectorAll('[data-mood]')) {
         b.setAttribute('aria-pressed', String(b.getAttribute('data-mood') === key));
@@ -109,10 +115,12 @@ const MOODS = [
       countEl.textContent = `${shown}件の作品を表示しとる。`;
       // 棚（HScroll）に入っとるので、絞り込んだら先頭に戻す。
       // scroll を1回投げて、端の霧と送りボタンの出し分けを測り直させる。
-      if (grid.scrollWidth > grid.clientWidth || grid.scrollLeft > 0) {
-        grid.scrollTo({ left: 0 });
+      if (!fx) {
+        if (grid.scrollWidth > grid.clientWidth || grid.scrollLeft > 0) {
+          grid.scrollTo({ left: 0 });
+        }
+        grid.dispatchEvent(new Event('scroll'));
       }
-      grid.dispatchEvent(new Event('scroll'));
     };
 
     picker.addEventListener('click', (e) => {

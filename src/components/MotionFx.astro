@@ -1,0 +1,215 @@
+---
+/**
+ * MotionFx — 触った時の「手応え」を足す裏方（全ページ共通・1つ置くだけ）。
+ *
+ * Framer Motion の素の JS 版（`motion`）の **バネの計算だけ** を借りとる。
+ * React は載せとらん（Astro＋素の JS のまま＝軽さはそのまま）。
+ *
+ *   1. 押した手応え … カード・ボタンを押すと少し沈んで、離すとバネでぽよんと戻る
+ *   2. 棚のドラッグ … マウスで横の棚を掴んで投げると、慣性で流れて近くのカードで止まる
+ *   3. 気分の絞り込み … 外れるカードは縮んで消え、残りはバネで詰め、新顔はふわっと出る
+ *                      （MoodPicker が window.BCN_FX.moodSwap を呼ぶ。無ければ従来どおり）
+ *
+ * ★今ある CSS の動きとぶつからんようにしとる:
+ *   ホバーで浮く・海から浮かぶ（Reveal）は `transform` を使う。こっちは
+ *   独立したプロパティの `scale` と `translate` だけに書く＝重ねがけになって上書きせん。
+ *   不透明度は Reveal が CSS の transition を持っとるけん、JS で毎フレーム書かず
+ *   ブラウザの Web Animations（el.animate）で一瞬だけ上から当てる。
+ * ★動きを減らす設定の人には何もせん（MoodPicker も従来の出し分けに戻る）。
+ */
+---
+<script>
+  // ★`animate` を丸ごと読むと圧縮後 21KB あった。使うのは「数値をバネで動かす」だけ
+  //   やけん、その中身（animateValue ＋ spring）だけ取り出して軽くしとる。
+  import { animateValue, spring } from 'motion';
+  const springNum = (from, to, opts) =>
+    animateValue({ keyframes: [from, to], type: spring, ...opts });
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduce) {
+    /* ── 1. 押した手応え ─────────────────────────────────────── */
+    const PRESS = '.card, .btn, .feat__sub, .moods__chips [data-mood], .hs__nav';
+    const state = new WeakMap(); // el → { v: 今の大きさ, anim }
+
+    const springTo = (el, to, opts) => {
+      const s = state.get(el) || { v: 1, anim: null };
+      s.anim?.stop();
+      s.anim = springNum(s.v, to, {
+        ...opts,
+        onUpdate: (v) => { s.v = v; el.style.scale = String(v); },
+        onComplete: () => { if (to === 1) el.style.scale = ''; },
+      });
+      state.set(el, s);
+    };
+    // 沈むのは速く・硬めに。戻る時はやわらかく少し行き過ぎる＝ぽよん
+    const press = (el) => springTo(el, el.matches('.card') ? 0.965 : 0.93, { stiffness: 620, damping: 32 });
+    const release = (el) => springTo(el, 1, { stiffness: 340, damping: 11 });
+
+    document.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      const el = e.target.closest(PRESS);
+      if (!el) return;
+      let pressed = false;
+      let timer = 0;
+      const x0 = e.clientX, y0 = e.clientY;
+      const down = () => { pressed = true; press(el); };
+      // ★指の時は少し待つ。棚を横にスワイプするたびにカードがへこむと鬱陶しい。
+      //   待っとる間に指が動いた（＝スクロール）なら押さん。
+      if (e.pointerType === 'touch') timer = window.setTimeout(down, 90);
+      else down();
+
+      const end = () => {
+        clearTimeout(timer);
+        if (pressed) release(el);
+        window.removeEventListener('pointerup', end);
+        window.removeEventListener('pointercancel', end);
+        window.removeEventListener('pointermove', move);
+      };
+      const move = (m) => {
+        if (Math.hypot(m.clientX - x0, m.clientY - y0) > 10) end();
+      };
+      window.addEventListener('pointerup', end);
+      window.addEventListener('pointercancel', end);
+      window.addEventListener('pointermove', move, { passive: true });
+    }, { passive: true });
+
+    /* ── 2. 棚のドラッグ（マウスだけ。指は元々スワイプできる）──── */
+    const snapTargets = (track) => {
+      const cs = getComputedStyle(track);
+      const pad = parseFloat(cs.scrollPaddingInlineStart) || parseFloat(cs.paddingLeft) || 0;
+      const base = track.getBoundingClientRect().left;
+      const max = track.scrollWidth - track.clientWidth;
+      return Array.from(track.children, (c) => {
+        if (c.hidden || c.getAttribute('aria-hidden') === 'true') return null;
+        const x = c.getBoundingClientRect().left - base + track.scrollLeft - pad;
+        return Math.max(0, Math.min(max, x));
+      }).filter((x) => x !== null);
+    };
+
+    const glideTo = (track, from, to, velocity) => {
+      track._glide?.stop();
+      track._glide = springNum(from, to, {
+        stiffness: 170, damping: 26, velocity,
+        onUpdate: (x) => { track.scrollLeft = x; },
+        onComplete: () => { track.style.scrollSnapType = ''; track.style.scrollBehavior = ''; },
+      });
+    };
+
+    document.querySelectorAll('.hs__track').forEach((track) => {
+      let drag = null;           // { x, left, moved, samples }
+      let swallowClick = false;
+
+      track.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        if (track.scrollWidth <= track.clientWidth) return;
+        track._glide?.stop();
+        drag = { x: e.clientX, left: track.scrollLeft, moved: false, samples: [{ x: e.clientX, t: e.timeStamp }] };
+      });
+
+      track.addEventListener('pointermove', (e) => {
+        if (!drag) return;
+        const dx = e.clientX - drag.x;
+        if (!drag.moved && Math.abs(dx) < 6) return;   // ちょっとの揺れはクリック扱い
+        if (!drag.moved) {
+          drag.moved = true;
+          track.setPointerCapture(e.pointerId);
+          // 掴んどる間は吸い付き(scroll-snap)と滑らかスクロールを切る。残すと指と喧嘩する
+          track.style.scrollSnapType = 'none';
+          track.style.scrollBehavior = 'auto';
+          track.classList.add('is-dragging');
+        }
+        track.scrollLeft = drag.left - dx;
+        drag.samples.push({ x: e.clientX, t: e.timeStamp });
+        if (drag.samples.length > 6) drag.samples.shift();
+      });
+
+      const finish = (e) => {
+        if (!drag) return;
+        const d = drag;
+        drag = null;
+        if (!d.moved) return;
+        track.classList.remove('is-dragging');
+        swallowClick = true;                   // ドラッグの最後でリンクが開かんように
+        setTimeout(() => { swallowClick = false; }, 0);
+
+        // 最後の 100ms ほどの速さ（px/秒）。スクロール量は指と逆向き
+        const s = d.samples;
+        const a = s[0], b = s[s.length - 1];
+        const dt = Math.max(1, b.t - a.t);
+        const v = -((b.x - a.x) / dt) * 1000;
+        const from = track.scrollLeft;
+        const aim = from + v * 0.28;           // 投げた勢いで流れる先
+        const stops = snapTargets(track);
+        const to = stops.reduce((best, x) => (Math.abs(x - aim) < Math.abs(best - aim) ? x : best), from);
+        glideTo(track, from, to, v);
+      };
+      track.addEventListener('pointerup', finish);
+      track.addEventListener('pointercancel', finish);
+      track.addEventListener('click', (e) => {
+        if (swallowClick) { e.preventDefault(); e.stopPropagation(); }
+      }, true);
+      // 画像やリンクをつまんだ時のブラウザ標準のドラッグ（ゴースト画像）を止める
+      track.addEventListener('dragstart', (e) => e.preventDefault());
+    });
+
+    /* ── 3. 気分の絞り込み（FLIP）────────────────────────────────
+       First: 今の位置を覚える → 外れるカードを縮めて消す → Last: 出し分けた後の
+       位置を測る → Invert: 前の位置へずらして → Play: バネで 0 に戻す */
+    const moodSwap = async (grid, cards, isHit) => {
+      // 連打対策: 新しい絞り込みが来たら、古い方は「縮めて消す」の後で手を引く
+      const id = (grid._swapId = (grid._swapId || 0) + 1);
+      grid.style.scrollBehavior = 'auto';
+      grid.scrollLeft = 0;                     // 先頭へ（測る前に戻しとくと位置がぶれん）
+      grid.style.scrollBehavior = '';
+
+      const visible = cards.filter((c) => !c.hidden);
+      const first = new Map(visible.map((c) => [c, c.getBoundingClientRect()]));
+      const leaving = visible.filter((c) => !isHit(c));
+      const entering = cards.filter((c) => c.hidden && isHit(c));
+
+      await Promise.all(leaving.map((c) =>
+        c.animate(
+          [{ opacity: 1, scale: '1' }, { opacity: 0, scale: '0.9' }],
+          { duration: 170, easing: 'cubic-bezier(0.4, 0, 1, 1)' }
+        ).finished.catch(() => {})
+      ));
+      if (grid._swapId !== id) return;
+      for (const c of leaving) c.hidden = true;
+      for (const c of entering) c.hidden = false;
+
+      // 残ったカード: 前の位置から今の位置へ、バネで滑らせる
+      for (const c of visible) {
+        if (!isHit(c)) continue;
+        const f = first.get(c), l = c.getBoundingClientRect();
+        const dx = f.left - l.left, dy = f.top - l.top;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) continue;
+        c._flip?.stop();
+        c._flip = springNum(1, 0, {
+          stiffness: 260, damping: 24,
+          onUpdate: (p) => { c.style.translate = `${dx * p}px ${dy * p}px`; },
+          onComplete: () => { c.style.translate = ''; },
+        });
+      }
+      // 新しく出るカード: 少し小さいところから、ぽよんと出す（1枚ずつ少しずらす）
+      entering.forEach((c, i) => {
+        c.animate(
+          [{ opacity: 0, scale: '0.9' }, { opacity: 1, scale: '1' }],
+          { duration: 420, delay: 60 + i * 45, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)', fill: 'backwards' }
+        );
+      });
+      grid.dispatchEvent(new Event('scroll'));
+    };
+
+    window.BCN_FX = { moodSwap };
+  }
+</script>
+
+<style is:global>
+  /* マウスの人にだけ「掴める」を見せる */
+  @media (hover: hover) and (pointer: fine) {
+    .hs__track { cursor: grab; }
+    .hs__track.is-dragging { cursor: grabbing; user-select: none; }
+    .hs__track.is-dragging a { pointer-events: none; }
+  }
+</style>

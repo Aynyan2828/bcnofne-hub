@@ -5,6 +5,7 @@ import CollageBackdrop from '../components/CollageBackdrop.astro';
 import OceanField from '../components/OceanField.astro';
 import LightWash from '../components/LightWash.astro';
 import TextFx from '../components/TextFx.astro';
+import MotionFx from '../components/MotionFx.astro';
 
 interface Props {
   title?: string;
@@ -78,6 +79,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <LightWash />
     <a href="#main" class="skip-link">本文へスキップ</a>
     <TextFx />
+    <MotionFx />
     <slot />
     <style>
       .skip-link {
