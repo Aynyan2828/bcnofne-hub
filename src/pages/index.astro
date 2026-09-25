@@ -48,8 +48,13 @@ const pinned = social.filter((s) => s.data.tier === 'pinned');
 const primarySocial = social.filter((s) => s.data.tier === 'primary');
 const moreSocial = social.filter((s) => s.data.tier === 'more');
 
-// 機関室の予告（AYN の機関日誌の新しい 3 本だけ。全部は /engine-room/）
-const recentLogs = (await getWorklog()).slice(0, 3);
+// 機関室の予告（AYN の機関日誌）。増えてきたら窓の中でスクロール（約 5 本ぶんの高さ）。
+// ページが重くならんよう窓に入れるのは新しい 30 本まで。全部は /engine-room/
+const LOG_WINDOW_MAX = 30;
+const LOG_WINDOW_ROWS = 5;
+const allLogs = await getWorklog();
+const recentLogs = allLogs.slice(0, LOG_WINDOW_MAX);
+const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
 ---
 <BaseLayout>
   <VoyageRail />
@@ -274,7 +279,13 @@ const recentLogs = (await getWorklog()).slice(0, 3);
     >
       <div class="enginelog" data-reveal="up">
         {recentLogs.length > 0 ? (
-          <ul class="enginelog__list">
+          <div class:list={['enginelog__window', { 'is-scroll': logScrolls }]}>
+          <ul
+            class="enginelog__list"
+            tabindex={logScrolls ? 0 : undefined}
+            aria-label={logScrolls ? 'AYN の機関日誌（窓の中をスクロールできます）' : undefined}
+            data-enginelog
+          >
             {recentLogs.map((e) => (
               <li>
                 <a href={`${base}/engine-room/#${logAnchor(e.data.date)}`}>
@@ -284,10 +295,14 @@ const recentLogs = (await getWorklog()).slice(0, 3);
               </li>
             ))}
           </ul>
+          </div>
         ) : (
           <p class="enginelog__empty">日誌はまだ白紙ばい。</p>
         )}
-        <a class="pins__pin pins__pin--strong enginelog__more" href={`${base}/engine-room/`}>機関室に入る</a>
+        {logScrolls && <p class="enginelog__hint" aria-hidden="true">↕ 窓の中をスクロールすると、前の日誌も読めるばい</p>}
+        <a class="pins__pin pins__pin--strong enginelog__more" href={`${base}/engine-room/`}>
+          機関室に入る{allLogs.length > LOG_WINDOW_MAX ? '（ぜんぶの日誌）' : ''}
+        </a>
       </div>
     </Section>
 
@@ -299,6 +314,17 @@ const recentLogs = (await getWorklog()).slice(0, 3);
   <LazyVideos />
   <Reveal />
 </BaseLayout>
+
+<script>
+  // 機関日誌の窓: 一番下まで読んだら下端の霧を消す
+  for (const list of document.querySelectorAll<HTMLElement>('[data-enginelog]')) {
+    const win = list.parentElement;
+    if (!win?.classList.contains('is-scroll')) continue;
+    const update = () => win.classList.toggle('is-end', list.scrollTop + list.clientHeight >= list.scrollHeight - 4);
+    list.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+</script>
 
 <style>
   /* Other Apps などの小見出し（港の中の区切り） */
@@ -387,15 +413,49 @@ const recentLogs = (await getWorklog()).slice(0, 3);
     margin: 0 auto;
     text-align: center;
   }
-  .enginelog__list {
-    list-style: none;
+  .enginelog__window {
+    position: relative;
     margin: 0 0 1rem;
-    padding: 0;
     background: var(--c-card);
     border: 1px solid var(--c-line);
     border-radius: 16px;
     box-shadow: var(--shadow-soft);
+    overflow: hidden;
+  }
+  .enginelog__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     text-align: left;
+  }
+  /* 窓: 約 5 本ぶん（1 行 ≒ 3rem）。中身が多い時だけスクロール。
+     overscroll-behavior で、窓の端まで来てもページごと流れ出さん（スマホの二重スクロール対策） */
+  .enginelog__window.is-scroll .enginelog__list {
+    max-height: 15.5rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--c-blue) transparent;
+  }
+  .enginelog__window.is-scroll .enginelog__list:focus-visible { outline: 2px solid var(--c-blue); outline-offset: -2px; }
+  /* 下に続きがある合図（下端のうっすら霧）。最後まで読んだら消える */
+  .enginelog__window.is-scroll::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2.2rem;
+    pointer-events: none;
+    background: linear-gradient(transparent, var(--c-card));
+    transition: opacity 0.2s ease;
+  }
+  .enginelog__window.is-end::after { opacity: 0; }
+  .enginelog__hint {
+    margin: -0.5rem 0 0.9rem;
+    font-size: 0.75rem;
+    color: var(--c-ink-soft);
   }
   .enginelog__list li + li { border-top: 1px dashed var(--c-line); }
   .enginelog__list a {
