@@ -28,8 +28,10 @@ interface Props {
   hint?: string;
   /** track に付ける data 属性（MoodPicker の絞り込み先など） */
   trackAttr?: string;
+  /** 中のカードを1枚ずつ海面から浮上させる（既定 true） */
+  surface?: boolean;
 }
-const { label, size = 'card', title, hint, trackAttr } = Astro.props;
+const { label, size = 'card', title, hint, trackAttr, surface = true } = Astro.props;
 
 // 1枚の幅は CSS 側（下の style）で端末ごとに決める。
 // min() 1本では書けん: スマホは vw の式、タブレット以上は固定 px にしたいけど、
@@ -49,7 +51,18 @@ const trackProps = trackAttr ? { [trackAttr]: true } : {};
     <button class="hs__nav hs__nav--prev" type="button" data-hs-prev aria-label={`${label}を前へ`}>
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
     </button>
-    <div class="hs__track" data-hs-track tabindex="0" role="group" aria-label={label} {...trackProps}>
+    {/* data-reveal-stagger は**トラック側**に付ける。カード1枚ずつに付けると、
+        横スクロールで画面外に居るカードがいつまでも出てこんようになるけん。
+        トラックが画面に入った時点で、中の全部に順番に .is-in が付く。 */}
+    <div
+      class="hs__track"
+      data-hs-track
+      tabindex="0"
+      role="group"
+      aria-label={label}
+      {...(surface ? { 'data-reveal-stagger': true } : {})}
+      {...trackProps}
+    >
       <slot />
     </div>
     <button class="hs__nav hs__nav--next" type="button" data-hs-next aria-label={`${label}を次へ`}>

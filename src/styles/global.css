@@ -228,6 +228,33 @@ html.reveal-on [data-reveal-stagger] > * {
   transition: opacity 0.75s ease, transform 0.75s cubic-bezier(0.22, 0.61, 0.36, 1);
   will-change: opacity, transform;
 }
+
+/* ── 海面から浮かび上がる（カードの束）────────────────────────
+   情報の海を進んどるんやけん、カードは「湧く」んやなくて
+   **水の中から浮き上がってくる**方が合う。
+     ・少し深いところ(28px下)から上がる
+     ・最初はぼやけて小さい＝まだ水中 → 上がりきると くっきり原寸
+   ぼかしは重いけん、対象は棚とカードの束だけに絞る（見出しは今までどおり）。 */
+html.reveal-on [data-reveal-stagger] > * {
+  transform: translateY(28px) scale(0.965);
+  filter: blur(5px);
+  transition:
+    opacity 0.85s ease,
+    transform 0.85s cubic-bezier(0.22, 0.61, 0.36, 1),
+    filter 0.7s ease;
+}
+html.reveal-on [data-reveal-stagger] > *.is-in {
+  transform: none;
+  filter: blur(0);
+}
+/* 棚（横スクロール）そのものも同じ浮き方で上がる */
+html.reveal-on [data-reveal='up'].hs,
+html.reveal-on [data-reveal='up'] > .hs {
+  filter: blur(4px);
+  transition: opacity 0.85s ease, transform 0.85s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.7s ease;
+}
+html.reveal-on [data-reveal='up'].is-in.hs,
+html.reveal-on [data-reveal='up'].is-in > .hs { filter: blur(0); }
 html.reveal-on [data-reveal='left'] { transform: translateX(-28px); }
 html.reveal-on [data-reveal='right'] { transform: translateX(28px); }
 html.reveal-on [data-reveal].is-in,
@@ -243,12 +270,14 @@ html.reveal-on [data-reveal-stagger] > *.is-in {
 }
 @media (prefers-reduced-motion: reduce) {
   html.reveal-on [data-reveal],
-  html.reveal-on [data-reveal-stagger] > * { opacity: 1; transform: none; }
+  html.reveal-on [data-reveal-stagger] > * { opacity: 1; transform: none; filter: none; }
 }
 /* 印刷では演出を待たん（JS が動かん紙の上で真っ白にせんため） */
 @media print {
   html.reveal-on [data-reveal],
-  html.reveal-on [data-reveal-stagger] > * { opacity: 1 !important; transform: none !important; }
+  html.reveal-on [data-reveal-stagger] > * {
+    opacity: 1 !important; transform: none !important; filter: none !important;
+  }
 }
 
 /* ── 到着演出（ARRIVING / APPS HARBOR）─────────────────────────────

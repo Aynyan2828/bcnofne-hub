@@ -165,7 +165,7 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
       avatarAlt="おやすみのAYN"
     >
       <LatestVideo />
-      <div data-reveal="up">
+      <div>
         <HScroll label="チャンネル一覧" size="card" hint={`${channels.length}チャンネル`}>
           {channels.map((ch) => (
             <Card
@@ -191,7 +191,7 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
       avatarAlt="うれしそうなAYN"
     >
       <MoodPicker />
-      <div data-reveal="up">
+      <div>
         <HScroll label="音楽作品" size="card" hint={`${music.length}件`} trackAttr="data-music-grid">
           {music.map((m) => (
             <Card
@@ -230,7 +230,7 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
         <a class="pins__pin" href="#listen">YouTube（3チャンネル）は Radio 港に</a>
       </div>
 
-      <div data-reveal="up">
+      <div>
         <HScroll label="発信先とリンク" size="card" hint={`${primarySocial.length}件`}>
           {primarySocial.map((s) => (
             <Card

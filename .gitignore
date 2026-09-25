@@ -25,3 +25,6 @@ pnpm-debug.log*
 # editor
 .vscode/
 .idea/
+
+# 背景世界の生パーツ（GPT の出力そのまま）。透過済みの public/world/*.png だけ追う
+public/world/_raw/
