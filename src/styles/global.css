@@ -66,21 +66,34 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
-/* ページの地＝夜空。ここが情報の海のいちばん奥になる。
+/* ── 空（夕べ 〜 夜の連続航海）─────────────────────────────────
+   ページの地＝空。ここが情報の海のいちばん奥になる。
    キャンバスで空を塗ると手前の水彩コラージュが隠れてしまうけん、
    空は CSS の固定グラデで敷いて、星・波・小舟だけキャンバスで重ねる。
+
+   ★スクロールで時間が進む: VoyageRail が寄港地ごとに書く
+     <html data-depth="0..5"> にそのまま乗せとる。
+     港を越えるたびに 1.6 秒かけて空が移る＝「気づいたら日が暮れとった」。
+       0 PORT   夕べ・港を出る（金と桃）
+       1 APPS   宵の口（紫が差す）
+       2 RADIO  藍に沈む
+       3 MUSIC  沖の夜（いちばん深い）
+       4 SOCIAL 深夜の霧（少し白む）
+       5 AYN    夜明け前（水平線がほのかに明るい）
    本文の読みやすさはセクションの「紙だまり」が持つ（下の .section::before）。 */
 html {
-  background:
-    linear-gradient(
-      180deg,
-      #141b3d 0%,
-      #1d2752 26%,
-      #2a3566 52%,
-      #3b4780 78%,
-      #4a5794 100%
-    )
-    fixed;
+  background: var(--sky) fixed;
+  transition: background 1.6s ease;
+  /* 既定＝夕べ。data-depth が付く前でもこの色で出る */
+  --sky: linear-gradient(180deg, #3a3560 0%, #5b4a76 34%, #8f6386 62%, #c98a86 84%, #e8b48c 100%);
+}
+html[data-depth='1'] { --sky: linear-gradient(180deg, #2c2f5c 0%, #443f74 34%, #6b5288 64%, #9c6a92 86%, #c78f9a 100%); }
+html[data-depth='2'] { --sky: linear-gradient(180deg, #1e2550 0%, #2f3566 34%, #4a4382 66%, #6d5490 88%, #8f6c9c 100%); }
+html[data-depth='3'] { --sky: linear-gradient(180deg, #131a3e 0%, #1d2550 32%, #2b3468 64%, #3c4682 88%, #4e5796 100%); }
+html[data-depth='4'] { --sky: linear-gradient(180deg, #171e42 0%, #232c58 32%, #35406f 62%, #4b5688 84%, #6f79a6 100%); }
+html[data-depth='5'] { --sky: linear-gradient(180deg, #1b2348 0%, #2a3360 30%, #454d80 58%, #6e6a9c 80%, #b58fa0 100%); }
+@media (prefers-reduced-motion: reduce) {
+  html { transition: none; }
 }
 
 body {
