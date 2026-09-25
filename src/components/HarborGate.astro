@@ -19,7 +19,7 @@
  * 高さは 62vh（スマホ）。1画面まるごと取ると、情報に辿り着くのが遠うなる。
  * 「海だけの間」は感じるけど、スクロールが苦にならん長さにしとる。
  */
-import SweepText from './SweepText.astro';
+import TypeText from './TypeText.astro';
 
 interface Props {
   /** 英字の港名（例: MUSIC HARBOR） */
@@ -37,7 +37,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 <div data-gate data-tone={tone} class:list={["gate", ayn && "has-ayn"]}>
   <div class="gate__inner">
     <p class="gate__tag">ARRIVING</p>
-    <SweepText as="p" class="gate__name">{harbor}</SweepText>
+    <TypeText as="p" class="gate__name" text={harbor} />
     {label && <p class="gate__label">{label}</p>}
     <span class="gate__rule" aria-hidden="true"></span>
   </div>
@@ -126,8 +126,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       0 2px 26px rgba(255, 255, 255, 0.8);
   }
 
-  /* 港の名前は海の上。紙用の色やと沈むけん、濃い方を使う */
-  .gate__name :global(.sweep) { color: var(--sw-ink-strong, var(--c-ink)); }
+  /* 港の名前は海の上。紙用の色やと沈むけん、濃い方に差し替える。
+     ★--sw-ink そのものを上書きすること。色を指定するだけやと、
+     1文字ずつのアニメの最後が --sw-ink を名指ししとるけん戻されてしまう。 */
+  .gate__name { --sw-ink: var(--sw-ink-strong, var(--c-ink)); }
 
   .gate__label {
     margin: 0.45rem 0 0;

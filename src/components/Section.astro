@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import HarborGate from './HarborGate.astro';
-import SweepText from './SweepText.astro';
+import TypeText from './TypeText.astro';
 
 interface Props {
   id: string;
@@ -41,8 +41,8 @@ const leadParts = lead ? lead.split(/(?<=。)/).filter(Boolean) : [];
           <Image src={avatar} alt={avatarAlt ?? `${title}のAYN`} width={112} height={112} loading="lazy" />
         </div>
       )}
-      {eyebrow && <SweepText as="span" class="eyebrow">{eyebrow}</SweepText>}
-      <SweepText as="h2">{title}</SweepText>
+      {eyebrow && <TypeText as="span" class="eyebrow" text={eyebrow} />}
+      <TypeText as="h2" text={title} />
       {leadParts.length > 0 && (
         <p>{leadParts.map((part, i) => (
           <span class={i % 2 === 1 ? 's-odd' : undefined}>{part}</span>

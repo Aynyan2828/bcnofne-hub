@@ -179,17 +179,18 @@ html[data-tide='night'] .section::before {
 :root {
   --sw-a: #6aa9e0;
   --sw-b: #8b7bd8;
+  --sw-c: #f4a6c4;
   --sw-ink: var(--c-ink);
 }
 /* --sw-ink = 紙だまりの上（本文まわり）の文字色
    --sw-ink-strong = **海の上**（港の入口）で使う一段濃い方。
      港の名前は紙の外＝夜の海に置くけん、紙用の色のままやと沈んで読めん
      （実機で SIGNAL HARBOR が消えかけた）。光だまりの上で保つ濃さにしとる。 */
-[data-tone='blue']   { --sw-a: #6aa9e0; --sw-b: #8b7bd8; --sw-ink: #2e5f93; --sw-ink-strong: #1d4877; }
-[data-tone='purple'] { --sw-a: #8b7bd8; --sw-b: #f4a6c4; --sw-ink: #5a4aa8; --sw-ink-strong: #43348a; }
-[data-tone='rose']   { --sw-a: #f4a6c4; --sw-b: #f0c48a; --sw-ink: #a84a6e; --sw-ink-strong: #8a3355; }
-[data-tone='teal']   { --sw-a: #7fd0c4; --sw-b: #6aa9e0; --sw-ink: #217a71; --sw-ink-strong: #145b54; }
-[data-tone='amber']  { --sw-a: #f0c48a; --sw-b: #f4a6c4; --sw-ink: #8a5a1e; --sw-ink-strong: #6b4314; }
+[data-tone='blue']   { --sw-a: #6aa9e0; --sw-b: #8b7bd8; --sw-c: #f4a6c4; --sw-ink: #2e5f93; --sw-ink-strong: #1d4877; }
+[data-tone='purple'] { --sw-a: #8b7bd8; --sw-b: #f4a6c4; --sw-c: #6aa9e0; --sw-ink: #5a4aa8; --sw-ink-strong: #43348a; }
+[data-tone='rose']   { --sw-a: #f4a6c4; --sw-b: #f0c48a; --sw-c: #8b7bd8; --sw-ink: #a84a6e; --sw-ink-strong: #8a3355; }
+[data-tone='teal']   { --sw-a: #7fd0c4; --sw-b: #6aa9e0; --sw-c: #8b7bd8; --sw-ink: #217a71; --sw-ink-strong: #145b54; }
+[data-tone='amber']  { --sw-a: #f0c48a; --sw-b: #f4a6c4; --sw-c: #7fd0c4; --sw-ink: #8a5a1e; --sw-ink-strong: #6b4314; }
 
 .section-head {
   margin-bottom: clamp(1.4rem, 4vw, 2.2rem);
