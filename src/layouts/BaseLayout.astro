@@ -4,6 +4,7 @@ import SEO from '../components/SEO.astro';
 import CollageBackdrop from '../components/CollageBackdrop.astro';
 import OceanField from '../components/OceanField.astro';
 import LightWash from '../components/LightWash.astro';
+import TextFx from '../components/TextFx.astro';
 
 interface Props {
   title?: string;
@@ -50,6 +51,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) &&
           document.visibilityState === 'visible';
         if (canReveal) d.classList.add('reveal-on');
+        // 文字の演出(TextFx)の保険: 3秒たってもスクリプトが来んなら、
+        // 伏せた見出しを割らんまま出す（真っ白な見出しを残さん）
+        if (canReveal) setTimeout(function () {
+          if (!d.classList.contains('tfx-ready')) d.classList.add('tfx-off');
+        }, 3000);
 
         var h = new Date().getHours();
         d.dataset.tide = h >= 22 || h < 6 ? 'night' : 'day';
@@ -71,6 +77,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <OceanField />
     <LightWash />
     <a href="#main" class="skip-link">本文へスキップ</a>
+    <TextFx />
     <slot />
     <style>
       .skip-link {

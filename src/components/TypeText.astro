@@ -1,71 +1,26 @@
 ---
 /**
- * TypeText — 文字が1文字ずつ、色を変えながら流れてきて、そのあと固定される。
+ * TypeText — 見出し用の薄い包み。中身の動きは TextFx.astro が全部持つ。
  *
- * マスターの注文そのまま:
- *   「色の帯はいらん。最初カラフルな風に色を変えながら文字が流れてきて、
- *     タイピング風に、それで文字が固定されたらいい」
+ * 前は文字をここ（ビルド時）で1文字ずつに割っとったけど、本文や
+ * <strong> 入りの文にも同じ演出をかけたくなって、割るのを TextFx（実行時）に
+ * 一本化した。ここは「港の色で出す見出し」という印を付けるだけ。
  *
- * 1文字ぶんの動き（0.62秒）:
- *   下から少し大きめで湧く → 港の色1 → 色2 → 色3 と変わりながら →
- *   落ち着いた文字色(--sw-ink)で止まる
- * これを1文字ずつ 38ms ずらして出す＝タイピング風。
- * ★長い見出しで待たされんよう、ずらしは最大 0.9 秒で頭打ちにしとる。
- *
- * 色は港ごと（--sw-a/b/c/ink）。global.css の [data-tone] で切り替わる。
- *
- * ★progressive enhancement は Reveal と同じ約束。`html.reveal-on` が付いた
- *   時だけ伏せる。JS が落ちても文字は読める。
- * ★読み上げ対策: バラした1文字ずつを読ませると壊れるけん、外側に aria-label
- *   を置いて、中の文字は aria-hidden にしとる。
+ * mode:
+ *   'type'     … 1文字ずつ色を変えながら湧く（既定）
+ *   'scramble' … JIZURA 式。カタカナや記号に化けながら確定していく（港の名前用）
  */
 interface Props {
-  /** 出す文字列。1文字ずつバラすけん、slot やなく文字列で受ける */
   text: string;
-  /** 外側のタグ。見出しなら h2。既定は span */
   as?: string;
   class?: string;
+  mode?: 'type' | 'scramble';
 }
-const { text, as: Tag = 'span', class: cls } = Astro.props;
-const chars = Array.from(text);
+const { text, as: Tag = 'span', class: cls, mode = 'type' } = Astro.props;
 ---
-<Tag class:list={[cls]}>
-  <span class="type" data-sweep aria-label={text}>
-    {chars.map((ch, i) => (
-      <span
-        class="type__c"
-        aria-hidden="true"
-        style={`animation-delay:${Math.min(i * 38, 900)}ms`}
-      >{ch === ' ' ? ' ' : ch}</span>
-    ))}
-  </span>
-</Tag>
+<Tag class:list={['type', cls]} data-type={mode === 'scramble' ? 'scramble' : ''}>{text}</Tag>
 
 <style is:global>
-  .type {
-    /* 落ち着いたあとの文字色。港ごとに変わる */
-    color: var(--sw-ink, var(--c-ink));
-  }
-  .type__c {
-    /* translate を効かせるために inline-block。日本語は1文字で折り返すけん
-       これで折り返しは壊れん（英字も単語の途中で折れんよう下で面倒を見る） */
-    display: inline-block;
-    white-space: pre;
-  }
-
-  html.reveal-on .type .type__c { opacity: 0; }
-  html.reveal-on .type.is-in .type__c {
-    animation: type-in 0.62s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-  }
-
-  @keyframes type-in {
-    0%   { opacity: 0; transform: translateY(0.24em) scale(1.14); color: var(--sw-a, #6aa9e0); }
-    38%  { opacity: 1; transform: translateY(0) scale(1.02);      color: var(--sw-b, #8b7bd8); }
-    66%  {                                                        color: var(--sw-c, #f4a6c4); }
-    100% { opacity: 1; transform: none;                           color: var(--sw-ink, #1f2540); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    html.reveal-on .type .type__c { opacity: 1; animation: none; }
-  }
+  /* 落ち着いたあとの文字色。港ごとに変わる（global.css の [data-tone]） */
+  .type { color: var(--sw-ink, var(--c-ink)); }
 </style>

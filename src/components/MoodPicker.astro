@@ -35,7 +35,7 @@ const MOODS = [
 ];
 ---
 <div class="moods" data-moods-picker data-target="[data-music-grid]" hidden>
-  <p class="moods__q">いま、どんな気分？</p>
+  <p class="moods__q" data-type data-type-step="60">いま、どんな気分？</p>
   <div class="moods__chips" role="group" aria-label="気分で選ぶ">
     {MOODS.map((m) => (
       <button type="button" class="moods__chip" data-mood={m.key} aria-pressed={m.key === 'all' ? 'true' : 'false'}>

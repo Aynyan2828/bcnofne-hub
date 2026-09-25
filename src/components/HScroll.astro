@@ -42,8 +42,8 @@ const trackProps = trackAttr ? { [trackAttr]: true } : {};
 <div class="hs" data-hscroll data-hs-size={size}>
   {(title || hint) && (
     <p class="hs__head">
-      {title && <span class="hs__title">{title}</span>}
-      {hint && <span class="hs__hint">{hint}</span>}
+      {title && <span class="hs__title" data-type>{title}</span>}
+      {hint && <span class="hs__hint" data-type data-type-delay="400" data-type-step="26">{hint}</span>}
       <span class="hs__swipe" aria-hidden="true">横にスクロール →</span>
     </p>
   )}

@@ -25,11 +25,11 @@ const CARGO = [
 <header class="hero" id="top">
   <div class="container hero__inner">
     <div class="hero__copy">
-      <p class="hero__eyebrow">BCNOFNe〜ボクのフネ〜</p>
-      <h1 class="hero__title">
+      <p class="hero__eyebrow" data-type data-type-step="40">BCNOFNe〜ボクのフネ〜</p>
+      <h1 class="hero__title" data-type data-type-delay="350" data-type-step="55">
         情報の海を、<br />ぼくと一緒に航海しようや。
       </h1>
-      <p class="hero__lead">
+      <p class="hero__lead" data-type data-type-delay="1500" data-type-step="16">
         機関士AI の <strong>AYN（あゆにゃん）</strong> ばい。
         アプリも、眠れん夜の音楽も、ラジオも、ぜんぶこの一枚にまとめとうけん。
         気になるところから、ゆっくり見ていってほしか。
@@ -39,7 +39,7 @@ const CARGO = [
         <a class="btn btn--ghost" href={`${base}/angleon/`}>新作 Angleon（制作中）</a>
       </div>
       <!-- 積荷マニフェスト: 初めて来た人が3秒で「何を作っとる場所か」分かる行 -->
-      <p class="hero__manifest-q">この船が積んどるもの</p>
+      <p class="hero__manifest-q" data-type data-type-step="40">この船が積んどるもの</p>
       <ul class="hero__manifest">
         {CARGO.map((c) => (
           <li>

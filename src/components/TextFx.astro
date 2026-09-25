@@ -1,0 +1,260 @@
+---
+/**
+ * TextFx — 文字が1文字ずつ、色を変えながら流れてきて固定される（全ページ共通の裏方）。
+ *
+ * 要素に属性を1つ付けるだけで効く:
+ *   data-type             タイピング風。1文字ずつ下から湧いて、港の色で
+ *                         3回色を変えてから元の文字色に落ち着く
+ *   data-type="scramble"  JIZURA の「スクランブル登場」の移植。
+ *                         文字がカタカナや記号にパラパラ化けながら、
+ *                         左から順に本物の字に確定していく（港の名前用）
+ *   data-type-step="18"   1文字ぶんのずらし(ms)。長い文は短めに。既定 38
+ *   data-type-delay="600" 書き始めるまでの待ち(ms)。並んだ行を順番に出したい時
+ *
+ * ★中身に <strong> や <a> が入っとっても壊さん。文字の部分(テキストノード)だけ
+ *   バラすけん、リンクも太字もそのまま効く。
+ * ★英単語は途中で折り返さんよう、単語ごとに1つの塊にまとめとる。
+ * ★読み上げ: バラした文字は aria-hidden。元の文は見えん所に1本置いとる。
+ *
+ * ★progressive enhancement:
+ *   ・伏せるのは `html.reveal-on`（演出を動かせる確証がある時）だけ
+ *   ・さらにこのスクリプトが来んかった時の保険を head に置いとる
+ *     （3秒で tfx-ready が付かんなら tfx-off を付けて全部そのまま出す）
+ *
+ * ── JIZURA について ─────────────────────────────────────────────
+ * スクランブルは JIZURA「字面」(MIT, (c) 2026 hakoniwa,
+ * https://github.com/852wa/JIZURA) の entrance「scramble」の考え方
+ * （字ごとの確定タイミング = 0.25 + 0.75 × 位置、最初の 1/4 は半分の字を伏せる）
+ * を DOM 用に書き直したもの。本体(1.8MB の動画用 canvas エンジン)は載せとらん。
+ * 化ける字の候補は、元の「嘘・壊・叫…」を海の字（海 波 星 月 船 灯…）に替えとる。
+ */
+---
+<script>
+  (() => {
+    const root = document.documentElement;
+    root.classList.add('tfx-ready');
+    // head が「伏せてよい」と判断せんかった＝文字はもう見えとる。何もせんでよか
+    if (!root.classList.contains('reveal-on')) return;
+
+    const targets = document.querySelectorAll('[data-type]');
+    if (!targets.length) return;
+
+    // JIZURA の SCRAMBLE_POOL を海の字に寄せたもの
+    const POOL =
+      'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン' +
+      '海波星月船灯風空夜光潮帆錨汐碧★◆●01ABCDEFGHJKLMNPRSTUVWXYZ';
+    const WORD = /[A-Za-z0-9'’\-.]/;
+    // ★1文字ずつ inline-block にすると日本語の禁則が効かんくなる
+    //   （「ばい」と「。」が別の行に割れた）。行頭に来たらいかん字は前の字に、
+    //   行末に来たらいかん字は次の字に、くっつけて1つの塊にする。
+    const CLOSE = /[。、，．・：；！？!?」』）)】〉》〕…ーぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ〜]/;
+    const OPEN = /[「『（(【〈《〔]/;
+
+    /* ── 1文字ずつに割る ──────────────────────────────────────── */
+    const split = (el) => {
+      const step = Number(el.dataset.typeStep || 38);
+      const base = Number(el.dataset.typeDelay || 0);
+      const CAP = 2200;          // 長文でも 2.2 秒で書き終わる
+      let n = 0;
+
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+
+      for (const node of nodes) {
+        const raw = node.nodeValue || '';
+        if (!raw.trim()) continue;                 // 改行とインデントだけの隙間は触らん
+        const text = raw.replace(/\s+/g, ' ');
+        const frag = document.createDocumentFragment();
+
+        // 読み上げ用に元の文を1本
+        const sr = document.createElement('span');
+        sr.className = 'tfx-sr';
+        sr.textContent = text;
+        frag.appendChild(sr);
+
+        let word = null;
+        let last = null;      // 直前に置いた1文字（塊に入っとらん時だけ）
+        let hold = null;      // 開き括弧。次の字とまとめるまで待たせる
+        const glue = (a) => {  // a を包む nowrap の塊を作って返す
+          const w = document.createElement('span');
+          w.className = 'tfx-w';
+          a.replaceWith(w);
+          w.appendChild(a);
+          return w;
+        };
+        for (const ch of Array.from(text)) {
+          if (ch === ' ') {                       // 空白は素の文字のまま＝普通に縮む
+            word = null; last = null;
+            frag.appendChild(document.createTextNode(' '));
+            continue;
+          }
+          const c = document.createElement('span');
+          c.className = 'tfx-c';
+          c.setAttribute('aria-hidden', 'true');
+          c.textContent = ch;
+          c.style.animationDelay = base + Math.min(n * step, CAP) + 'ms';
+          c.dataset.i = String(n);
+          n++;
+          if (hold) {                              // 開き括弧のすぐ後ろ＝一緒の塊へ
+            hold.appendChild(c);
+            word = WORD.test(ch) ? hold : null;
+            last = null;
+            hold = null;
+            continue;
+          }
+          if (CLOSE.test(ch)) {                    // 行頭禁止＝前の字（か塊）にくっつける
+            if (word) word.appendChild(c);
+            else if (last) { word = glue(last); word.appendChild(c); word = null; }
+            else frag.appendChild(c);
+            last = null;
+            continue;
+          }
+          if (OPEN.test(ch)) {                     // 行末禁止＝次の字を待つ
+            const w = document.createElement('span');
+            w.className = 'tfx-w';
+            w.appendChild(c);
+            frag.appendChild(w);
+            hold = w; word = null; last = null;
+            continue;
+          }
+          if (WORD.test(ch)) {                     // 英単語は1つの塊に（途中で折れんよう）
+            if (!word) {
+              word = document.createElement('span');
+              word.className = 'tfx-w';
+              frag.appendChild(word);
+            }
+            word.appendChild(c);
+            last = null;
+          } else {
+            word = null;
+            frag.appendChild(c);
+            last = c;
+          }
+        }
+        node.parentNode.replaceChild(frag, node);
+      }
+      el.classList.add('is-typed');
+      return n;
+    };
+
+    /* ── スクランブル（JIZURA scramble の移植）──────────────────── */
+    const scramble = (el) => {
+      const chars = Array.from(el.querySelectorAll('.tfx-c'));
+      const n = chars.length;
+      if (!n) return;
+      const cs = getComputedStyle(el);
+      const hues = ['--sw-a', '--sw-b', '--sw-c']
+        .map((v) => cs.getPropertyValue(v).trim())
+        .filter(Boolean);
+      // 化けた字で幅が揺れて行がガタつかんよう、本物の字の幅で固定する
+      for (const c of chars) {
+        c.dataset.ch = c.textContent;
+        c.style.width = c.getBoundingClientRect().width + 'px';
+      }
+      const base = Number(el.dataset.typeDelay || 0);
+      const DUR = 1300, STEP = 60;               // 60ms ごとに字を替える（JIZURA の step 相当）
+      let t0 = 0, lastStep = -1;
+
+      const frame = (now) => {
+        if (!t0) t0 = now;
+        const p = Math.min(1, (now - t0) / DUR);
+        const step = Math.floor((now - t0) / STEP);
+        // ★最後の1コマは必ず書き換える。字の入れ替えは 60ms 刻みで間引いとるけん、
+        //   p=1 の瞬間が前回と同じ刻みに入ると更新が飛んで、**最後の字が化けたまま
+        //   止まった**（APPS HARBOY）。
+        if (step !== lastStep || p >= 1) {
+          lastStep = step;
+          for (let i = 0; i < n; i++) {
+            const c = chars[i];
+            const settle = 0.25 + 0.75 * (n > 1 ? i / (n - 1) : 1);
+            if (p >= settle) {
+              // ★色と濃さは字が合っとっても必ず戻す。化けた字がたまたま本物と
+              //   同じ字やった時に色だけ残った（APPS HARBOR の H が紫のまま）。
+              c.textContent = c.dataset.ch;
+              c.style.color = '';
+              c.style.opacity = '';
+              continue;
+            }
+            if (p < settle * 0.25 && Math.random() < 0.5) { c.style.opacity = '0'; continue; }
+            c.style.opacity = '0.9';
+            c.textContent = POOL[(Math.random() * POOL.length) | 0];
+            if (hues.length) c.style.color = hues[(Math.random() * hues.length) | 0];
+          }
+        }
+        if (p < 1) requestAnimationFrame(frame);
+        else for (const c of chars) { c.style.width = ''; }
+      };
+      setTimeout(() => requestAnimationFrame(frame), base);
+    };
+
+    for (const el of targets) split(el);
+
+    let alive = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        alive = true;
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const el = e.target;
+          io.unobserve(el);
+          el.classList.add('is-in');
+          if (el.dataset.type === 'scramble') scramble(el);
+          // 港の名前が見えたら、その入口の AYN と水平線も一緒に灯す。
+          // ★前は「その港の中身が今いる港になったら」灯しとって、最初の港の前に
+          //   外洋を足したら、名前は出とるのに AYN が出てこん時間ができた。
+          const gate = el.closest('.gate');
+          if (gate) gate.classList.add('is-in');
+        }
+      },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0.2 }
+    );
+    for (const el of targets) io.observe(el);
+
+    // IO を作れたのに一度も呼ばれん環境の保険（Reveal と同じ）: 演出を捨てて全部出す
+    setTimeout(() => {
+      if (alive) return;
+      root.classList.add('tfx-off');
+      io.disconnect();
+    }, 2500);
+  })();
+</script>
+
+<style is:global>
+  /* スクリプトが割る前の一瞬、素の文字が見えてから消える「ちらつき」を防ぐ。
+     ★保険付き: head が 3 秒で tfx-off を付けたら、割られんでも出す */
+  html.reveal-on:not(.tfx-off) [data-type]:not(.is-typed) { visibility: hidden; }
+
+  .tfx-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .tfx-w { display: inline-block; white-space: nowrap; }
+  .tfx-c {
+    display: inline-block;
+    white-space: pre;
+    text-align: center;
+  }
+
+  html.reveal-on:not(.tfx-off) [data-type] .tfx-c { opacity: 0; }
+  html.reveal-on:not(.tfx-off) [data-type].is-in .tfx-c {
+    opacity: 1;
+    /* backwards: 待ち時間の間は 0% の状態（見えん）で待たせる。
+       終わったら素の状態＝親から受け継いだ文字色に戻る */
+    animation: tfx-in 0.62s cubic-bezier(0.22, 0.61, 0.36, 1) backwards;
+  }
+  /* スクランブルは JS が字を替えるけん、CSS の湧き上がりは使わん */
+  html.reveal-on:not(.tfx-off) [data-type='scramble'].is-in .tfx-c { animation: none; }
+
+  @keyframes tfx-in {
+    0%   { opacity: 0; transform: translateY(0.24em) scale(1.14); color: var(--sw-a, #6aa9e0); }
+    38%  { opacity: 1; transform: none;                          color: var(--sw-b, #8b7bd8); }
+    66%  {                                                       color: var(--sw-c, #f4a6c4); }
+    /* 100% に色を書かん＝元の文字色（港の色・本文色・白）へ戻る */
+    100% { opacity: 1; transform: none; }
+  }
+</style>

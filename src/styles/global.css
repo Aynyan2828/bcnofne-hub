@@ -144,6 +144,16 @@ h1, h2, h3 { line-height: 1.4; margin: 0; font-weight: 400; }
   position: relative;
   isolation: isolate;
 }
+/* ★港の入口とその港の中身は「同じ港」。入口のすぐ下から中身を始める
+   （マスター: APPS HARBOR と「つくったアプリ」の間は空けんでよか）。
+   港と港の間（=外洋）は上の padding がそのまま効く。 */
+.gate + .section { padding-top: clamp(0.5rem, 2vw, 1.25rem); }
+
+/* ★最初の港はいきなり来ん。ようこその後に外洋を一区間挟む
+   （マスター: いきなり ARRIVING APPS HARBOR はおかしい）。
+   ここで海が見えて「出航した」になってから、最初の港に着く。 */
+#main > .gate:first-child { margin-top: clamp(38vh, 55vh, 70vh); }
+
 .section::before {
   content: '';
   position: absolute;

@@ -42,14 +42,14 @@ const hookLines = (hook ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
 ---
 <article class="feat">
   <div class="feat__body" data-reveal="left">
-    <p class="feat__eyebrow">{eyebrow}</p>
+    <p class="feat__eyebrow" data-type data-type-step="40">{eyebrow}</p>
     <div class="feat__brand">
       {icon && <Image src={icon} alt={`${title} のアイコン`} width={68} height={68} class="feat__icon" />}
-      <h3 class="feat__title">{title}</h3>
+      <h3 class="feat__title" data-type data-type-delay="250" data-type-step="55">{title}</h3>
       {badge && <span class="feat__badge">{badge}</span>}
     </div>
     {hookLines.length > 0 ? (
-      <p class="feat__hook">{hookLines.map((l) => <span>{l}</span>)}</p>
+      <p class="feat__hook" data-type data-type-delay="700" data-type-step="40">{hookLines.map((l) => <span>{l}</span>)}</p>
     ) : null}
     <p class="feat__summary">{summary}</p>
     <div class="feat__cta">

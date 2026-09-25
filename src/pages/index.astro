@@ -91,8 +91,8 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
       {otherApps.length > 0 && (
         <>
           <h3 class="subhead" data-reveal="up">
-            <span class="subhead__en">Other Apps</span>
-            もう動きよるアプリ
+            <span class="subhead__en" data-type data-type-step="45">Other Apps</span>
+            <span class="type" data-type data-type-delay="250">もう動きよるアプリ</span>
           </h3>
           <div class="grid" data-reveal-stagger>
             {otherApps.map((app) => (

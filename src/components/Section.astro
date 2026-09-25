@@ -44,7 +44,7 @@ const leadParts = lead ? lead.split(/(?<=。)/).filter(Boolean) : [];
       {eyebrow && <TypeText as="span" class="eyebrow" text={eyebrow} />}
       <TypeText as="h2" text={title} />
       {leadParts.length > 0 && (
-        <p>{leadParts.map((part, i) => (
+        <p data-type data-type-step="24" data-type-delay="350">{leadParts.map((part, i) => (
           <span class={i % 2 === 1 ? 's-odd' : undefined}>{part}</span>
         ))}</p>
       )}

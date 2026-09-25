@@ -19,8 +19,6 @@
  * 高さは 62vh（スマホ）。1画面まるごと取ると、情報に辿り着くのが遠うなる。
  * 「海だけの間」は感じるけど、スクロールが苦にならん長さにしとる。
  */
-import TypeText from './TypeText.astro';
-
 interface Props {
   /** 英字の港名（例: MUSIC HARBOR） */
   harbor: string;
@@ -38,9 +36,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <div data-gate data-port={port} data-tone={tone} class:list={["gate", ayn && "has-ayn"]}>
   <div class="gate__inner">
-    <p class="gate__tag">ARRIVING</p>
-    <TypeText as="p" class="gate__name" text={harbor} />
-    {label && <p class="gate__label">{label}</p>}
+    <p class="gate__tag" data-type data-type-step="45">ARRIVING</p>
+    {/* ★TypeText を通さず、ここで直に描く。別コンポーネントが描いた要素には
+        この入口のスコープ付き CSS（大きさ・白い縁取り・港の濃い色）が当たらん。
+        一回それで港の名前が小さく薄くなった。 */}
+    <p class="gate__name type" data-type="scramble">{harbor}</p>
+    {label && <p class="gate__label" data-type data-type-delay="900" data-type-step="70">{label}</p>}
     <span class="gate__rule" aria-hidden="true"></span>
   </div>
   {ayn && (
@@ -90,9 +91,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   }
   /* AYN が立つ港は、文字を上げて下半分を空ける（重なると両方読めん） */
   .gate.has-ayn {
-    --gate-eye: 34%;
+    --gate-eye: 30%;
     justify-content: flex-start;
-    padding-top: 12vh;
+    padding-top: 8vh;
+    /* ★入口とその港の中身は同じ港。港の名前から「つくったアプリ」まで
+       海が1画面まるごと空いとった（マスター: 間は空けんでよか）。
+       AYN が立てる分だけ残して詰める。 */
+    min-height: 50vh;
   }
   .gate__inner {
     display: flex;
@@ -122,7 +127,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     font-size: clamp(1.7rem, 8vw, 3.4rem);
     letter-spacing: 0.06em;
     line-height: 1.15;
-    color: var(--c-ink);
+    color: var(--sw-ink, var(--c-ink));   /* 港の濃い色（下の --sw-ink 差し替え） */
     text-shadow:
       0 0 14px rgba(255, 255, 255, 0.9),
       0 2px 26px rgba(255, 255, 255, 0.8);
@@ -159,19 +164,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
      JS が落ちても港の名前は読める。 */
   /* ★.gate__name はここに入れん。中の SweepText（色の帯）が出し入れする。
      二重にやると帯が走る前に文字がふわっと出てしまう。 */
-  :global(html.reveal-on) .gate__tag,
-  :global(html.reveal-on) .gate__label {
-    opacity: 0;
-    transform: translateY(26px) scale(0.94);
-    transition: opacity 0.9s ease, transform 1s cubic-bezier(0.22, 0.61, 0.36, 1);
-  }
-  :global(html.reveal-on) .gate.is-in .gate__tag { opacity: 0.85; transform: none; }
-  :global(html.reveal-on) .gate.is-in .gate__label { opacity: 1; transform: none; transition-delay: 0.2s; }
+  /* ARRIVING・港の名前・日本語の一行は TextFx が1文字ずつ出す
+     （名前だけ JIZURA 式のスクランブル）。ここで伏せると二重になるけん伏せん。
+     入口の側で動かすのは、水平線の線が開くのだけ。 */
   .gate.is-in .gate__rule { transform: scaleX(1); transition-delay: 0.25s; }
 
   @media (prefers-reduced-motion: reduce) {
-    :global(html.reveal-on) .gate__tag,
-    :global(html.reveal-on) .gate__label { opacity: 1; transform: none; }
     .gate__rule { transform: scaleX(1); transition: none; }
   }
 
@@ -204,7 +202,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   @media (max-width: 560px) {
     /* スマホは小さく。文字の邪魔をせん大きさに留める */
-    .gate__ayn { height: min(34vh, 250px); right: -0.4rem; opacity: 0.95; }
+    .gate__ayn { height: min(30vh, 230px); right: -0.4rem; opacity: 0.95; }
   }
   @media (prefers-reduced-motion: reduce) {
     :global(html.reveal-on) .gate__ayn { opacity: 1; transform: none; }
