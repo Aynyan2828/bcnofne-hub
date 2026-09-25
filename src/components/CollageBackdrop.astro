@@ -23,6 +23,11 @@ import c18 from '../assets/collage/p2-08-The_Harbor_Holds.webp';
 
 // 座標直書き（ビルド毎に変わらない・ここを編集して微調整）
 // x/y=vw/vh基準%, rot=deg, w=幅vw, z=重なり, mobile:falseはモバイル非表示
+//
+// 視差(parallax): z=1 を「奥」、z=2 を「手前」として2層に束ねる。
+// 束ごとに transform を1回書き換えるだけにしとる（写真18枚を個別に
+// 動かすと毎フレーム18回のスタイル再計算になるけん）。動かすのは
+// SeaBackdrop の描画ループ。奥はゆっくり、手前は速く流れる。
 const ITEMS = [
   { img: c01, x: -4, y: -5, rot: -8.5, w: 20, z: 1, mobile: true },
   { img: c02, x: 15, y: 2, rot: 12.0, w: 15, z: 2, mobile: false },
@@ -45,12 +50,19 @@ const ITEMS = [
 ];
 ---
 <div class="pagecollage" aria-hidden="true">
-  {ITEMS.map((it) => (
-    <div
-      class:list={['pagecollage__item', { 'pagecollage__item--desktop': !it.mobile }]}
-      style={`left:${it.x}vw; top:${it.y}vh; width:${it.w}vw; z-index:${it.z}; --rot:${it.rot}deg;`}
-    >
-      <Image src={it.img} alt="" width={560} height={315} loading="lazy" />
+  {[
+    { z: 1, par: 0.06 },  // 奥の束: ゆっくり
+    { z: 2, par: 0.14 },  // 手前の束: すこし速く
+  ].map((layer) => (
+    <div class="pagecollage__layer" style={`z-index:${layer.z};`} data-par={layer.par}>
+      {ITEMS.filter((it) => it.z === layer.z).map((it) => (
+        <div
+          class:list={['pagecollage__item', { 'pagecollage__item--desktop': !it.mobile }]}
+          style={`left:${it.x}vw; top:${it.y}vh; width:${it.w}vw; --rot:${it.rot}deg;`}
+        >
+          <Image src={it.img} alt="" width={560} height={315} loading="lazy" />
+        </div>
+      ))}
     </div>
   ))}
   <!-- 沖へ出るほど濃くなる霧。深さ(--fog)は VoyageRail が港ごとに更新する。
@@ -67,6 +79,14 @@ const ITEMS = [
     pointer-events: none;
     overflow: hidden;
   }
+  /* 視差の束。中身は今までどおり絶対配置。
+     will-change で合成レイヤーに乗せて、transform だけで動かす。
+     縦に流すぶん、上下に余裕を持たせて端が見切れんようにする。 */
+  .pagecollage__layer {
+    position: absolute;
+    inset: -20vh 0;
+    will-change: transform;
+  }
   .pagecollage__item {
     position: absolute;
     transform: rotate(var(--rot));
@@ -81,8 +101,12 @@ const ITEMS = [
     height: auto;
     border-radius: 3px;
   }
-  /* 白ベール: 写真をうっすら見せつつ本文コントラストを確保
-     （backdrop-filterは全画面だと重いので不透明度のみ） */
+  /* 写真は「情報の海に浮かぶ思い出」の扱い。1枚も減らさんかわりに
+     透かして、奥の海・粒子が通るようにする。ここも濃さの調整点。 */
+  .pagecollage__item { opacity: 0.68; }
+  /* 夜の scrim: 地が夜空になったけん、白で飛ばさず逆に沈める。
+     写真が「夜の海に浮かぶ思い出」に見える濃さ。本文の読みやすさは
+     セクションの紙だまりが持つけん、ここは白くせんでよか。 */
   .pagecollage::after {
     content: '';
     position: absolute;
@@ -90,9 +114,9 @@ const ITEMS = [
     z-index: 4; /* 写真(z1-2)より上 */
     background: linear-gradient(
       180deg,
-      rgba(247, 250, 255, 0.46) 0%,
-      rgba(251, 252, 255, 0.56) 40%,
-      rgba(247, 250, 255, 0.5) 100%
+      rgba(18, 24, 54, 0.34) 0%,
+      rgba(22, 29, 62, 0.26) 45%,
+      rgba(18, 24, 54, 0.34) 100%
     );
   }
 

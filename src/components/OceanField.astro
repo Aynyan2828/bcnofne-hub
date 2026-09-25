@@ -1,0 +1,304 @@
+---
+/**
+ * OceanField — 情報の海（Crypto Ocean）。ページ全体にかかる一枚の世界。
+ *
+ * 描くもの（奥から手前へ）:
+ *   1. 島影    … 水平線の向こう。スクロールで右から左へ流れる＝渡っとる証拠
+ *   2. うねり  … 3枚の薄いバンド。位相が送られて波が動く
+ *   3. 小舟    … 波に乗って上下する。ランタンが灯っとる
+ *   4. 粒子    … データの粒。星みたいに漂って、近いもの同士が線でつながる
+ *
+ * ★空は塗らん（透明のまま）。
+ *   奥にある水彩コラージュがそのまま空の役をするけん、写真を消さずに
+ *   海と粒子を重ねられる。一度「空を塗る」版を作って、写真が全部隠れて
+ *   失敗した。透明にしたことで両立した。
+ *
+ * ── 置き場所 ──────────────────────────────────────────────────
+ * 写真コラージュ（z:-1）より **DOM で後ろ**に置いて同じ z:-1。
+ * ＝写真と白ベールの上・本文の下。本文のある所はセクションの
+ * 「紙だまり」が更に上に乗るけん、海は自然と**港と港の間で濃く見える**。
+ *
+ * ── 実装の考え方 ──────────────────────────────────────────────
+ * ・canvas 2D 1枚。DOM は増やさん。
+ * ・スクロールイベントは張らん（毎フレーム scrollY を読むだけ）。
+ * ・30fps に間引く。粒の光は事前に4色スプライトへ焼いて drawImage。
+ *   毎フレーム createRadialGradient を呼ぶと一気に重うなる。
+ * ・タブが隠れたら描かん。prefers-reduced-motion / save-data は
+ *   1枚だけ描いて終わり（凪いだ海。動かんだけで絵は出る）。
+ * ・最初の1枚は rAF を待たずに描く（裏タブ等で rAF が来ん環境がある）。
+ * ・同じループから背景コラージュ2層の視差も動かす（ループを2本持たん）。
+ */
+---
+<canvas class="ocean" data-ocean aria-hidden="true"></canvas>
+
+<style>
+  .ocean {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* コラージュと同じ層。DOM で後ろに置いとるけん上に出る */
+    pointer-events: none;
+    display: block;
+  }
+</style>
+
+<script>
+  (() => {
+    const cv = document.querySelector('[data-ocean]');
+    if (!cv) return;
+    const ctx = cv.getContext('2d', { alpha: true });
+    if (!ctx) return;
+
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const saveData = !!(navigator.connection && navigator.connection.saveData);
+    const still = reduce || saveData;
+
+    /* ── 色（水彩の配色そのまま）───────────────────────────── */
+    const HUES = ['#6aa9e0', '#8b7bd8', '#f4a6c4', '#ffffff'];
+    // ★濃さの調整はここ1か所。薄すぎたら数字を上げる／うるさかったら下げる。
+    //   最初は控えめに振ったけど、水彩コラージュに負けて見えんかったけん上げた。
+    const DAY = {
+      isle: 'rgba(116,146,200,0.30)',
+      far: 'rgba(140,174,228,0.38)',
+      mid: 'rgba(134,118,214,0.28)',
+      near: 'rgba(96,162,224,0.36)',
+      foam: 'rgba(255,255,255,0.62)',
+      hull: 'rgba(52,70,124,0.60)',
+      lamp: 'rgba(255,212,155,0.70)',
+      line: '#5a9ad8',
+      dotA: 0.72,
+      lineA: 0.15,
+    };
+    const NIGHT = {
+      isle: 'rgba(40,54,108,0.42)',
+      far: 'rgba(68,90,166,0.42)',
+      mid: 'rgba(106,92,190,0.34)',
+      near: 'rgba(52,86,158,0.40)',
+      foam: 'rgba(214,226,255,0.52)',
+      hull: 'rgba(20,28,64,0.66)',
+      lamp: 'rgba(255,206,140,0.9)',
+      line: '#cfe0ff',
+      dotA: 1,
+      lineA: 0.24,
+    };
+    // 空はいつでも夜空（マスター指定）。data-tide は紙の色みなど他で使うけど、
+    // 海と星はこれで固定する。
+    const isNight = () => true;
+
+    /* 光の玉を事前に焼いておく。毎フレームのグラデーション生成は高い */
+    const SPRITE = 64;
+    const sprites = HUES.map((c) => {
+      const s = document.createElement('canvas');
+      s.width = s.height = SPRITE;
+      const g = s.getContext('2d');
+      const grd = g.createRadialGradient(SPRITE / 2, SPRITE / 2, 0, SPRITE / 2, SPRITE / 2, SPRITE / 2);
+      grd.addColorStop(0, c);
+      grd.addColorStop(0.35, c + '88');
+      grd.addColorStop(1, c + '00');
+      g.fillStyle = grd;
+      g.fillRect(0, 0, SPRITE, SPRITE);
+      return s;
+    });
+
+    /* ── 寸法と粒 ───────────────────────────────────────────── */
+    let W = 0, H = 0, dpr = 1, dots = [];
+    const ISLES = [
+      { at: 0.10, w: 0.26, h: 0.05 },
+      { at: 0.38, w: 0.17, h: 0.034 },
+      { at: 0.62, w: 0.31, h: 0.062 },
+      { at: 0.88, w: 0.20, h: 0.04 },
+    ];
+
+    const build = () => {
+      const area = (W * H) / 1000;
+      const n = Math.round(Math.min(W < 600 ? 90 : 185, Math.max(50, area * 0.16)));
+      dots = Array.from({ length: n }, (_, i) => ({
+        x: Math.random(),
+        y: Math.random(),
+        z: 0.28 + Math.random() * 0.72,   // 奥行き。手前ほど大きく速い
+        r: 0.8 + Math.random() * 2.4,
+        c: i % 11 === 0 ? 3 : i % 3,       // たまに白を混ぜる
+        ph: Math.random() * Math.PI * 2,
+        wob: 0.3 + Math.random() * 0.9,
+      }));
+    };
+    const fit = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = innerWidth;
+      H = innerHeight;
+      cv.width = Math.round(W * dpr);
+      cv.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      build();
+    };
+    fit();
+    let fitTimer = 0;
+    addEventListener('resize', () => {
+      clearTimeout(fitTimer);
+      fitTimer = setTimeout(() => { fit(); draw(0); }, 180);
+    }, { passive: true });
+
+    /* ── 波の線 ─────────────────────────────────────────────── */
+    const waveBand = (baseY, amp, k, phase, fill, foam) => {
+      const step = Math.max(9, W / 55);
+      ctx.beginPath();
+      ctx.moveTo(0, H);
+      for (let x = 0; x <= W + step; x += step) {
+        const y = baseY + Math.sin(x * k + phase) * amp + Math.sin(x * k * 2.3 + phase * 1.7) * amp * 0.35;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W, H);
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+      if (!foam) return;
+      ctx.beginPath();
+      for (let x = 0; x <= W + step; x += step) {
+        const y = baseY + Math.sin(x * k + phase) * amp + Math.sin(x * k * 2.3 + phase * 1.7) * amp * 0.35;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = foam;
+      ctx.lineWidth = 1.1;
+      ctx.stroke();
+    };
+
+    /* ── 小舟 ───────────────────────────────────────────────── */
+    const boat = (x, y, s, C) => {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(s, s);
+      const g = ctx.createRadialGradient(6, -20, 0, 6, -20, 44);
+      g.addColorStop(0, C.lamp);
+      g.addColorStop(1, 'rgba(255,214,160,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(6, -20, 44, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = C.hull;
+      ctx.beginPath();
+      ctx.moveTo(-18, 0);
+      ctx.quadraticCurveTo(0, 9, 18, 0);
+      ctx.lineTo(13, -5);
+      ctx.lineTo(-14, -5);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = C.hull;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(-2, -5);
+      ctx.lineTo(-2, -28);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-1, -26);
+      ctx.quadraticCurveTo(12, -17, -1, -8);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    };
+
+    /* ── 1フレーム ──────────────────────────────────────────── */
+    const SPAN = 1.25;
+    const draw = (t) => {
+      const C = isNight() ? NIGHT : DAY;
+      const sc = scrollY;
+      // 進み具合。島影の流れと水平線の高さに効かせる
+      const max = document.documentElement.scrollHeight - innerHeight;
+      const p = max > 0 ? Math.min(1, Math.max(0, sc / max)) : 0;
+
+      ctx.clearRect(0, 0, W, H);
+
+      // 水平線は画面の下寄り。海は「下の帯」に留めて、空(＝水彩の写真)を潰さん
+      const horizon = H * (0.62 + p * 0.04);
+
+      // 1. 島影。p が進むと左へ流れる
+      ctx.fillStyle = C.isle;
+      for (const is of ISLES) {
+        const x = (((is.at - p * 0.55) % 1.4) + 1.4) % 1.4 * W - W * 0.2;
+        const w = is.w * W;
+        const h = is.h * H;
+        ctx.beginPath();
+        ctx.moveTo(x - w / 2, horizon);
+        ctx.quadraticCurveTo(x - w * 0.22, horizon - h, x, horizon - h * 0.82);
+        ctx.quadraticCurveTo(x + w * 0.28, horizon - h * 1.05, x + w / 2, horizon);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // 2. うねり
+      const ph = t * 0.35 + p * 10;
+      waveBand(horizon + H * 0.012, H * 0.010, 0.011, ph * 0.8, C.far, null);
+      const midY = horizon + H * 0.072;
+      const midAmp = H * 0.014;
+      waveBand(midY, midAmp, 0.008, ph * 1.15 + 1.2, C.mid, C.foam);
+      waveBand(horizon + H * 0.165, H * 0.020, 0.006, ph * 1.6 + 2.4, C.near, C.foam);
+
+      // 3. 小舟（中波の上に乗る・波と同じ式で上下する）
+      const bx = W * 0.2;
+      const by = midY + Math.sin(bx * 0.008 + ph * 1.15 + 1.2) * midAmp;
+      boat(bx, by, Math.min(1.2, Math.max(0.7, W / 950)), C);
+
+      // 4. 粒子（データの粒）。海の上でも光る
+      const pts = [];
+      ctx.globalCompositeOperation = 'lighter';
+      for (const d of dots) {
+        // 上へ流れる＝自分が前へ進んどるけん、粒は後ろへ去っていく
+        const flow = (sc * 0.10 + t * 7) * d.z;
+        const y = ((((d.y * H - flow) % (H * SPAN)) + H * SPAN) % (H * SPAN)) - (H * (SPAN - 1)) / 2;
+        const x = d.x * W + Math.sin(t * d.wob * 0.5 + d.ph) * 14 * d.z;
+        const tw = 0.55 + 0.45 * Math.sin(t * 1.1 + d.ph);
+        ctx.globalAlpha = C.dotA * tw * (0.35 + d.z * 0.65);
+        const size = d.r * (0.6 + d.z * 1.5) * 7;
+        ctx.drawImage(sprites[d.c], x - size / 2, y - size / 2, size, size);
+        if (d.z > 0.72 && pts.length < 34) pts.push({ x, y });
+      }
+
+      // 近い粒どうしを細い線で結ぶ＝星座。情報がつながっとる絵
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.lineWidth = 0.7;
+      ctx.strokeStyle = C.line;
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const dist = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y);
+          if (dist > 130) continue;
+          ctx.globalAlpha = C.lineA * (1 - dist / 130);
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x, pts[i].y);
+          ctx.lineTo(pts[j].x, pts[j].y);
+          ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 1;
+    };
+
+    /* ── 背景コラージュの視差（同じループで動かす）──────────── */
+    const layers = Array.from(document.querySelectorAll('[data-par]'))
+      .map((el) => ({ el, d: parseFloat(el.dataset.par) || 0 }));
+    function parallax() {
+      if (!layers.length) return;
+      const y = scrollY;
+      for (const l of layers) {
+        l.el.style.transform = `translate3d(0, ${(-y * l.d).toFixed(1)}px, 0)`;
+      }
+    }
+
+    // 最初の1枚は rAF を待たずに描く
+    draw(0);
+    parallax();
+    if (still) return;
+
+    let last = 0;
+    const FRAME = 1000 / 30;
+    let raf = 0;
+    const loop = (now) => {
+      raf = requestAnimationFrame(loop);
+      if (now - last < FRAME) return;
+      last = now;
+      if (document.hidden) return;
+      draw(now / 1000);
+      parallax();
+    };
+    raf = requestAnimationFrame(loop);
+    addEventListener('pagehide', () => cancelAnimationFrame(raf), { once: true });
+  })();
+</script>

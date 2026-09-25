@@ -74,13 +74,14 @@ const CARGO = [
     color: #fff;
     overflow: hidden;
     padding-block: clamp(3rem, 9vw, 6rem);
-    /* 半透明の紺グラデ＝背後のコラージュ写真がうっすら透ける */
+    /* 半透明の紺グラデ。背後のコラージュ写真と、その上を流れる
+       情報の海（OceanField の粒子）がうっすら透ける濃さにしとる。 */
     background: linear-gradient(
       160deg,
-      rgba(42, 53, 102, 0.58) 0%,
-      rgba(58, 74, 134, 0.52) 40%,
-      rgba(95, 111, 184, 0.46) 72%,
-      rgba(159, 182, 230, 0.42) 100%
+      rgba(42, 53, 102, 0.50) 0%,
+      rgba(58, 74, 134, 0.44) 40%,
+      rgba(95, 111, 184, 0.38) 72%,
+      rgba(159, 182, 230, 0.34) 100%
     );
   }
   .hero__inner {
@@ -92,7 +93,7 @@ const CARGO = [
   }
   /* 本文すりガラスパネル（AA確保） */
   .hero__copy {
-    background: rgba(26, 34, 72, 0.5);
+    background: rgba(26, 34, 72, 0.62);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.14);
