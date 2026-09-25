@@ -79,6 +79,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   .gate {
     position: relative;
+    overflow-x: clip;   /* 港の AYN を右に少しはみ出させとるけん、横だけ切る */
     min-height: 62vh;
     display: flex;
     flex-direction: column;

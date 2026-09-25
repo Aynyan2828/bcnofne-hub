@@ -137,6 +137,12 @@ h1, h2, h3 { line-height: 1.4; margin: 0; font-weight: 400; }
    isolation で自前の重なり文脈を作っとるけん、z-index:-1 はこの
    セクションの中だけで効く（最背面の固定コラージュは隠れん）。 */
 .section {
+  /* ★横だけ切る。照り返しの帯(.wash)は左右に 20% ずつ大きく作っとって、切らんと
+     ページの幅が 451px に広がっとった（スマホの見える幅は 375px）。そのせいで
+     画面に固定した AYN ナビ・航路バー・背景が 451px 基準で置かれ、右端が
+     画面の外に出とった（UI UX Pro Max §5 horizontal-scroll）。
+     clip は hidden と違ってスクロールの箱を作らんけん、中の動きに影響せん。 */
+  overflow-x: clip;
   /* 港と港の間はたっぷり空ける。ここが「航海しとる時間」になる＝
      海と空だけの帯ができて、次の港に着いた感じが出る。
      （2.8→5.5rem / 7→13vw / 4.5→9rem に広げた） */
@@ -445,3 +451,38 @@ html[data-mood='all'] #music::after { opacity: 0; }
   html { scroll-behavior: auto; }
   * { transition: none !important; animation: none !important; }
 }
+
+/* 最後の保険: どこかがはみ出しても、ページの幅を広げさせん */
+html, body { overflow-x: clip; }
+
+/* ── 押せる範囲を 44px 四方まで広げる（見た目の大きさはそのまま）─────────────
+   UI UX Pro Max §2 touch-target-size: 指で押す所は最低 44×44px。
+   実測で足りんかった: 積荷ピル 40 / 気分チップ 32 / 発信先ピル 37 / 次の港へ 30 /
+   RSS 21 / 主役アプリの小リンク 24 / フッターのリンク 26（「X」は幅 8px）。
+   見えん板（::after）を後ろに敷いて、押せる範囲だけ広げる。 */
+.hero__manifest a,
+.moods__chip,
+.pins__pin,
+.feat__sub,
+.feed__rss,
+.latest,
+.footer__links a {
+  position: relative;
+}
+.hero__manifest a::after,
+.moods__chip::after,
+.pins__pin::after,
+.feat__sub::after,
+.feed__rss::after,
+.latest::after,
+.footer__links a::after,
+.onward::after {            /* 次の港へ は固定配置やけん position は触らん */
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  translate: -50% -50%;
+}
+
