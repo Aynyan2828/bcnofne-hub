@@ -1,0 +1,144 @@
+---
+/**
+ * HarborGate — 港の入口。「着いた」が分かる一画面。
+ *
+ * みさとと式に寄せるための一手。いまのサイトは「動く背景の上に普通のページが
+ * 乗っとる」状態やった。港の手前に **海と空だけの一画面** を挟むことで、
+ *   航海（海だけ）→ 到着（港の名前が出る）→ 中身（カード）
+ * という呼吸を作る。
+ *
+ * 出すもの:
+ *   ・港の英字名（MUSIC HARBOR）を大きく。奥から手前に寄ってくる
+ *   ・日本語の一行（音楽の港）
+ *   ・水平線の細い線が左右に開く＝港が開く合図
+ *
+ * ★カードの追加しやすさは壊さん。ここは「港の入口」だけを持つ入れ物で、
+ *   中身のカードは今までどおり src/content/*.md が正本。港を増やす時も
+ *   src/lib/voyage.ts に1行 ＋ Section に harbor を渡すだけ。
+ *
+ * 高さは 62vh（スマホ）。1画面まるごと取ると、情報に辿り着くのが遠うなる。
+ * 「海だけの間」は感じるけど、スクロールが苦にならん長さにしとる。
+ */
+interface Props {
+  /** 英字の港名（例: MUSIC HARBOR） */
+  harbor: string;
+  /** 日本語の一行（例: 音楽の港） */
+  label?: string;
+}
+const { harbor, label } = Astro.props;
+---
+<div class="gate" data-gate>
+  <p class="gate__tag">ARRIVING</p>
+  <p class="gate__name">{harbor}</p>
+  {label && <p class="gate__label">{label}</p>}
+  <span class="gate__rule" aria-hidden="true"></span>
+</div>
+
+<style>
+  /* 文字のうしろにだけ淡い光だまりを敷く。港の入口は紙だまりの外やけん、
+     これが無いと海の柄に文字が食われる。 */
+  .gate::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(92vw, 640px);
+    height: min(46vh, 320px);
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      rgba(251, 252, 255, 0.72),
+      rgba(251, 252, 255, 0.34) 55%,
+      rgba(251, 252, 255, 0) 100%
+    );
+    pointer-events: none;
+  }
+
+  .gate {
+    position: relative;
+    min-height: 62vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    text-align: center;
+    /* 港の入口は「海の上」。紙だまりを敷かんけん、ここだけ背景が素で見える */
+    padding-inline: 1.2rem;
+  }
+
+  /* ★小さい文字は海の柄に負ける。白い光の縁を回して浮かせる
+     （実機で ARRIVING と日本語の一行が読めんかった）。 */
+  .gate__tag {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 0.66rem;
+    letter-spacing: 0.34em;
+    color: var(--c-blue-deep);
+    opacity: 0.95;
+    text-shadow:
+      0 0 10px rgba(255, 255, 255, 0.95),
+      0 0 22px rgba(255, 255, 255, 0.85);
+  }
+
+  /* 港の名前。奥から手前に寄ってくる＝近づいとる */
+  .gate__name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 8vw, 3.4rem);
+    letter-spacing: 0.06em;
+    line-height: 1.15;
+    color: var(--c-ink);
+    text-shadow:
+      0 0 14px rgba(255, 255, 255, 0.9),
+      0 2px 26px rgba(255, 255, 255, 0.8);
+  }
+
+  .gate__label {
+    margin: 0.45rem 0 0;
+    font-size: 0.98rem;
+    color: var(--c-ink);
+    text-shadow:
+      0 0 10px rgba(255, 255, 255, 0.95),
+      0 0 22px rgba(255, 255, 255, 0.85);
+  }
+
+  /* 水平線の細い線。着くと左右に開く＝港が開く */
+  .gate__rule {
+    display: block;
+    width: min(70vw, 420px);
+    height: 1px;
+    margin-top: 1.1rem;
+    background: linear-gradient(90deg, transparent, var(--c-blue-deep), transparent);
+    opacity: 0.55;
+    transform: scaleX(0.2);
+    transform-origin: 50% 50%;
+    transition: transform 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* 伏せるのは「演出を動かせる」時だけ（reveal と同じ約束）。
+     JS が落ちても港の名前は読める。 */
+  :global(html.reveal-on) .gate__tag,
+  :global(html.reveal-on) .gate__name,
+  :global(html.reveal-on) .gate__label {
+    opacity: 0;
+    transform: translateY(26px) scale(0.94);
+    transition: opacity 0.9s ease, transform 1s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  :global(html.reveal-on) .gate.is-in .gate__tag { opacity: 0.85; transform: none; }
+  :global(html.reveal-on) .gate.is-in .gate__name { opacity: 1; transform: none; transition-delay: 0.1s; }
+  :global(html.reveal-on) .gate.is-in .gate__label { opacity: 1; transform: none; transition-delay: 0.2s; }
+  .gate.is-in .gate__rule { transform: scaleX(1); transition-delay: 0.25s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.reveal-on) .gate__tag,
+    :global(html.reveal-on) .gate__name,
+    :global(html.reveal-on) .gate__label { opacity: 1; transform: none; }
+    .gate__rule { transform: scaleX(1); transition: none; }
+  }
+
+  @media (min-width: 900px) {
+    .gate { min-height: 56vh; }
+  }
+</style>

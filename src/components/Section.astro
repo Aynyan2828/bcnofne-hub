@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import HarborGate from './HarborGate.astro';
 
 interface Props {
   id: string;
@@ -10,24 +11,20 @@ interface Props {
   mist?: boolean;
   avatar?: ImageMetadata; // 見出しに添える丸いAYN
   avatarAlt?: string;
-  /** 到着演出の港名（例: APPS HARBOR）。指定すると「ARRIVING」の一行が一度だけ灯る。 */
+  /** 港の名前（例: APPS HARBOR）。指定すると手前に「港の入口」の一画面が入る。 */
   harbor?: string;
+  /** 港の入口に出す日本語の一行（例: アプリの港） */
+  harborLabel?: string;
 }
-const { id, eyebrow, title, lead, mist = false, avatar, avatarAlt, harbor } = Astro.props;
+const { id, eyebrow, title, lead, mist = false, avatar, avatarAlt, harbor, harborLabel } = Astro.props;
 ---
+{/* 港の入口。海と空だけの一画面を挟んで「着いた」を作る。
+    紙だまりの外に置くけん、ここだけ背景（海・空・月）が素で見える。 */}
+{harbor && <HarborGate harbor={harbor} label={harborLabel} />}
+
 <section id={id} class:list={['section', { 'section--mist': mist }]}>
   <div class="container">
     <div class="section-head" data-reveal="up">
-      {/* 到着演出: VoyageRail の IntersectionObserver が .is-arrived を付ける。
-          JS なし／動きを減らす設定なら最初から静かに見えとる状態で置いとく。 */}
-      {harbor && (
-        <p class="arrival" data-harbor>
-          <span class="arrival__rule" aria-hidden="true"></span>
-          <span class="arrival__tag">ARRIVING</span>
-          <span class="arrival__name">{harbor}</span>
-          <span class="arrival__rule" aria-hidden="true"></span>
-        </p>
-      )}
       {avatar && (
         <div class="section-avatar">
           <Image src={avatar} alt={avatarAlt ?? `${title}のAYN`} width={112} height={112} loading="lazy" />

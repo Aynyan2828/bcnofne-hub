@@ -149,8 +149,12 @@ import { STATIONS } from '../lib/voyage';
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          // 港の入口は section の**手前**にあるけん、兄弟をたどって点ける
+          const gate = e.target.previousElementSibling;
+          if (gate && gate.classList.contains('gate')) gate.classList.add('is-in');
           const harbor = e.target.querySelector('[data-harbor]');
-          if (e.isIntersecting && harbor) harbor.classList.add('is-arrived');
+          if (harbor) harbor.classList.add('is-arrived');
         }
         // 画面のいちばん上に近い交差中セクションを現在地にする
         const visible = sections
@@ -378,11 +382,12 @@ import { STATIONS } from '../lib/voyage';
   }
 
   /* ── 次の港へ ──────────────────────────────────────────────── */
+  /* ★真ん中に置いたら本文の上に居座って読めんかった。左下へ寄せる
+     （右下は AYN ナビが居る）。小さくして、居ることは分かる程度に。 */
   .onward {
     position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: max(0.9rem, env(safe-area-inset-bottom));
+    left: max(0.8rem, env(safe-area-inset-left));
+    bottom: max(0.8rem, env(safe-area-inset-bottom));
     z-index: 30;
     display: inline-flex;
     align-items: center;
@@ -410,7 +415,8 @@ import { STATIONS } from '../lib/voyage';
   .onward.is-quiet { opacity: 0.25; }
   /* 右下の AYN と重ならんよう、狭い画面では少し左に寄せる */
   @media (max-width: 560px) {
-    .onward { left: calc(50% - 26px); font-size: 0.76rem; padding: 0.42rem 0.8rem; }
+    .onward { font-size: 0.72rem; padding: 0.38rem 0.7rem; gap: 0.3rem; }
+    .onward svg { width: 15px; height: 15px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
