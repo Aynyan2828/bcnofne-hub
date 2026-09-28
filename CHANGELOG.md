@@ -1,5 +1,12 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-09-28 — Cloudflare Web Analytics を入れた
+
+- `BaseLayout.astro`(全5ページ)と `public/angleon/play.html` の `</body>` 前に Cloudflare Web Analytics のビーコンを追加(Cookie なし)。
+  どのページが・どこから・いつ見られたかが Cloudflare ダッシュボードの「ウェブ分析」で見える。token はサイトに載る公開値
+- Angleon プライバシーポリシーの「Cloudflare Web Analytics で数えとる」と中身が一致した(今までは未設置で食い違っとった)
+- 総アクセス数の航海者カウンター(bcnofne-edge の /counter・Bridge が読む)はそのまま
+
 ## 2026-09-25 (9) — 港の入口をつくる（みさとと式への第一歩）
 
 各セクションの手前に **海と空だけの一画面** を挟んだ。
