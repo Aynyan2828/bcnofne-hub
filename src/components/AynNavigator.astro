@@ -13,7 +13,11 @@
  */
 import { Image } from 'astro:assets';
 import aynOk from '../assets/ayn/ayn-ok.png';
-import { STATIONS } from '../lib/voyage';
+import { stationsFor } from '../lib/voyage';
+interface Props { lang?: 'ja' | 'en' }
+const { lang = 'ja' } = Astro.props;
+const en = lang === 'en';
+const STATIONS = stationsFor(lang);
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -41,12 +45,31 @@ const routes = [
     note: s.note,
     external: false,
   })),
-  { href: `${base}/angleon/`, label: '新作 Angleon を見る', note: '制作中・事前登録', external: false },
-  { href: `${base}/shortcuts`, label: 'ショートカットをもらう', note: 'AYNにまかせんしゃい', external: false },
-  { href: '#contact', label: 'おたよりを出す', note: 'ぼくに直接届くばい', external: false },
+  // 港の外の用事。英語ページは日本語だけの行き先（ショートカット・おたより）を出さん
+  ...(en
+    ? [{ href: `${base}/angleon/play.html?lang=en`, label: 'Try the Angleon demo', note: 'In progress · in your browser', external: false }]
+    : [
+        { href: `${base}/angleon/`, label: '新作 Angleon を見る', note: '制作中・事前登録', external: false },
+        { href: `${base}/shortcuts`, label: 'ショートカットをもらう', note: 'AYNにまかせんしゃい', external: false },
+        { href: '#contact', label: 'おたよりを出す', note: 'ぼくに直接届くばい', external: false },
+      ]),
 ];
+// スクリプト側で使う文言（時刻のあいさつ・全港クリア・港の数）
+const T = en
+  ? {
+      late: 'Still up? Where to?', morning: 'Good morning. Where to today?', day: 'Hi there. Where to?', evening: 'Good evening. Where to today?',
+      done: 'You’ve visited every harbor. Thanks for sailing with me.', ports: 'harbors',
+      open: 'Ask AYN where to go', hint: 'Ask me where to go', panel: 'AYN’s guide', close: 'Close',
+      foot: 'For now I can only guide you around. Someday you’ll be able to talk with me right here.',
+    }
+  : {
+      late: 'まだ起きとると？ どこ行くと？', morning: 'おはよう。今日はどこ行くと？', day: 'こんにちは。どこ行くと？', evening: 'お疲れさん。今日はどこ行くと？',
+      done: 'ぜんぶの港を回ったね。ありがとう、よか航海やった。', ports: 'の港',
+      open: 'AYN に行き先を聞く', hint: 'どこ行くか、聞いてもよかよ', panel: 'AYN の行き先案内', close: '閉じる',
+      foot: 'いまは行き先案内だけ。じきに、ここでぼくと直に話せるようにするばい。',
+    };
 ---
-<div class="aynnav" data-aynnav>
+<div class="aynnav" data-aynnav data-lang={lang} data-t={JSON.stringify(T)}>
   <button
     class="aynnav__btn"
     type="button"
@@ -62,24 +85,24 @@ const routes = [
       <b>AYN</b>
       <span class="aynnav__status" data-aynnav-status>● ONLINE</span>
     </span>
-    <span class="visually-hidden">AYN に行き先を聞く</span>
+    <span class="visually-hidden">{T.open}</span>
   </button>
 
   {/* 初回だけ出る小さな吹き出し。ここに AYN が居って案内役やと分かってもらう。
       2回目以降は出さん（localStorage に1回だけ印を付ける）。 */}
   <p class="aynnav__hint" data-aynnav-hint hidden aria-hidden="true">
-    どこ行くか、聞いてもよかよ
+    {T.hint}
   </p>
 
-  <div class="aynnav__panel" id="aynnav-panel" data-aynnav-panel role="dialog" aria-label="AYN の行き先案内" hidden>
+  <div class="aynnav__panel" id="aynnav-panel" data-aynnav-panel role="dialog" aria-label={T.panel} hidden>
     <div class="aynnav__head">
       <span class="aynnav__headname">AYN</span>
       <span class="aynnav__headstatus" data-aynnav-status2>● ONLINE</span>
-      <button class="aynnav__close" type="button" data-aynnav-close aria-label="閉じる">
+      <button class="aynnav__close" type="button" data-aynnav-close aria-label={T.close}>
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
       </button>
     </div>
-    <p class="aynnav__say" data-aynnav-say aria-live="polite">今日はどこ行くと？</p>
+    <p class="aynnav__say" data-aynnav-say aria-live="polite">{en ? T.day : '今日はどこ行くと？'}</p>
     <ul class="aynnav__routes">
       {routes.map((r) => (
         <li>
@@ -114,7 +137,7 @@ const routes = [
     <p class="aynnav__foot">
       {ASK_ENDPOINT
         ? '答えはぼくの機関室から返しよる。うまく届かん時もあるけん、そこは許してほしか。'
-        : 'いまは行き先案内だけ。じきに、ここでぼくと直に話せるようにするばい。'}
+        : T.foot}
     </p>
   </div>
 </div>
@@ -129,20 +152,21 @@ const routes = [
     const closeBtn = root.querySelector('[data-aynnav-close]');
     const statusEls = root.querySelectorAll('[data-aynnav-status], [data-aynnav-status2]');
 
+    const T = JSON.parse(root.dataset.t || '{}');
     // 時刻で第一声を変える（閲覧者のローカル時刻）
     const greet = () => {
       const h = new Date().getHours();
-      if (h >= 22 || h < 5) return 'まだ起きとると？ どこ行くと？';
-      if (h < 11) return 'おはよう。今日はどこ行くと？';
-      if (h < 17) return 'こんにちは。どこ行くと？';
-      return 'お疲れさん。今日はどこ行くと？';
+      if (h >= 22 || h < 5) return T.late;
+      if (h < 11) return T.morning;
+      if (h < 17) return T.day;
+      return T.evening;
     };
     sayEl.textContent = greet();
 
     // 航海日誌の状態（setOpen から参照するけん先に宣言）
     let pendingComplete = false;
     let saidComplete = false;
-    const DONE_LINE = 'ぜんぶの港を回ったね。ありがとう、よか航海やった。';
+    const DONE_LINE = T.done;
 
     let open = false;
     const setOpen = (v) => {
@@ -232,7 +256,7 @@ const routes = [
       for (const i of logEl.querySelectorAll('[data-stamp]')) {
         i.classList.toggle('is-on', visited.includes(i.getAttribute('data-stamp')));
       }
-      countEl.textContent = `${visited.length} / ${d.total} の港`;
+      countEl.textContent = `${visited.length} / ${d.total} ${T.ports}`;
       logEl.hidden = visited.length === 0;
       if (d.complete) {
         root.classList.add('is-complete');

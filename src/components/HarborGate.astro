@@ -48,7 +48,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <img
       class="gate__ayn"
       src={`${base}/world/${ayn}.webp`}
-      alt={`${harbor} で迎える AYN`}
+      alt={/^[\x00-\x7F]*$/.test(label ?? '') ? `AYN welcoming you at ${harbor}` : `${harbor} で迎える AYN`}
       loading="lazy"
       decoding="async"
     />

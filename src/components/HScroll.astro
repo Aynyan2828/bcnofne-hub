@@ -30,8 +30,11 @@ interface Props {
   trackAttr?: string;
   /** 中のカードを1枚ずつ海面から浮上させる（既定 true） */
   surface?: boolean;
+  /** 操作ヒントの言語（既定 ja） */
+  lang?: 'ja' | 'en';
 }
-const { label, size = 'card', title, hint, trackAttr, surface = true } = Astro.props;
+const { label, size = 'card', title, hint, trackAttr, surface = true, lang = 'ja' } = Astro.props;
+const en = lang === 'en';
 
 // 1枚の幅は CSS 側（下の style）で端末ごとに決める。
 // min() 1本では書けん: スマホは vw の式、タブレット以上は固定 px にしたいけど、
@@ -44,11 +47,11 @@ const trackProps = trackAttr ? { [trackAttr]: true } : {};
     <p class="hs__head">
       {title && <span class="hs__title" data-type>{title}</span>}
       {hint && <span class="hs__hint" data-type data-type-delay="400" data-type-step="26">{hint}</span>}
-      <span class="hs__swipe" aria-hidden="true">横にスクロール →</span>
+      <span class="hs__swipe" aria-hidden="true">{en ? 'Scroll sideways →' : '横にスクロール →'}</span>
     </p>
   )}
   <div class="hs__frame">
-    <button class="hs__nav hs__nav--prev" type="button" data-hs-prev aria-label={`${label}を前へ`}>
+    <button class="hs__nav hs__nav--prev" type="button" data-hs-prev aria-label={en ? `${label}: previous` : `${label}を前へ`}>
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
     </button>
     {/* data-reveal-stagger は**トラック側**に付ける。カード1枚ずつに付けると、
@@ -65,7 +68,7 @@ const trackProps = trackAttr ? { [trackAttr]: true } : {};
     >
       <slot />
     </div>
-    <button class="hs__nav hs__nav--next" type="button" data-hs-next aria-label={`${label}を次へ`}>
+    <button class="hs__nav hs__nav--next" type="button" data-hs-next aria-label={en ? `${label}: next` : `${label}を次へ`}>
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
     </button>
   </div>

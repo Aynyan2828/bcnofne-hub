@@ -1,8 +1,11 @@
 ---
 // Crypto Ocean 航海者カウンター＋国別あいさつ（bcnofne-edge の /counter と /greeting）。
 const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
+interface Props { lang?: 'ja' | 'en' }
+const { lang = 'ja' } = Astro.props;
+const en = lang === 'en';
 ---
-<aside class="voyager" data-voyager data-endpoint={EDGE} aria-live="polite">
+<aside class="voyager" data-voyager data-endpoint={EDGE} data-lang={lang} aria-live="polite">
   <span class="voyager__anchor" aria-hidden="true">
     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="5" r="2.2"/>
@@ -12,15 +15,17 @@ const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
     </svg>
   </span>
   <p class="voyager__text">
-    <span data-pre data-type data-type-step="42">ようこそ、Crypto Ocean へ。きみは </span>
+    <span data-pre data-type data-type-step="42">{en ? 'Welcome aboard the Crypto Ocean. You are voyager No. ' : 'ようこそ、Crypto Ocean へ。きみは '}</span>
     <span class="voyager__no" data-count>—</span>
-    <span data-post data-type data-type-delay="1100" data-type-step="42"> 人目の航海者ばい。</span>
+    <span data-post data-type data-type-delay="1100" data-type-step="42">{en ? '.' : ' 人目の航海者ばい。'}</span>
   </p>
   <p class="voyager__gloss">
-    <b>Crypto Ocean</b> ＝ AI・アプリ・音楽・創作が流れる情報の海。BCNOFNe ではこの海のことばい。
+    {en
+      ? <><b>Crypto Ocean</b> = the sea of information where AI, apps, music, and making things flow. That’s the ocean BCNOFNe sails.</>
+      : <><b>Crypto Ocean</b> ＝ AI・アプリ・音楽・創作が流れる情報の海。BCNOFNe ではこの海のことばい。</>}
   </p>
   <!-- ようこその締め。このあと外洋を一区間渡ってから最初の港に着く -->
-  <p class="voyager__bon" data-bon data-type data-type-delay="1900" data-type-step="85">それでは、航海をお楽しみください。</p>
+  <p class="voyager__bon" data-bon data-type data-type-delay="1900" data-type-step="85">{en ? 'Now, enjoy the voyage.' : 'それでは、航海をお楽しみください。'}</p>
 </aside>
 
 <script>
@@ -64,7 +69,7 @@ const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
 
     const fallback = () => {
       const t = el.querySelector('.voyager__text');
-      if (t) t.textContent = 'ようこそ、Crypto Ocean へ。';
+      if (t) t.textContent = el.dataset.lang === 'en' ? 'Welcome aboard the Crypto Ocean.' : 'ようこそ、Crypto Ocean へ。';
     };
 
     (async () => {

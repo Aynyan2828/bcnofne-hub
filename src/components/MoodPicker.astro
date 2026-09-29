@@ -8,7 +8,17 @@
  *
  * JS が無いときはチップを出さず、一覧はそのまま全部見える（何も失わん）。
  */
-const MOODS = [
+interface Props { lang?: 'ja' | 'en' }
+const { lang = 'ja' } = Astro.props;
+const en = lang === 'en';
+const MOODS_EN = [
+  { key: 'all', label: 'All', note: '' },
+  { key: 'sleep', label: 'Sleep', note: 'Lights down, drifting toward the harbor. EPs made for falling asleep.', link: { label: 'Sleep videos are here', url: '#listen' } },
+  { key: 'night', label: 'Night sea', note: 'Crossing a calm night sea by lantern light — the sound at the heart of BCNOFNe.' },
+  { key: 'morning', label: 'Morning drive', note: 'Start the engine and head into the morning. Best with the windows down.' },
+  { key: 'focus', label: 'Focus', note: 'For focus, the always-on work BGM fits better than an album.', link: { label: 'Open AYN Work Radio', url: 'https://www.youtube.com/@AYNWorkRadio' } },
+];
+const MOODS_JA = [
   { key: 'all', label: 'ぜんぶ', note: '' },
   {
     key: 'sleep',
@@ -33,10 +43,11 @@ const MOODS = [
     link: { label: 'AYN Work Radio を開く', url: 'https://www.youtube.com/@AYNWorkRadio' },
   },
 ];
+const MOODS = en ? MOODS_EN : MOODS_JA;
 ---
-<div class="moods" data-moods-picker data-target="[data-music-grid]" hidden>
-  <p class="moods__q" data-type data-type-step="60">いま、どんな気分？</p>
-  <div class="moods__chips" role="group" aria-label="気分で選ぶ">
+<div class="moods" data-moods-picker data-target="[data-music-grid]" data-lang={lang} hidden>
+  <p class="moods__q" data-type data-type-step="60">{en ? 'What’s your mood right now?' : 'いま、どんな気分？'}</p>
+  <div class="moods__chips" role="group" aria-label={en ? 'Pick by mood' : '気分で選ぶ'}>
     {MOODS.map((m) => (
       <button type="button" class="moods__chip" data-mood={m.key} aria-pressed={m.key === 'all' ? 'true' : 'false'}>
         {m.label}
@@ -112,7 +123,7 @@ const MOODS = [
       } else {
         noteEl.hidden = true;
       }
-      countEl.textContent = `${shown}件の作品を表示しとる。`;
+      countEl.textContent = picker.dataset.lang === 'en' ? `Showing ${shown} releases.` : `${shown}件の作品を表示しとる。`;
       // 棚（HScroll）に入っとるので、絞り込んだら先頭に戻す。
       // scroll を1回投げて、端の霧と送りボタンの出し分けを測り直させる。
       if (!fx) {

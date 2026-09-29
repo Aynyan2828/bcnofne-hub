@@ -14,9 +14,17 @@
  * prefers-reduced-motion: 船の移動・線の伸び・到着のふわっ、を全部やめて
  * 「現在地の点が光る」だけにする。JS が無い時はレールごと出さない。
  */
-import { STATIONS } from '../lib/voyage';
+import { stationsFor } from '../lib/voyage';
+interface Props { lang?: 'ja' | 'en' }
+const { lang = 'ja' } = Astro.props;
+const STATIONS = stationsFor(lang);
+const T = lang === 'en'
+  ? { nav: 'Voyage (where you are)', next: 'Next harbor', back: 'Back to port' }
+  : { nav: '航路（現在地）', next: '次の港へ', back: '港へもどる' };
+// 寄った港の記録は言語ごとに分ける（港の顔ぶれが違うけん、混ぜると片方の記録が消える）
+const logKey = lang === 'en' ? 'bcnofne_logbook_en' : 'bcnofne_logbook';
 ---
-<nav class="rail" data-rail aria-label="航路（現在地）" hidden>
+<nav class="rail" data-rail aria-label={T.nav} data-logkey={logKey} data-next={T.next} data-back={T.back} hidden>
   <!-- PC: 左端の縦航路 -->
   <div class="rail__line" aria-hidden="true">
     <span class="rail__wake"></span>
@@ -45,7 +53,7 @@ import { STATIONS } from '../lib/voyage';
 <!-- 次の港へ進める矢印（みさととの下向き矢印と同じ役目）。
      航海を前に進める合図。最後の港では「港へ戻る」に変わる。 -->
 <button class="onward" data-onward type="button" hidden>
-  <span class="onward__label" data-onward-label>次の港へ</span>
+  <span class="onward__label" data-onward-label>{T.next}</span>
   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M12 5v14M6 13l6 6 6-6"/>
@@ -115,7 +123,7 @@ import { STATIONS } from '../lib/voyage';
        localStorage に港の id を貯める。全部回ったら 'bcnofne:voyage' の
        detail.complete が true になって、AYN ナビが労いの一言を出す。
        プライベートモード等で localStorage が死んどっても落とさん。 */
-    const LOG_KEY = 'bcnofne_logbook';
+    const LOG_KEY = rail.dataset.logkey || 'bcnofne_logbook';
     const readLog = () => {
       try {
         const v = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
@@ -203,9 +211,10 @@ import { STATIONS } from '../lib/voyage';
       const refresh = () => {
         const n = nextOf();
         const last = sections.findIndex((s) => s.id === current) === sections.length - 1;
-        onwardLabel.textContent = last ? '港へもどる' : '次の港へ';
+        const word = last ? rail.dataset.back : rail.dataset.next;
+        onwardLabel.textContent = word;
         onward.setAttribute('aria-label',
-          (last ? '港へもどる' : '次の港へ') + (n ? `（${n.li.querySelector('.rail__code').textContent}）` : ''));
+          word + (n ? `（${n.li.querySelector('.rail__code').textContent}）` : ''));
       };
       refresh();
       document.addEventListener('bcnofne:voyage', refresh);

@@ -12,34 +12,70 @@ const rigVer = Date.now().toString(36);
 const rigUrl = `${base}/ayn-rig/rig.json?v=${rigVer}`;
 const rigJs = `${base}/ayn-rig/rig.js?v=${rigVer}`;
 
+interface Props { lang?: 'ja' | 'en' }
+const { lang = 'ja' } = Astro.props;
+const en = lang === 'en';
+
 // 積荷（この船が何を作っとるか）。各港へのアンカーを兼ねる。
 // 新しいジャンルを始めたらここに1行足す。
-const CARGO = [
+const CARGO_EN = [
+  { en: 'Radio', ja: 'Sleep & focus BGM', href: '#listen' },
+  { en: 'Music', ja: 'Original EPs', href: '#music' },
+  { en: 'Log', ja: 'Weekly build log', href: '#log' },
+  { en: 'Apps', ja: 'iOS apps', href: '#apps' },
+  { en: 'AI', ja: 'AYN, the engineer', href: '#about' },
+];
+// AYN のひとこと（タップで喋る）。[文, 表情]
+const LINES = en
+  ? [['Welcome aboard!', 'happy'], ['Take your time.', 'kubikashige'], ['Music, apps, logs — all here.', 'wink'], ['Can’t sleep? Try Sleep Radio.', 'surprise']]
+  : [['ようこそ、ボクのフネへ。', 'happy'], ['ゆっくり見ていってほしか。', 'kubikashige'], ['アプリも音楽も、ぜんぶここばい。', 'wink'], ['眠れん夜は、Sleep Radio やけんね。', 'surprise']];
+const CARGO_JA = [
   { en: 'Apps', ja: 'iPhoneアプリ', href: '#apps' },
   { en: 'Radio', ja: '睡眠・作業BGM', href: '#listen' },
   { en: 'Music', ja: '配信EP', href: '#music' },
   { en: 'Art', ja: '水彩の情景', href: '#about' },
   { en: 'AI', ja: '機関士AI AYN', href: '#about' },
 ];
+const CARGO = en ? CARGO_EN : CARGO_JA;
 ---
 <header class="hero" id="top">
   <div class="container hero__inner">
     <div class="hero__copy">
-      <p class="hero__eyebrow" data-type data-type-step="40">BCNOFNe〜ボクのフネ〜</p>
-      <h1 class="hero__title" data-type data-type-delay="350" data-type-step="55">
-        情報の海を、<br />ぼくと一緒に航海しようや。
-      </h1>
-      <p class="hero__lead" data-type data-type-delay="1500" data-type-step="16">
-        機関士AI の <strong>AYN（あゆにゃん）</strong> ばい。
-        アプリも、眠れん夜の音楽も、ラジオも、ぜんぶこの一枚にまとめとうけん。
-        気になるところから、ゆっくり見ていってほしか。
-      </p>
-      <div class="hero__cta">
-        <a class="btn" href="#apps">アプリを見る</a>
-        <a class="btn btn--ghost" href={`${base}/angleon/`}>新作 Angleon（制作中）</a>
-      </div>
+      {en ? (
+        <>
+          <p class="hero__eyebrow" data-type data-type-step="40">BCNOFNe · “boku no fune” — my ship</p>
+          <h1 class="hero__title" data-type data-type-delay="350" data-type-step="55">
+            Free music, small apps, and a build log — from one small ship.
+          </h1>
+          <p class="hero__lead" data-type data-type-delay="1500" data-type-step="16">
+            BCNOFNe is a one-person studio building an AI character named <strong>AYN</strong> —
+            and the music, apps, and tools that sail with her.
+            Free sleep &amp; focus music, small iOS apps, and a weekly build log in English.
+          </p>
+          <div class="hero__cta">
+            <a class="btn" href="#listen">Play sleep &amp; focus music</a>
+            <a class="btn btn--ghost" href="#log">Read the Ship’s Log</a>
+          </div>
+        </>
+      ) : (
+        <>
+          <p class="hero__eyebrow" data-type data-type-step="40">BCNOFNe〜ボクのフネ〜</p>
+          <h1 class="hero__title" data-type data-type-delay="350" data-type-step="55">
+            情報の海を、<br />ぼくと一緒に航海しようや。
+          </h1>
+          <p class="hero__lead" data-type data-type-delay="1500" data-type-step="16">
+            機関士AI の <strong>AYN（あゆにゃん）</strong> ばい。
+            アプリも、眠れん夜の音楽も、ラジオも、ぜんぶこの一枚にまとめとうけん。
+            気になるところから、ゆっくり見ていってほしか。
+          </p>
+          <div class="hero__cta">
+            <a class="btn" href="#apps">アプリを見る</a>
+            <a class="btn btn--ghost" href={`${base}/angleon/`}>新作 Angleon（制作中）</a>
+          </div>
+        </>
+      )}
       <!-- 積荷マニフェスト: 初めて来た人が3秒で「何を作っとる場所か」分かる行 -->
-      <p class="hero__manifest-q" data-type data-type-step="40">この船が積んどるもの</p>
+      <p class="hero__manifest-q" data-type data-type-step="40">{en ? 'What this ship carries' : 'この船が積んどるもの'}</p>
       <ul class="hero__manifest">
         {CARGO.map((c) => (
           <li>
@@ -52,13 +88,13 @@ const CARGO = [
       </ul>
     </div>
     <div class="hero__art">
-      <div class="hero__rig" id="ayn-rig" data-rig={rigUrl} data-js={rigJs} title="タップすると喋るばい">
+      <div class="hero__rig" id="ayn-rig" data-rig={rigUrl} data-js={rigJs} data-lines={JSON.stringify(LINES)} title={en ? 'Tap her to talk' : 'タップすると喋るばい'}>
         <canvas class="hero__canvas" aria-hidden="true"></canvas>
-        <span class="hero__bubble" aria-live="polite"></span>
+        <span class:list={['hero__bubble', { 'hero__bubble--wrap': en }]} aria-live="polite"></span>
       </div>
       <Image
         src={keyVisual}
-        alt="水彩で描かれた機関士AI AYN。青紫の髪に赤メガネ、夜空と流星の航海シーン。"
+        alt={en ? 'Watercolor illustration of AYN, an AI ship’s engineer with blue-violet hair and red glasses, sailing under a night sky with shooting stars.' : '水彩で描かれた機関士AI AYN。青紫の髪に赤メガネ、夜空と流星の航海シーン。'}
         widths={[320, 480, 640]}
         sizes="(max-width: 720px) 70vw, 420px"
         loading="eager"
@@ -189,6 +225,8 @@ const CARGO = [
     white-space: nowrap; opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none;
   }
   .hero__bubble.is-on { opacity: 1; transform: translateX(-50%) translateY(0); }
+  /* 英語は字幅が広うて1行に収まらんことがある→折り返して丸枠の中に収める（日本語は今まで通り1行） */
+  .hero__bubble--wrap { white-space: normal; width: max-content; text-align: center; line-height: 1.35; border-radius: 1rem; }
   @media (prefers-reduced-motion: reduce) { .hero__rig { display: none !important; } .hero__rig + .hero__img { display: block !important; } }
   .hero__img {
     width: min(72vw, 420px);
@@ -236,7 +274,8 @@ const CARGO = [
       let speaking = false, env = null, envStart = 0, envDur = 0, level = 0, levelS = 0;
       let nextBlink = performance.now() + 1800, blinkUntil = 0, last = performance.now();
       const bubble = host.querySelector('.hero__bubble');
-      const lines = [['ようこそ、ボクのフネへ。', 'happy'], ['ゆっくり見ていってほしか。', 'kubikashige'], ['アプリも音楽も、ぜんぶここばい。', 'wink'], ['眠れん夜は、Sleep Radio やけんね。', 'surprise']];
+      const lines = JSON.parse(host.dataset.lines || '[]');
+      if (!lines.length) lines.push(['ようこそ、ボクのフネへ。', 'happy']);
       let li = 0;
       const talk = () => {
         const [text, expr] = lines[li++ % lines.length];
