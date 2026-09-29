@@ -11,6 +11,7 @@ import Section from '../../components/Section.astro';
 import Card from '../../components/Card.astro';
 import HScroll from '../../components/HScroll.astro';
 import Footer from '../../components/Footer.astro';
+import LangSwitch from '../../components/LangSwitch.astro';
 import Reveal from '../../components/Reveal.astro';
 import keyVisual from '../../assets/ayn-keyvisual.png';
 import aynNight from '../../assets/ayn/ayn-night.png';
@@ -96,6 +97,7 @@ const SOCIAL = [
     { lang: 'x-default', path: '/' },
   ]}
 >
+  <LangSwitch lang="en" />
   <header class="enhero">
     <div class="container enhero__inner">
       <div class="enhero__copy">
@@ -282,6 +284,7 @@ const SOCIAL = [
     position: relative;
     color: #fff;
     padding-block: clamp(3rem, 9vw, 5.5rem);
+    padding-top: clamp(4.8rem, 9vw, 5.5rem);   /* 右上の言語ボタン(44px)と一行目が重ならんように */
     background: linear-gradient(160deg, rgba(34, 43, 92, 0.9) 0%, rgba(58, 74, 134, 0.84) 55%, rgba(98, 88, 150, 0.8) 100%);
   }
   .enhero__inner {

@@ -18,6 +18,7 @@ import About from '../components/About.astro';
 import Contact from '../components/Contact.astro';
 import Feed from '../components/Feed.astro';
 import Footer from '../components/Footer.astro';
+import LangSwitch from '../components/LangSwitch.astro';
 
 // 見出しの丸AYN・大きな水彩シーン
 import aynOk from '../assets/ayn/ayn-ok.png';
@@ -62,6 +63,7 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
   { lang: 'en', path: '/en/' },
   { lang: 'x-default', path: '/' },
 ]}>
+  <LangSwitch />
   <VoyageRail />
   <Hero />
   <VoyagerCounter />

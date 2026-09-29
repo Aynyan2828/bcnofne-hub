@@ -1,0 +1,41 @@
+---
+// 言語切替（ページ最上部の右端）。Footer だけやと見つからんかった（マスター実機・2026-09-29）。
+// 固定表示にはせん＝読み始めたら一緒に流れて消える。左上はスマホの「いまの港」表示が居るけん右に置く。
+interface Props {
+  /** いま表示しとるページの言語。ja なら English へ、en なら日本語へ */
+  lang?: 'ja' | 'en';
+}
+const { lang = 'ja' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const to = lang === 'en'
+  ? { href: `${base}/`, hreflang: 'ja', label: '日本語', aria: '日本語サイトへ' }
+  : { href: `${base}/en/`, hreflang: 'en', label: 'English', aria: 'English version' };
+---
+<a class="langswitch" href={to.href} hreflang={to.hreflang} lang={to.hreflang} aria-label={to.aria}>
+  <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9S9.4 5.6 12 3z"/></svg>
+  {to.label}
+</a>
+
+<style>
+  .langswitch {
+    position: absolute;
+    top: max(0.9rem, env(safe-area-inset-top));
+    right: max(0.9rem, env(safe-area-inset-right));
+    z-index: 25;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    min-height: 44px;
+    padding: 0 1em;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    background: rgba(20, 26, 64, 0.45);
+    color: #fff;
+    font-size: 0.9rem;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: background 0.18s ease, transform 0.18s ease;
+  }
+  .langswitch:hover { background: rgba(20, 26, 64, 0.7); transform: translateY(-1px); text-decoration: none; color: #fff; }
+  .langswitch:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+</style>
