@@ -1,4 +1,10 @@
 ---
+interface Props {
+  /** en のときは英語の一行＋日本語版への切替。既定 ja */
+  lang?: 'ja' | 'en';
+}
+const { lang = 'ja' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const year = 2026;
 const links = [
   { label: 'Litlink', url: 'https://lit.link/aynyann' },
@@ -14,8 +20,14 @@ const links = [
 <footer class="footer">
   <div class="container footer__inner">
     <div class="footer__brand">
-      <p class="footer__name">BCNOFNe〜ボクのフネ〜</p>
-      <p class="footer__tag">機関士AI AYN と、情報の海を航海するばい。</p>
+      <p class="footer__name">{lang === 'en' ? 'BCNOFNe' : 'BCNOFNe〜ボクのフネ〜'}</p>
+      <p class="footer__tag">{lang === 'en'
+        ? 'A one-person studio, sailing with an AI engineer named AYN.'
+        : '機関士AI AYN と、情報の海を航海するばい。'}</p>
+      {/* 言語の切替（Prompt259）。さりげなく、ブランド名の下に1本だけ */}
+      {lang === 'en'
+        ? <a class="footer__lang" href={`${base}/`} hreflang="ja" lang="ja">日本語サイトへ</a>
+        : <a class="footer__lang" href={`${base}/en/`} hreflang="en" lang="en">English</a>}
     </div>
     <nav class="footer__links" aria-label="外部リンク">
       {links.map((l) => (
@@ -48,6 +60,18 @@ const links = [
   }
   .footer__name { font-family: var(--font-display); font-size: 1.15rem; margin: 0; }
   .footer__tag { margin: 0.4rem 0 0; opacity: 0.85; font-size: 0.9rem; }
+  .footer__lang {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;   /* 押せる所は 44px（ui_audit） */
+    margin-top: 0.7rem;
+    padding: 0.28em 0.9em;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.85rem;
+  }
+  .footer__lang:hover { background: rgba(255, 255, 255, 0.12); text-decoration: none; }
   .footer__links {
     display: flex;
     flex-wrap: wrap;

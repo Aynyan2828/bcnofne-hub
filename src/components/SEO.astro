@@ -4,8 +4,13 @@ interface Props {
   title: string;
   description: string;
   ogImage?: string; // base込みの絶対 or ルート相対パス
+  lang?: 'ja' | 'en';
+  /** hreflang（言語違いの対ページ）。path は base 抜きのルート相対 */
+  alternates?: { lang: string; path: string }[];
 }
-const { title, description, ogImage = 'og/og-default.jpg' } = Astro.props;
+const { title, description, ogImage = 'og/og-default.jpg', lang = 'ja', alternates = [] } = Astro.props;
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+const altUrl = (path: string) => new URL(basePath + path, Astro.site).href;
 
 // 絶対URL化（OGP は絶対URL必須）
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -48,7 +53,7 @@ const jsonLd = {
       url: canonical,
       name: title,
       description,
-      inLanguage: 'ja',
+      inLanguage: lang,
       publisher: { '@id': canonical + '#org' },
     },
   ],
@@ -57,6 +62,7 @@ const jsonLd = {
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
+{alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={altUrl(a.path)} />)}
 
 <!-- OGP -->
 <meta property="og:type" content="website" />
@@ -65,7 +71,10 @@ const jsonLd = {
 <meta property="og:url" content={canonical} />
 <meta property="og:image" content={ogImageUrl} />
 <meta property="og:site_name" content="BCNOFNe" />
-<meta property="og:locale" content="ja_JP" />
+<meta property="og:locale" content={lang === 'en' ? 'en_US' : 'ja_JP'} />
+{alternates.filter((a) => a.lang !== lang && a.lang !== 'x-default').map((a) => (
+  <meta property="og:locale:alternate" content={a.lang === 'en' ? 'en_US' : 'ja_JP'} />
+))}
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />

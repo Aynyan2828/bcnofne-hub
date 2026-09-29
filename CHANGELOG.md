@@ -1,5 +1,31 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-09-29 — 英語の着地点 /en と Substack カード（Prompt259）
+
+外国から来た人が迷わず「今すぐ聴ける・読める」所へ飛べる英語ページを1枚だけ足した。全訳はせん。
+
+### Added
+- `src/pages/en/index.astro` — 英語ランディング。順番＝Sleep & Focus（YouTube Sleep/Work）→ Music（Spotify＋EP 7枚・HyperFollow）
+  → **Ship's Log of BCNOFNe**（主役の横長カード）→ Apps（ShiftWake＝英語UI・米国ストア／Angleon＝制作中・ブラウザデモ）→ note・SNS。
+  英語は書き下ろし。カードの URL・画像は content/*.md を共有し、英語の文言だけページ側に持つ
+- `src/content/social/substack.md` — 便りの港に Substack カード（https://bcnofnelog.substack.com・棚の先頭）
+- `src/assets/sns/art-substack.png` — カード絵。AYN 水彩プラグインを DOM で操作して生成
+  （identity block を依頼文の先頭に置き、設定資料 MASTER.png を添付。夜の機関室・ランタン・航海日誌）
+- `public/angleon/play.html` — `?lang=en` で英語表示（ヒント1行と絵の名前 Front/Profile/Wink）。引数無しは今まで通り日本語
+
+### Changed（既定値のままなら今までと同じ出力）
+- `BaseLayout` / `SEO` に `lang` と `alternates`。`/` と `/en/` に hreflang（ja・en・x-default）、`/en` は `og:locale=en_US`
+- `Footer` に言語切替のピル（日本語側＝English／英語側＝日本語サイトへ）
+
+### 載せんと決めたもの
+- 扶養メーター（日本の税制専用）・LINE・楽天ROOM・日本語トークの BCNOFNe Radio / AI RADIO Podcast
+- シリーズ名 "Building AYN"（英語圏に伝わらん＝ShipsLog Decisions 2026-09-28）
+
+### 確かめたこと
+- `npm run build` 成功。main のビルドと比べて日本語ページの差分は追加だけ（hreflang・Substack カード・English ピル）
+- `ui_audit.py` で /en：コントラスト不合格 0・小さい文字 0・横はみ出し 0（375/横向き/PC）・見出し順 OK。
+  English/日本語 ピルが高さ 33px → 44px に直した
+
 ## 2026-09-28 — Cloudflare Web Analytics を入れた
 
 - `BaseLayout.astro`(全5ページ)と `public/angleon/play.html` の `</body>` 前に Cloudflare Web Analytics のビーコンを追加(Cookie なし)。

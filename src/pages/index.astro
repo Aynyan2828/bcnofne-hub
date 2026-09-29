@@ -57,7 +57,11 @@ const allLogs = await getWorklog();
 const recentLogs = allLogs.slice(0, LOG_WINDOW_MAX);
 const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
 ---
-<BaseLayout>
+<BaseLayout alternates={[
+  { lang: 'ja', path: '/' },
+  { lang: 'en', path: '/en/' },
+  { lang: 'x-default', path: '/' },
+]}>
   <VoyageRail />
   <Hero />
   <VoyagerCounter />
