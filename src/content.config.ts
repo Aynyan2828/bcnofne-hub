@@ -61,6 +61,11 @@ const music = defineCollection({
       ...cardBase,
       service: z.string().optional(),
       image: image().optional(),
+      // 音楽の種類。カードを並べる棚を分けるのに使う。
+      //   ep     … EP・アルバム（既定）。Spotify のアーティストページもここ
+      //   single … 単曲リリース。EP と混ざると EP が埋もれるので別の棚に出す
+      // 既存の .md は kind を書いとらんので全部 ep 扱い（表示は変わらん）。
+      kind: z.enum(['ep', 'single']).default('ep'),
       // 「今どんな気分？」で絞り込むためのタグ。
       // 未指定（空）＝どの気分でも出る常設カード（Spotify のような入口）。
       moods: z

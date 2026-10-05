@@ -38,6 +38,10 @@ const byOrder = (a: { data: { order: number } }, b: { data: { order: number } })
 const apps = (await getCollection('apps')).filter(visible).sort(byOrder);
 const channels = (await getCollection('channels')).filter(visible).sort(byOrder);
 const music = (await getCollection('music')).filter(visible).sort(byOrder);
+// 音の港の棚を2つに分ける。単曲が増えると EP が埋もれるため（2026-10-05）。
+// .md に kind: single と書いた分だけ下の棚に出る。書かんかったら今まで通り上の棚。
+const musicEps = music.filter((m) => m.data.kind !== 'single');
+const musicSingles = music.filter((m) => m.data.kind === 'single');
 const social = (await getCollection('social')).filter(visible).sort(byOrder);
 
 // Apps 港の主役（featured: true の1本）。残りは Other Apps。
@@ -206,8 +210,8 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
     >
       <MoodPicker />
       <div>
-        <HScroll label="音楽作品" size="card" hint={`${music.length}件`} trackAttr="data-music-grid">
-          {music.map((m) => (
+        <HScroll label="EP・アルバム" title="EP・アルバム" size="card" hint={`${musicEps.length}件`} trackAttr="data-music-grid">
+          {musicEps.map((m) => (
             <Card
               title={m.data.title}
               summary={m.data.summary}
@@ -220,6 +224,24 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
           ))}
         </HScroll>
       </div>
+
+      {musicSingles.length > 0 && (
+        <div>
+          <HScroll label="シングル" title="シングル" size="card" hint={`${musicSingles.length}件`} trackAttr="data-music-singles">
+            {musicSingles.map((m) => (
+              <Card
+                title={m.data.title}
+                summary={m.data.summary}
+                url={m.data.url}
+                cta={m.data.cta}
+                badge={m.data.service}
+                image={m.data.image}
+                moods={m.data.moods}
+              />
+            ))}
+          </HScroll>
+        </div>
+      )}
     </Section>
 
     <Section
