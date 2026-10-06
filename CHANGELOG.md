@@ -1,5 +1,12 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-10-06 — SubScope のサポートページとプライバシーポリシー
+
+App Store 提出用（サポート URL・プライバシーポリシー URL）。日本語と英語を 1 枚ずつに載せる（英語は `#en`）。
+- `/subscope/`：アプリの説明・よくある質問（削除しても契約は止まらん・通知・機種変更・購入の復元）・お問い合わせ
+- `/subscope/privacy/`：データは全部端末の中・通信はロゴ検索（Apple）・為替（Frankfurter）・課金（Apple／RevenueCat）だけ・解析なし
+- アイコン `src/assets/app-subscope-icon.png`（512px）。トップのアプリ一覧には発売後に載せる
+
 ## 2026-09-29 (3) — /en を日本語トップと同じ船の作りに
 
 マスター要望「英語ページもサイト構成を日本語と同じに（2D の動く AYN など）」。

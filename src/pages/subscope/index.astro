@@ -1,0 +1,52 @@
+---
+// SubScope のサポートページ（App Store の「サポート URL」）。日本語・英語を 1 枚に。
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+import icon from '../../assets/app-subscope-icon.png';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<BaseLayout title="SubScope｜サブスク管理・解約忘れ防止 / Subscription Manager" description="契約中のサブスクの更新日・合計・無料体験の終わりを見張り、解約の締め切り前に知らせる iPhone アプリ SubScope のサポートページ。">
+  <main id="main" class="section">
+    <div class="container" style="max-width: 720px;">
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom: 1.5rem;">
+        <Image src={icon} alt="SubScope のアイコン" width={88} height={88} style="border-radius: 20px;" />
+        <div>
+          <span class="eyebrow">iPhone App</span>
+          <h2 style="margin:0">SubScope</h2>
+        </div>
+      </div>
+      <p><a href="#en">English below</a></p>
+
+      <p>SubScope（サブスコープ）は、契約中のサブスクの更新日・ひと月の合計・無料体験の終わる日を見張り、解約の締め切り前にお知らせする iPhone アプリです。AI ツールのクレジットなど「ポイントの残り」が更新までに使い切れるかも予測します。登録した情報はすべて iPhone の中だけに保存します。</p>
+
+      <h3>よくある質問</h3>
+      <p><strong>アプリで削除すると、契約も止まりますか？</strong><br />止まりません。SubScope は記録と通知のアプリです。解約は支払い先（App Store・Google Play・各サービスのサイトなど）で行ってください。アプリの編集画面に「止める場所」を表示しています。</p>
+      <p><strong>通知が来ません。</strong><br />iPhone の「設定 ＞ 通知 ＞ SubScope」で通知がオンになっているかご確認ください。通知は朝 9 時に出ます。</p>
+      <p><strong>機種変更の時は？</strong><br />「設定 ＞ 書き出し」でファイルに書き出し、新しい iPhone の「取り込み」で読み込めます。</p>
+      <p><strong>SubScope Pro の購入を復元したい。</strong><br />「設定 ＞ SubScope Pro ＞ 購入を復元」を押してください。月額プランの解約は iPhone の「設定 ＞ 自分の名前 ＞ サブスクリプション」から行えます。</p>
+
+      <h3>お問い合わせ</h3>
+      <p>不具合・ご要望・掲載の削除のご依頼は <a href={`${base}/#contact`}>お問い合わせ</a>からご連絡ください。</p>
+      <p><a href={`${base}/subscope/privacy/`}>プライバシーポリシー</a></p>
+
+      <hr style="margin: 3rem 0; opacity: .3;" />
+
+      <div lang="en" id="en">
+        <h2>SubScope — Subscription Manager</h2>
+        <p>SubScope is an iPhone app that watches your subscriptions' renewal dates, monthly total and free-trial end dates, and reminds you before the cancellation deadline. It also forecasts whether you'll use up point balances, such as AI tool credits, before they renew. Everything you add is stored only on your iPhone.</p>
+
+        <h3>FAQ</h3>
+        <p><strong>Does deleting a subscription in the app cancel it?</strong><br />No. SubScope only records and reminds. Please cancel where you pay (the App Store, Google Play, or the service's website). The edit screen shows where to cancel.</p>
+        <p><strong>I'm not getting reminders.</strong><br />Check that notifications are on in Settings › Notifications › SubScope. Reminders arrive at 9 a.m.</p>
+        <p><strong>Moving to a new iPhone?</strong><br />Export your data from Settings › Export, then use Import on your new iPhone.</p>
+        <p><strong>How do I restore SubScope Pro?</strong><br />Tap Settings › SubScope Pro › Restore purchases. You can cancel the monthly plan in your iPhone's Settings › your name › Subscriptions.</p>
+
+        <h3>Contact</h3>
+        <p>For bug reports, requests or removal requests, please use the <a href={`${base}/#contact`}>contact form</a>.</p>
+        <p><a href={`${base}/subscope/privacy/#en`}>Privacy Policy</a></p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

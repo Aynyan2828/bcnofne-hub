@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Footer from '../../../components/Footer.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<BaseLayout title="SubScope プライバシーポリシー / Privacy Policy" description="サブスク管理アプリ SubScope が扱う情報（日本語・English）。">
+  <main id="main" class="section">
+    <div class="container" style="max-width: 720px;">
+      <div class="section-head section-head--left" style="text-align:left">
+        <span class="eyebrow">Privacy</span>
+        <h2>SubScope プライバシーポリシー</h2>
+      </div>
+      <p>最終更新：2026-10-06 ／ 運営者：BCNOFNe（aynyan）<br /><a href="#en">English version below</a></p>
+
+      <h3>登録したサブスクの情報</h3>
+      <p>サービス名・料金・更新日・メモ・ポイントの残り・ロゴなど、アプリに登録した内容は、すべてお使いの iPhone の中だけに保存します。BCNOFNe のサーバーに送ることはありません。アカウント登録もありません。iPhone のバックアップ（iCloud バックアップなど）に含まれるかどうかは、Apple の設定に従います。</p>
+
+      <h3>インターネットにつなぐ場面</h3>
+      <p>アプリがインターネットにつなぐのは、次の場合だけです。どの場合も、登録したサブスクの一覧や個人を特定する情報は送りません。</p>
+      <ul>
+        <li><strong>ロゴを探す時</strong>：入力したアプリ名と国のコードを Apple の公開検索（iTunes Search API）に送り、候補のアイコンを受け取ります。選んだロゴの画像は Apple のサーバーから取得し、iPhone の中に保存します。</li>
+        <li><strong>外貨を円などにまとめる時</strong>：為替レートを Frankfurter（欧州中央銀行の公開レート）から取得します。送るのは「どの通貨のレートが欲しいか」だけです。</li>
+        <li><strong>SubScope Pro の購入・復元</strong>：下の「アプリ内課金」をご覧ください。</li>
+      </ul>
+      <p>どの通信でも、通信の仕組み上、接続先のサーバーにお使いの IP アドレスが届きます。</p>
+
+      <h3>写真・ファイル・通知</h3>
+      <p>「写真から選ぶ」では、選んだ 1 枚だけをアプリが受け取り、ロゴとして iPhone の中に保存します。写真ライブラリ全体を読むことはありません。書き出し・取り込み・自動で取り込むファイルは、ご自身で選んだファイルだけを読み書きします。更新日などのお知らせは iPhone の中で予約する通知で、外部には送りません。</p>
+
+      <h3>アプリ内課金（SubScope Pro）</h3>
+      <p>購入・復元の処理は Apple の App Store と、課金管理サービス RevenueCat（RevenueCat, Inc.）を通して行います。RevenueCat には匿名の利用者 ID・購入した商品・購入日時・端末の種類と OS の版数が送られ、購入状態の確認と復元に使われます。氏名・メールアドレス・支払い情報は BCNOFNe にも RevenueCat にも渡りません（支払いは Apple が処理します）。詳しくは <a href="https://www.revenuecat.com/privacy" rel="noopener" target="_blank">RevenueCat のプライバシーポリシー</a>をご覧ください。</p>
+      <p>月額プランの解約は、iPhone の「設定 ＞ 自分の名前 ＞ サブスクリプション」から行えます。利用規約は <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" rel="noopener" target="_blank">Apple 標準の使用許諾契約（EULA）</a>に従います。</p>
+
+      <h3>解析・広告</h3>
+      <p>アクセス解析・広告・トラッキングの仕組みは入れていません。</p>
+
+      <h3>データの削除</h3>
+      <p>アプリ内でサブスクを削除するか、アプリを削除すると、iPhone の中のデータは消えます。BCNOFNe はデータを持っていないため、削除の手続きは不要です。</p>
+
+      <h3>お問い合わせ</h3>
+      <p>ご質問は <a href={`${base}/#contact`}>お問い合わせ</a>からご連絡ください。このポリシーを変える時は、このページで最終更新日とあわせてお知らせします。</p>
+
+      <hr style="margin: 3rem 0; opacity: .3;" />
+
+      <div lang="en" id="en">
+        <div class="section-head section-head--left" style="text-align:left">
+          <span class="eyebrow">Privacy</span>
+          <h2>SubScope Privacy Policy</h2>
+        </div>
+        <p>Last updated: October 6, 2026 / Operator: BCNOFNe (aynyan)</p>
+
+        <h3>Your subscription data</h3>
+        <p>Everything you add to the app — service names, prices, renewal dates, notes, point balances and logos — is stored only on your iPhone. It is never sent to BCNOFNe's servers, and no account is required. Whether it is included in your iPhone backups (such as iCloud Backup) follows your Apple settings.</p>
+
+        <h3>When the app connects to the internet</h3>
+        <p>The app connects to the internet only in the cases below. In none of them does it send your list of subscriptions or any information that identifies you.</p>
+        <ul>
+          <li><strong>Searching for a logo</strong>: the app name you type and your country code are sent to Apple's public search (iTunes Search API) to get candidate icons. The logo you choose is downloaded from Apple's servers and stored on your iPhone.</li>
+          <li><strong>Combining foreign currencies into one total</strong>: exchange rates are fetched from Frankfurter (public rates from the European Central Bank). Only the currencies requested are sent.</li>
+          <li><strong>Buying or restoring SubScope Pro</strong>: see "In-app purchases" below.</li>
+        </ul>
+        <p>As with any internet connection, the servers you connect to receive your IP address.</p>
+
+        <h3>Photos, files and notifications</h3>
+        <p>With "Choose from Photos", the app receives only the one image you pick and stores it on your iPhone as a logo. It never reads your whole photo library. Export, import and the auto-import file read and write only files you choose yourself. Reminders are local notifications scheduled on your iPhone and are not sent anywhere.</p>
+
+        <h3>In-app purchases (SubScope Pro)</h3>
+        <p>Purchases and restores are handled through Apple's App Store and the subscription service RevenueCat (RevenueCat, Inc.). RevenueCat receives an anonymous user ID, the product purchased, the purchase date, and your device model and OS version, which are used to confirm and restore your purchases. Your name, email address and payment details are not shared with BCNOFNe or RevenueCat (payments are processed by Apple). See <a href="https://www.revenuecat.com/privacy" rel="noopener" target="_blank">RevenueCat's Privacy Policy</a> for details.</p>
+        <p>You can cancel the monthly plan in your iPhone's Settings › your name › Subscriptions. The <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" rel="noopener" target="_blank">Apple Standard EULA</a> applies as the terms of use.</p>
+
+        <h3>Analytics and advertising</h3>
+        <p>The app contains no analytics, advertising or tracking.</p>
+
+        <h3>Deleting your data</h3>
+        <p>Deleting a subscription in the app, or deleting the app, removes the data from your iPhone. BCNOFNe holds none of your data, so no deletion request is needed.</p>
+
+        <h3>Contact</h3>
+        <p>For questions, please use the <a href={`${base}/#contact`}>contact form</a>. If this policy changes, we will update this page along with the "Last updated" date.</p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
