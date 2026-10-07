@@ -1,5 +1,11 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-10-07 — フッターに運営者と連絡先・Litlink を外す
+
+Claude for Startups の審査（サイト・会社メール・会社名の一致を見る）向け。日本語・英語の両方に出る。
+- フッター下段に「運営：BCNOFNe（個人の工房）　お問い合わせ：support@bcnofne.com」（英語は Operated by BCNOFNe, an independent one-person studio in Japan）
+- フッターのリンク欄から Litlink を外す（入口は bcnofne.com に一本化の方針）。日本語トップの SNS カード・SEO の sameAs・llms.txt には残っとる
+
 ## 2026-10-06 — SubScope のサポートページとプライバシーポリシー
 
 App Store 提出用（サポート URL・プライバシーポリシー URL）。日本語と英語を 1 枚ずつに載せる（英語は `#en`）。

@@ -7,7 +7,6 @@ const { lang = 'ja' } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const year = 2026;
 const links = [
-  { label: 'Litlink', url: 'https://lit.link/aynyann' },
   { label: 'YouTube', url: 'https://www.youtube.com/@AYNSleepRadio' },
   { label: 'X', url: 'https://x.com/Aynyann' },
   { label: 'Instagram', url: 'https://www.instagram.com/aynyan28' },
@@ -37,6 +36,10 @@ const links = [
   </div>
   <div class="footer__bar">
     <div class="container">
+      {/* 運営者と連絡先（Claude for Startups などの審査でサイトとメールの一致を見せる・2026-10-07） */}
+      <p class="footer__operator">{lang === 'en'
+        ? <>Operated by BCNOFNe, an independent one-person studio in Japan. Contact: <a href="mailto:support@bcnofne.com">support@bcnofne.com</a></>
+        : <>運営：BCNOFNe（個人の工房）　お問い合わせ：<a href="mailto:support@bcnofne.com">support@bcnofne.com</a></>}</p>
       <small>© {year} BCNOFNe / AYN. All rights reserved.</small>
     </div>
   </div>
@@ -84,5 +87,7 @@ const links = [
     border-top: 1px solid rgba(255,255,255,0.16);
     padding-block: 1rem;
   }
-  .footer__bar small { opacity: 0.92; font-size: 0.82rem; }   /* 0.75 やと 2.9 しか出とらんかった */
+  .footer__bar small { opacity: 0.92; font-size: 0.82rem; }
+  .footer__operator { margin: 0 0 0.4rem; font-size: 0.82rem; opacity: 0.92; overflow-wrap: anywhere; }
+  .footer__operator a { color: #fff; text-decoration: underline; }   /* 0.75 やと 2.9 しか出とらんかった */
 </style>
