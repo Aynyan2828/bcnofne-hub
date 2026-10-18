@@ -1,0 +1,71 @@
+---
+// Sorotte の紹介・サポートページ（制作中・App Store の「サポート URL」にも使う）。日本語・英語を 1 枚に。
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+import icon from '../../assets/app-sorotte-icon.png';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<BaseLayout title="Sorotte（ソロッテ）｜iPhone の着せ替えアプリ / iPhone Customization" description="アイコンを形にそろえるウィジェット、一枚絵のホーム画面、ロック画面の動く壁紙、充電アニメ。iPhone を丸ごと着せ替えるアプリ Sorotte（制作中）。">
+  <main id="main" class="section">
+    <div class="container" style="max-width: 720px;">
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom: 1.5rem;">
+        <Image src={icon} alt="Sorotte のアイコン" width={88} height={88} style="border-radius: 20px;" />
+        <div>
+          <span class="eyebrow">iPhone App ・ 制作中</span>
+          <h2 style="margin:0">Sorotte（ソロッテ）</h2>
+        </div>
+      </div>
+      <p><a href="#en">English below</a></p>
+
+      <video
+        src={`${base}/media/sorotte_promo.mp4`}
+        poster={`${base}/media/sorotte_promo_poster.jpg`}
+        width="540" height="960"
+        controls muted loop playsinline preload="none"
+        style="display:block; width:min(100%, 320px); height:auto; margin: 0 auto 1.5rem; border-radius: 24px;"
+        aria-label="Sorotte のデモ動画。ホーム画面・テンプレ・ロック画面のカラーパネル・充電アニメの順に見せる。"
+      ></video>
+
+      <p>Sorotte（ソロッテ）は、iPhone の見た目を丸ごと着せ替えるアプリです。いま公開に向けて仕上げ中です。</p>
+
+      <h3>できること</h3>
+      <ul>
+        <li><strong>アイコンを形にそろえる</strong>：ホーム画面のウィジェットに、アプリのアイコンをハート・星・六芒星・自分で描いた形に並べます。</li>
+        <li><strong>一枚絵</strong>：好きな絵とアイコンをつなげて、ホーム画面を一枚の絵のように。</li>
+        <li><strong>テンプレート</strong>：時計つき・大きく 1 つ など、決まった並びのウィジェット。</li>
+        <li><strong>ロック画面</strong>：時計の下の丸・アプリを並べるカラーパネル・動く壁紙（Live Photo）。</li>
+        <li><strong>充電アニメ</strong>：つないだ時に出るアニメ。自分の写真や動画でも作れます。</li>
+        <li><strong>一式を人に渡す</strong>：作った着せ替えを 1 つのファイルにして、LINE や AirDrop で渡せます。</li>
+      </ul>
+      <p>広告はありません。基本の機能は無料、一部の機能は Sorotte Pro（アプリ内課金）で使えます。</p>
+
+      <h3>お問い合わせ</h3>
+      <p>不具合・ご要望は <a href={`${base}/#contact`}>お問い合わせ</a>からご連絡ください。</p>
+      <p><a href={`${base}/sorotte/privacy/`}>プライバシーポリシー</a></p>
+
+      <hr style="margin: 3rem 0; opacity: .3;" />
+
+      <div lang="en" id="en">
+        <h2>Sorotte — iPhone Customization (in development)</h2>
+        <p>Sorotte lets you customize the whole look of your iPhone. We're finishing it up for release.</p>
+
+        <h3>What it does</h3>
+        <ul>
+          <li><strong>Icons in shapes</strong>: Home Screen widgets that arrange your app icons in hearts, stars, hexagrams or shapes you draw.</li>
+          <li><strong>One picture</strong>: blend a picture with your icons so the Home Screen looks like a single artwork.</li>
+          <li><strong>Templates</strong>: widgets with fixed layouts, such as a clock with icons.</li>
+          <li><strong>Lock Screen</strong>: circles under the clock, a color panel of apps, and moving wallpapers (Live Photos).</li>
+          <li><strong>Charging animations</strong>: shown when you plug in, including ones made from your own photos and videos.</li>
+          <li><strong>Share a whole set</strong>: pack your customization into one file and send it with LINE or AirDrop.</li>
+        </ul>
+        <p>No ads. The basic features are free; some features are available with Sorotte Pro (in-app purchase).</p>
+
+        <h3>Contact</h3>
+        <p>For bug reports or requests, please use the <a href={`${base}/#contact`}>contact form</a>.</p>
+        <p><a href={`${base}/sorotte/privacy/#en`}>Privacy Policy</a></p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

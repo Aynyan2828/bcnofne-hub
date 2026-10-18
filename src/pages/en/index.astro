@@ -85,6 +85,7 @@ const SUBSTACK = shipsLog?.data.url ?? 'https://bcnofnelog.substack.com';
 // ── Apps：英語 UI があって海外ストアにあるものだけ ──
 const shiftwake = await getEntry('apps', 'shiftwake');
 const angleon = await getEntry('apps', 'angleon');
+const sorotte = await getEntry('apps', 'sorotte');
 const SHIFTWAKE_US = 'https://apps.apple.com/us/app/id6785128543';
 
 // ── note / Social ──
@@ -246,6 +247,14 @@ const SOCIAL = [
             cta="View on the App Store"
           />
         )}
+        <Card
+          title="Sorotte"
+          badge="In progress"
+          summary="Customize your whole iPhone: arrange app icons in shapes, turn your Home Screen into one picture, and add moving Lock Screen wallpapers and charging animations. Coming soon."
+          url={`${base}/sorotte/#en`}
+          icon={sorotte?.data.icon}
+          cta="See what it does"
+        />
         <Card
           title="Angleon"
           badge="In progress"

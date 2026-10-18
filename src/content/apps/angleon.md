@@ -11,7 +11,8 @@ order: 5
 status: active
 appId: angleon
 tagline: 回すと、絵が出る
-featured: true
+featured: false
+# 主役は Sorotte に交代（2026-10-18 マスター。旧：featured: true 〜同日）。ページ /angleon/ は残す
 hook: |
   ぐちゃぐちゃの線を回す。
   ある角度だけ、絵が現れる。
