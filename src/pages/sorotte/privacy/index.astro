@@ -1,0 +1,181 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Footer from '../../../components/Footer.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<BaseLayout title="Sorotte プライバシーポリシー / Privacy Policy" description="着せ替えアプリ Sorotte（ソロッテ）が扱う情報（日本語・English）。">
+  <main id="main" class="section">
+    <div class="container" style="max-width: 720px;">
+      <div class="section-head section-head--left" style="text-align:left">
+        <span class="eyebrow">Privacy</span>
+        <h2>Sorotte プライバシーポリシー</h2>
+      </div>
+      <p>最終更新：2026-10-18<br /><a href="#en">English version below</a></p>
+
+      <h3>1. 本ポリシーの対象</h3>
+      <p>このポリシーは、BCNOFNe（運営者：aynyan）が提供する iPhone・iPad 向けアプリ「Sorotte（ソロッテ）」と、そのウィジェット・ロック画面の表示・ショートカットに適用されます。</p>
+
+      <h3>2. 本アプリの概要</h3>
+      <p>Sorotte は、アプリのアイコンを形に並べるホーム画面のウィジェット、テンプレート、ロック画面の動く壁紙（Live Photo）、充電中のアニメーションなどで、iPhone の見た目を着せ替えるアプリです。基本の機能は無料で、一部の機能は「Sorotte Pro」（月額・年額・買い切りのアプリ内課金）で使えます。広告は表示しません。</p>
+
+      <h3>3. 取り扱う情報</h3>
+      <ul>
+        <li><strong>iPhone の中だけにある情報</strong>：並べるアプリの名前・バンドル ID・開くための呼び出し名、アイコンの画像、ウィジェットやテンプレートの設定、ご自身で選んだ写真・動画・壁紙のスクリーンショット、作った一枚絵・充電アニメ・マイコレクション、ひとことのメッセージ。</li>
+        <li><strong>課金のために外部へ送る情報</strong>：匿名の利用者 ID、購入した商品、購入日時、端末の種類と OS の版数（8. を参照）。</li>
+        <li><strong>アプリ名の検索・アイコン取得のために送る情報</strong>：入力したアプリ名と国のコード、またはアプリのバンドル ID。</li>
+        <li><strong>お問い合わせの情報</strong>：お問い合わせいただいた時の内容と連絡先。</li>
+      </ul>
+      <p>氏名・メールアドレス・位置情報・連絡先・写真ライブラリ全体などは取得しません。アカウント登録もありません。</p>
+
+      <h3>4. 取得方法</h3>
+      <ul>
+        <li>アプリの画面でのご自身の入力・選択。</li>
+        <li>写真の選択画面（ご自身で選んだ写真・動画だけをアプリが受け取ります）。</li>
+        <li>よく使われるアプリが入っているかの確認：iPhone の仕組み（canOpenURL）で、決まった約 50 個のアプリを「開けるか」だけを iPhone の中で確かめます。結果は外部に送りません。</li>
+        <li>人から受け取った Sorotte のファイル（.zip）をご自身で開いた時、その中身。</li>
+        <li>課金の手続き（App Store と RevenueCat を通します）。</li>
+      </ul>
+
+      <h3>5. 利用目的</h3>
+      <ul>
+        <li>アイコンの並べ替え・ウィジェット・ロック画面・充電アニメの表示など、アプリの機能を動かすため。</li>
+        <li>アプリのアイコン画像を取得するため（Apple の公開検索）。</li>
+        <li>購入状態の確認と復元のため。</li>
+        <li>お問い合わせに回答するため。</li>
+      </ul>
+      <p>写真から人物や物の形を切り抜く処理（下絵の取り込み・写真を動かす）は、iPhone の中の機能（Vision）で行い、写真を外部に送りません。</p>
+
+      <h3>6. 保存場所と外部送信</h3>
+      <ul>
+        <li>設定・画像・動画は、お使いの iPhone の中（アプリとウィジェットが共有する保存場所を含む）にだけ保存します。BCNOFNe のサーバーには送りません。iPhone のバックアップに含まれるかどうかは Apple の設定に従います。</li>
+        <li>作った動く壁紙・録画した動画は、ご自身が保存を選んだ時だけ写真アプリに追加します（追加のための許可だけを使い、写真ライブラリは読みません）。録画するのは Sorotte の画面だけです。</li>
+        <li>「人に渡す」で作るファイルは、ご自身で選んだ送り先（AirDrop・LINE・ファイルなど）にだけ渡ります。中には選んだ設定・アイコン・写真・動画が入ります。BCNOFNe を経由しません。</li>
+        <li>「AI で着せ替え」などで書き出したシートやプロンプトを ChatGPT などに貼るかどうかは、ご自身の操作です。Sorotte がそのサービスに送ることはありません。貼った内容はそのサービスの規約に従います。</li>
+        <li>アプリを削除すると、iPhone の中のデータは消えます（写真アプリに保存した物は残ります）。BCNOFNe はデータを持っていないため、削除の手続きは不要です。</li>
+        <li>月額・年額プランの解約は、iPhone の「設定 ＞ 自分の名前 ＞ サブスクリプション」から行えます。</li>
+      </ul>
+      <p>どの通信でも、通信の仕組み上、接続先のサーバーにお使いの IP アドレスが届きます。</p>
+
+      <h3>7. 第三者提供</h3>
+      <p>次の場合を除き、取り扱う情報を第三者に提供しません。</p>
+      <ul>
+        <li>8. の外部サービスに、それぞれの目的の範囲で送る場合。</li>
+        <li>ご自身が「人に渡す」で送り先を選んだ場合。</li>
+        <li>法令に基づく場合。</li>
+      </ul>
+
+      <h3>8. 外部サービス</h3>
+      <ul>
+        <li><strong>Apple（iTunes Search API・App Store の画像配信）</strong>：アプリ名の検索とアイコン画像の取得。送るのは入力したアプリ名と国のコード、またはバンドル ID です。<a href="https://www.apple.com/legal/privacy/" rel="noopener" target="_blank">Apple のプライバシーポリシー</a></li>
+        <li><strong>Apple（App Store のアプリ内課金）</strong>：購入・支払い。支払い情報は Apple が処理し、BCNOFNe には渡りません。</li>
+        <li><strong>RevenueCat（RevenueCat, Inc.）</strong>：購入状態の確認と復元。匿名の利用者 ID・購入した商品・購入日時・端末の種類と OS の版数が送られます。<a href="https://www.revenuecat.com/privacy" rel="noopener" target="_blank">RevenueCat のプライバシーポリシー</a></li>
+      </ul>
+      <p>アクセス解析・広告・トラッキングの仕組みは入れていません。利用規約は <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" rel="noopener" target="_blank">Apple 標準の使用許諾契約（EULA）</a>に従います。</p>
+
+      <h3>9. 安全管理</h3>
+      <ul>
+        <li>外部との通信は暗号化された接続（https）だけを使います。アイコン画像は Apple の画像配信元からだけ取得します。</li>
+        <li>人から受け取ったファイルは、開く前に大きさ・数・名前・画像の大きさ・中身が壊れていないかを確かめ、合わないものは取り込みません。</li>
+        <li>ウィジェットから他のアプリを開く時は、ご自身が並べたアプリだけを開きます。</li>
+        <li>管理用の秘密の鍵はアプリに入れていません。</li>
+      </ul>
+
+      <h3>10. 未成年者の利用</h3>
+      <p>年齢による利用の制限はありません。未成年の方がアプリ内課金を行う場合は、保護者の方の同意のうえでご利用ください。購入の制限は、iPhone の「スクリーンタイム」や「ファミリー共有」の「承認と購入のリクエスト」で設定できます。</p>
+
+      <h3>11. 本ポリシーの変更</h3>
+      <p>このポリシーを変える時は、このページを更新し、最終更新日とあわせてお知らせします。</p>
+
+      <h3>12. お問い合わせ</h3>
+      <p>ご質問は <a href={`${base}/#contact`}>お問い合わせ</a>からご連絡ください。</p>
+
+      <hr style="margin: 3rem 0; opacity: .3;" />
+
+      <div lang="en" id="en">
+        <div class="section-head section-head--left" style="text-align:left">
+          <span class="eyebrow">Privacy</span>
+          <h2>Sorotte Privacy Policy</h2>
+        </div>
+        <p>Last updated: October 18, 2026</p>
+
+        <h3>1. Scope</h3>
+        <p>This policy applies to "Sorotte", the iPhone and iPad app provided by BCNOFNe (operator: aynyan), including its widgets, Lock Screen displays and Shortcuts.</p>
+
+        <h3>2. About the app</h3>
+        <p>Sorotte lets you customize the look of your iPhone with Home Screen widgets that arrange app icons in shapes, templates, moving Lock Screen wallpapers (Live Photos) and charging animations. The basic features are free; some features are available with "Sorotte Pro" (monthly, yearly or one-time in-app purchase). The app shows no ads.</p>
+
+        <h3>3. Information we handle</h3>
+        <ul>
+          <li><strong>Information kept only on your iPhone</strong>: the names, bundle IDs and launch schemes of the apps you arrange, icon images, widget and template settings, photos, videos and wallpaper screenshots you choose, the pictures, charging animations and collections you create, and your short message.</li>
+          <li><strong>Information sent for purchases</strong>: an anonymous user ID, the product purchased, the purchase date, and your device model and OS version (see section 8).</li>
+          <li><strong>Information sent to search apps and fetch icons</strong>: the app name you type and your country code, or an app's bundle ID.</li>
+          <li><strong>Contact information</strong>: the content and contact details you provide when you contact us.</li>
+        </ul>
+        <p>We do not collect your name, email address, location, contacts or your whole photo library. No account is required.</p>
+
+        <h3>4. How we obtain it</h3>
+        <ul>
+          <li>What you enter and choose in the app.</li>
+          <li>The photo picker (the app receives only the photos and videos you pick).</li>
+          <li>Checking whether popular apps are installed: using an iPhone feature (canOpenURL), the app checks on your iPhone only whether about 50 specific apps can be opened. The result is not sent anywhere.</li>
+          <li>The contents of a Sorotte file (.zip) that someone sent you, when you open it yourself.</li>
+          <li>The purchase process (through the App Store and RevenueCat).</li>
+        </ul>
+
+        <h3>5. Purposes</h3>
+        <ul>
+          <li>To run the app's features, such as arranging icons and showing widgets, Lock Screen displays and charging animations.</li>
+          <li>To fetch app icon images (Apple's public search).</li>
+          <li>To confirm and restore purchases.</li>
+          <li>To answer your inquiries.</li>
+        </ul>
+        <p>Cutting out people or objects from your photos (importing a guide picture, making a photo move) is done with on-device features (Vision); your photos are not sent anywhere.</p>
+
+        <h3>6. Storage and transmission</h3>
+        <ul>
+          <li>Settings, images and videos are stored only on your iPhone (including the storage shared between the app and its widgets). They are never sent to BCNOFNe's servers. Whether they are included in your iPhone backups follows your Apple settings.</li>
+          <li>Moving wallpapers and recordings are added to the Photos app only when you choose to save them (the app uses add-only permission and does not read your photo library). Only Sorotte's own screen is recorded.</li>
+          <li>Files made with "Share with someone" go only to the destination you choose (AirDrop, LINE, Files, etc.). They contain the settings, icons, photos and videos you selected, and do not pass through BCNOFNe.</li>
+          <li>Whether you paste an exported sheet or prompt into ChatGPT or similar services (for example, with "AI restyle") is your own action. Sorotte does not send anything to those services, and what you paste is subject to their terms.</li>
+          <li>Deleting the app removes its data from your iPhone (items saved to the Photos app remain). BCNOFNe holds none of your data, so no deletion request is needed.</li>
+          <li>You can cancel the monthly or yearly plan in your iPhone's Settings › your name › Subscriptions.</li>
+        </ul>
+        <p>As with any internet connection, the servers you connect to receive your IP address.</p>
+
+        <h3>7. Sharing with third parties</h3>
+        <p>We do not share the information we handle with third parties except:</p>
+        <ul>
+          <li>when it is sent to the services in section 8 for their stated purposes;</li>
+          <li>when you choose a destination with "Share with someone";</li>
+          <li>when required by law.</li>
+        </ul>
+
+        <h3>8. External services</h3>
+        <ul>
+          <li><strong>Apple (iTunes Search API and App Store image delivery)</strong>: searching app names and fetching icon images. Only the app name you type and your country code, or a bundle ID, are sent. <a href="https://www.apple.com/legal/privacy/" rel="noopener" target="_blank">Apple Privacy Policy</a></li>
+          <li><strong>Apple (App Store in-app purchases)</strong>: purchases and payments. Payment details are processed by Apple and are not shared with BCNOFNe.</li>
+          <li><strong>RevenueCat (RevenueCat, Inc.)</strong>: confirming and restoring purchases. It receives an anonymous user ID, the product purchased, the purchase date, and your device model and OS version. <a href="https://www.revenuecat.com/privacy" rel="noopener" target="_blank">RevenueCat Privacy Policy</a></li>
+        </ul>
+        <p>The app contains no analytics, advertising or tracking. The <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" rel="noopener" target="_blank">Apple Standard EULA</a> applies as the terms of use.</p>
+
+        <h3>9. Security</h3>
+        <ul>
+          <li>The app communicates only over encrypted connections (https). Icon images are fetched only from Apple's image servers.</li>
+          <li>Before importing a file someone sent you, the app checks its size, number of items, names, image dimensions and integrity, and rejects anything that does not match.</li>
+          <li>When a widget opens another app, only apps you arranged yourself can be opened.</li>
+          <li>No administrative secret keys are included in the app.</li>
+        </ul>
+
+        <h3>10. Use by minors</h3>
+        <p>There is no age restriction. Minors should make in-app purchases with a parent's or guardian's consent. Purchases can be restricted with Screen Time or Family Sharing's "Ask to Buy" on iPhone.</p>
+
+        <h3>11. Changes to this policy</h3>
+        <p>If this policy changes, we will update this page along with the "Last updated" date.</p>
+
+        <h3>12. Contact</h3>
+        <p>For questions, please use the <a href={`${base}/#contact`}>contact form</a>.</p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
