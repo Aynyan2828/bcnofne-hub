@@ -1,4 +1,5 @@
 ---
+import { buildGraph, buildLiteGraph } from '../lib/structured-data';
 // SEO: title/description/OGP/Twitter Card/JSON-LD をまとめて出力
 interface Props {
   title: string;
@@ -19,45 +20,13 @@ const ogImageUrl = new URL(
   Astro.site,
 ).href;
 
-// 構造化データ（Person / Organization / WebSite）
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Organization',
-      '@id': canonical + '#org',
-      name: 'BCNOFNe〜ボクのフネ〜',
-      url: canonical,
-      logo: ogImageUrl,
-      sameAs: [
-        'https://www.youtube.com/@AYNSleepRadio',
-        'https://x.com/Aynyann',
-        'https://www.tiktok.com/@aynyan2828',
-        'https://www.instagram.com/aynyan28',
-        'https://bsky.app/profile/aynyan.bsky.social',
-        'https://lit.link/aynyann',
-      ],
-    },
-    {
-      '@type': 'Person',
-      '@id': canonical + '#ayn',
-      name: 'AYN（あゆにゃん）',
-      alternateName: '機関士AI AYN',
-      description: 'BCNOFNe から生まれた機関士AI。Crypto Ocean を一緒に航海する相棒。',
-      image: ogImageUrl,
-      memberOf: { '@id': canonical + '#org' },
-    },
-    {
-      '@type': 'WebSite',
-      '@id': canonical + '#website',
-      url: canonical,
-      name: title,
-      description,
-      inLanguage: lang,
-      publisher: { '@id': canonical + '#org' },
-    },
-  ],
-};
+// 構造化データ（JSON-LD）。トップ（日英）は全部入り、他のページは運営者＋ページだけ。
+// 中身は src/lib/structured-data.ts（content の md から組み立てる）
+const site = Astro.site ?? new URL('https://bcnofne.com');
+const pageInfo = { url: canonical, title, description, lang, image: ogImageUrl };
+const pathNoBase = Astro.url.pathname.slice(basePath.length).replace(/\/?$/, '/');
+const isHome = pathNoBase === '/' || pathNoBase === '/en/';
+const jsonLd = isHome ? await buildGraph(site, pageInfo) : buildLiteGraph(site, pageInfo);
 ---
 <title>{title}</title>
 <meta name="description" content={description} />
