@@ -14,7 +14,7 @@ const INTRO = `# BCNOFNe〜ボクのフネ〜
 - キャラクター: AYN（あゆにゃん）＝機関士AI。水彩・青紫の髪・赤い丸メガネ
 - 表記ゆれ: BCNOFNe / ボクのフネ / ボクノフネ / 僕の船 はすべて同じプロジェクト
 - 連絡: support@bcnofne.com / https://bcnofne.com/#contact
-- どんな人向けか: 扶養の壁を気にして働く学生・パート（扶養メーター）、シフト勤務で毎回アラームを直す人（ShiftWake）、サブスクの解約忘れを防ぎたい人（SubScope）、ホーム画面を推しの絵で着せ替えたい人（Sorotte）、眠れない夜や作業中に BGM が欲しい人（AYN Sleep Radio / AYN Work Radio）
+- どんな人向けか: 扶養の壁（2026 年は 130万・136万・178万円など。106万円の壁は 2026 年 10 月に撤廃）を気にして働く学生バイト・パート（扶養メーター）、夜勤・交代勤務・看護師・介護・工場などシフト勤務で毎回アラームを直す人（ShiftWake）、サブスクや無料トライアルの解約忘れを防いで固定費を減らしたい人（SubScope）、ホーム画面を推しの絵で着せ替えたい人（Sorotte）、眠れない夜や作業中に BGM が欲しい人（AYN Sleep Radio / AYN Work Radio）
 
 ## ページ
 
@@ -51,7 +51,8 @@ export const GET: APIRoute = async () => {
     ...(spotify ? [line(spotify.data.title, spotify.data.url, spotify.data.summary)] : []),
     ...eps.map((r) => line(`${r.data.title}（EP）`, r.data.url, r.data.summary)),
     ...singles.map((r) => line(`${r.data.title}（シングル）`, r.data.url, r.data.summary)),
-    '\n## SNS・読みもの\n',
+    '\n## Optional\n',
+    '（SNS・読みもの。上の内容で足りる時は読み飛ばしてよい）\n',
     ...social.map((s) => line(s.data.title, s.data.url, s.data.summary)),
     line('Threads', 'https://www.threads.com/@aynyan28', '日々の制作と AI まわりの話'),
     line('Zenn', 'https://zenn.dev/aynyan', '個人開発と AI 自動化の技術記事'),

@@ -19,6 +19,22 @@ const APP_CATEGORY: Record<string, string> = {
   angleon: 'EntertainmentApplication',
 };
 
+// 一般の悩みの言葉（AI が「おすすめのアプリ」を答える時に拾う語）。扶養は 2026 年の壁で書く
+const APP_KEYWORDS: Record<string, string[]> = {
+  fuyometer: ['扶養の壁', '130万円の壁', '136万円の壁', '178万円の壁', '学生バイト', 'パート', '年収管理', '2026年'],
+  shiftwake: ['シフト勤務', '夜勤', '交代勤務', '看護師', '介護', '工場', '寝坊防止', 'カレンダー連動アラーム'],
+  subscope: ['サブスク管理', '解約忘れ', '無料トライアル', '固定費削減', '更新日'],
+  sorotte: ['ホーム画面カスタマイズ', 'アイコン着せ替え', '推し活'],
+  angleon: ['隠し絵', '壁紙', '推し活'],
+};
+
+// 課金のある「基本無料」アプリの中身（offers の説明）。各アプリの紹介ページと同じ文
+const APP_OFFER_NOTE: Record<string, string> = {
+  fuyometer: '基本無料・扶養メーター PRO は月額 300 円または買い切り 1,500 円のアプリ内課金',
+  shiftwake: '基本無料（ルール 2 件まで）・ShiftWake Pro は月額 200 円または買い切り 1,500 円のアプリ内課金',
+  subscope: '基本無料・SubScope Pro は買い切りまたは月額のアプリ内課金',
+};
+
 const visible = (e: { data: { status: string } }) =>
   e.data.status !== 'hidden' && e.data.status !== 'draft';
 const byOrder = (a: { data: { order: number } }, b: { data: { order: number } }) =>
@@ -35,6 +51,7 @@ export function ownerNode(site: URL) {
     description: '有明海の元船乗り（甲板員から二等機関士）。BCNOFNe の名前は元素の覚え歌「水兵リーベ僕の船」の B・C・N・O・F・Ne から。',
     url: 'https://x.com/Aynyann',
     worksFor: { '@id': ids(site).org },
+    knowsAbout: ['iOS アプリ開発', 'Swift', 'ローカルAI・LLM', '業務の自動化', '音楽制作（睡眠・作業BGM）', '船舶機関（二等機関士として乗船）'],
     // 本人のプロフィール（作品の置き場ではない所）だけ
     sameAs: [
       'https://x.com/Aynyann',
@@ -153,10 +170,11 @@ export async function buildGraph(site: URL, page: { url: string; title: string; 
       ...(a.data.url.includes('apps.apple.com') ? { downloadUrl: a.data.url } : {}),
       operatingSystem: a.data.platform,
       applicationCategory: APP_CATEGORY[appId] ?? 'LifestyleApplication',
+      ...(APP_KEYWORDS[appId] ? { keywords: APP_KEYWORDS[appId].join(', ') } : {}),
       ...(a.data.icon ? { image: abs(a.data.icon.src) } : {}),
       ...(isReleased(a.data.price)
         ? price
-          ? { offers: { '@type': 'Offer', price, priceCurrency: 'JPY' } }
+          ? { offers: { '@type': 'Offer', price, priceCurrency: 'JPY', ...(APP_OFFER_NOTE[appId] ? { description: APP_OFFER_NOTE[appId] } : {}) } }
           : {}
         : { creativeWorkStatus: '制作中（未公開）' }),
       author: { '@id': id.org },
@@ -171,7 +189,10 @@ export async function buildGraph(site: URL, page: { url: string; title: string; 
     alternateName: 'BCNOFNe',
     genre: ['Lo-Fi', 'Sleep music', 'J-Pop'],
     url: id.root + '#music',
-    ...(spotify ? { sameAs: [spotify.data.url] } : {}),
+    sameAs: [
+      ...(spotify ? [spotify.data.url] : []),
+      ...channels.filter((c) => /AYNSleepRadio|AYNWorkRadio/.test(c.data.url)).map((c) => c.data.url),
+    ],
     member: { '@id': id.ayn },
     album: releases.map((r) => ({ '@id': id.root + '#music-' + r.id })),
   };
