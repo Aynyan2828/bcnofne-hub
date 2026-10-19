@@ -2,7 +2,7 @@
 title: 扶養メーター
 summary: バイトの給料と扶養の上限を、ぼくと一緒にゆるっと管理するiOSアプリ。稼ぎすぎも足りなさも、ひと目で分かるばい。
 url: https://apps.apple.com/jp/app/id6781950133
-price: 無料
+price: 基本無料
 platform: iOS
 category: アプリ
 icon: ../../assets/app-baitopay-icon.png
