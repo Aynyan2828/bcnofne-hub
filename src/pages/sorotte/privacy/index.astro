@@ -10,17 +10,19 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <span class="eyebrow">Privacy</span>
         <h2>Sorotte プライバシーポリシー</h2>
       </div>
-      <p>最終更新：2026-10-18<br /><a href="#en">English version below</a></p>
+      <p>最終更新：2026-10-19（着せ替えセットの作者名と端末の印・AI で一括着せ替えの書き方を追記）<br /><a href="#en">English version below</a></p>
 
       <h3>1. 本ポリシーの対象</h3>
       <p>このポリシーは、BCNOFNe（運営者：aynyan）が提供する iPhone・iPad 向けアプリ「Sorotte（ソロッテ）」と、そのウィジェット・ロック画面の表示・ショートカットに適用されます。</p>
 
       <h3>2. 本アプリの概要</h3>
-      <p>Sorotte は、アプリのアイコンを形に並べるホーム画面のウィジェット、テンプレート、ロック画面の動く壁紙（Live Photo）、充電中のアニメーションなどで、iPhone の見た目を着せ替えるアプリです。基本の機能は無料で、一部の機能は「Sorotte Pro」（月額・年額・買い切りのアプリ内課金）で使えます。広告は表示しません。</p>
+      <p>Sorotte は、アプリのアイコンを形に並べるホーム画面のウィジェット、テンプレート、ロック画面の動く壁紙（Live Photo）、充電中のアニメーションなどで、iPhone の見た目を着せ替えるアプリです。自分の絵で着せ替えセットを作って配ったり、人が作ったセットを受け取ったりもできます。基本の機能は無料で、一部の機能は「Sorotte Pro」（月額・年額・買い切りのアプリ内課金）で使えます。広告は表示しません。</p>
 
       <h3>3. 取り扱う情報</h3>
       <ul>
         <li><strong>iPhone の中だけにある情報</strong>：並べるアプリの名前・バンドル ID・開くための呼び出し名、アイコンの画像、ウィジェットやテンプレートの設定、ご自身で選んだ写真・動画・壁紙のスクリーンショット、作った一枚絵・充電アニメ・マイコレクション、ひとことのメッセージ。</li>
+        <li><strong>着せ替えセットを作る時に入れる情報</strong>：セット名・作者名・SNS のハンドル（入れた時だけ）。作ったセットのファイルに入ります。</li>
+        <li><strong>このアプリを入れた端末の印</strong>：初めて使う時に作るランダムな番号（名前や端末の情報は含みません）。自分の端末で作ったセットかどうかを見分けるために、作ったセットのファイルに入れ、iPhone のキーチェーンに保存します。</li>
         <li><strong>課金のために外部へ送る情報</strong>：匿名の利用者 ID、購入した商品、購入日時、端末の種類と OS の版数（8. を参照）。</li>
         <li><strong>アプリ名の検索・アイコン取得のために送る情報</strong>：入力したアプリ名と国のコード、またはアプリのバンドル ID。</li>
         <li><strong>お問い合わせの情報</strong>：お問い合わせいただいた時の内容と連絡先。</li>
@@ -32,7 +34,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <li>アプリの画面でのご自身の入力・選択。</li>
         <li>写真の選択画面（ご自身で選んだ写真・動画だけをアプリが受け取ります）。</li>
         <li>よく使われるアプリが入っているかの確認：iPhone の仕組み（canOpenURL）で、決まった約 50 個のアプリを「開けるか」だけを iPhone の中で確かめます。結果は外部に送りません。</li>
-        <li>人から受け取った Sorotte のファイル（.zip）をご自身で開いた時、その中身。</li>
+        <li>人から受け取った Sorotte のファイル（.zip）をご自身で開いた時、その中身（作った人が入れたセット名・作者名・SNS のハンドル・端末の印を含みます）。</li>
         <li>課金の手続き（App Store と RevenueCat を通します）。</li>
       </ul>
 
@@ -40,6 +42,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <ul>
         <li>アイコンの並べ替え・ウィジェット・ロック画面・充電アニメの表示など、アプリの機能を動かすため。</li>
         <li>アプリのアイコン画像を取得するため（Apple の公開検索）。</li>
+        <li>受け取ったセットに作った人の名前を表示するため、また自分の端末で作ったセットを自分のホーム画面に使う時に Sorotte Pro が必要かを判断するため（端末の印）。</li>
         <li>購入状態の確認と復元のため。</li>
         <li>お問い合わせに回答するため。</li>
       </ul>
@@ -49,9 +52,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <ul>
         <li>設定・画像・動画は、お使いの iPhone の中（アプリとウィジェットが共有する保存場所を含む）にだけ保存します。BCNOFNe のサーバーには送りません。iPhone のバックアップに含まれるかどうかは Apple の設定に従います。</li>
         <li>作った動く壁紙・録画した動画は、ご自身が保存を選んだ時だけ写真アプリに追加します（追加のための許可だけを使い、写真ライブラリは読みません）。録画するのは Sorotte の画面だけです。</li>
-        <li>「人に渡す」で作るファイルは、ご自身で選んだ送り先（AirDrop・LINE・ファイルなど）にだけ渡ります。中には選んだ設定・アイコン・写真・動画が入ります。BCNOFNe を経由しません。</li>
-        <li>「AI で着せ替え」などで書き出したシートやプロンプトを ChatGPT などに貼るかどうかは、ご自身の操作です。Sorotte がそのサービスに送ることはありません。貼った内容はそのサービスの規約に従います。</li>
-        <li>アプリを削除すると、iPhone の中のデータは消えます（写真アプリに保存した物は残ります）。BCNOFNe はデータを持っていないため、削除の手続きは不要です。</li>
+        <li>「一式を人に渡す」「セットを作って配る」で作るファイルは、ご自身で選んだ送り先（AirDrop・LINE・ファイル・ご自身の BOOTH や Google ドライブなど）にだけ渡ります。中には選んだ設定・アイコン・絵・写真・動画と、セット名・作者名・SNS のハンドル・端末の印が入ります。BCNOFNe を経由せず、Sorotte がファイルを預かることもありません。告知の画像はご自身が保存・共有を選んだ時だけ書き出します。</li>
+        <li>端末の印は iPhone のキーチェーンに保存するため、アプリを削除しても残ります。iCloud キーチェーンをお使いの場合は、同じ Apple ID の端末どうしで Apple により同期されます。BCNOFNe のサーバーには送りません。</li>
+        <li>「AI で一括着せ替え」では、アイコンを並べたシートをご自身の操作で写真アプリに保存し、描いてほしい絵のプロンプトをコピーできます。それらを ChatGPT などに貼るかどうかはご自身の操作で、Sorotte がそのサービスに送ることはありません。貼った内容はそのサービスの規約に従います。</li>
+        <li>アプリを削除すると、iPhone の中のデータは消えます（写真アプリに保存した物と、キーチェーンの端末の印は残ります）。BCNOFNe はデータを持っていないため、削除の手続きは不要です。</li>
         <li>月額・年額プランの解約は、iPhone の「設定 ＞ 自分の名前 ＞ サブスクリプション」から行えます。</li>
       </ul>
       <p>どの通信でも、通信の仕組み上、接続先のサーバーにお使いの IP アドレスが届きます。</p>
@@ -60,7 +64,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <p>次の場合を除き、取り扱う情報を第三者に提供しません。</p>
       <ul>
         <li>8. の外部サービスに、それぞれの目的の範囲で送る場合。</li>
-        <li>ご自身が「人に渡す」で送り先を選んだ場合。</li>
+        <li>ご自身が「一式を人に渡す」「セットを作って配る」で送り先を選んだ場合。</li>
         <li>法令に基づく場合。</li>
       </ul>
 
@@ -96,17 +100,19 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           <span class="eyebrow">Privacy</span>
           <h2>Sorotte Privacy Policy</h2>
         </div>
-        <p>Last updated: October 18, 2026</p>
+        <p>Last updated: October 19, 2026 (added the creator name and device ID in sets, and clarified "Customize all with AI")</p>
 
         <h3>1. Scope</h3>
         <p>This policy applies to "Sorotte", the iPhone and iPad app provided by BCNOFNe (operator: aynyan), including its widgets, Lock Screen displays and Shortcuts.</p>
 
         <h3>2. About the app</h3>
-        <p>Sorotte lets you customize the look of your iPhone with Home Screen widgets that arrange app icons in shapes, templates, moving Lock Screen wallpapers (Live Photos) and charging animations. The basic features are free; some features are available with "Sorotte Pro" (monthly, yearly or one-time in-app purchase). The app shows no ads.</p>
+        <p>Sorotte lets you customize the look of your iPhone with Home Screen widgets that arrange app icons in shapes, templates, moving Lock Screen wallpapers (Live Photos) and charging animations. You can also make and share sets from your own art, and receive sets made by others. The basic features are free; some features are available with "Sorotte Pro" (monthly, yearly or one-time in-app purchase). The app shows no ads.</p>
 
         <h3>3. Information we handle</h3>
         <ul>
           <li><strong>Information kept only on your iPhone</strong>: the names, bundle IDs and launch schemes of the apps you arrange, icon images, widget and template settings, photos, videos and wallpaper screenshots you choose, the pictures, charging animations and collections you create, and your short message.</li>
+          <li><strong>Information you enter when making a set</strong>: the set name, creator name and social handle (only if you enter one). These are included in the set file you create.</li>
+          <li><strong>A device ID for this installation</strong>: a random number created the first time you use the app (it contains no name or device information). It is included in the sets you make so the app can tell whether a set was made on your own device, and it is stored in your iPhone's Keychain.</li>
           <li><strong>Information sent for purchases</strong>: an anonymous user ID, the product purchased, the purchase date, and your device model and OS version (see section 8).</li>
           <li><strong>Information sent to search apps and fetch icons</strong>: the app name you type and your country code, or an app's bundle ID.</li>
           <li><strong>Contact information</strong>: the content and contact details you provide when you contact us.</li>
@@ -118,7 +124,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           <li>What you enter and choose in the app.</li>
           <li>The photo picker (the app receives only the photos and videos you pick).</li>
           <li>Checking whether popular apps are installed: using an iPhone feature (canOpenURL), the app checks on your iPhone only whether about 50 specific apps can be opened. The result is not sent anywhere.</li>
-          <li>The contents of a Sorotte file (.zip) that someone sent you, when you open it yourself.</li>
+          <li>The contents of a Sorotte file (.zip) that someone sent you, when you open it yourself (including the set name, creator name, social handle and device ID the creator included).</li>
           <li>The purchase process (through the App Store and RevenueCat).</li>
         </ul>
 
@@ -126,6 +132,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <ul>
           <li>To run the app's features, such as arranging icons and showing widgets, Lock Screen displays and charging animations.</li>
           <li>To fetch app icon images (Apple's public search).</li>
+          <li>To show the creator's name on sets you receive, and to determine whether Sorotte Pro is needed when you apply a set made on your own device to your own Home Screen (device ID).</li>
           <li>To confirm and restore purchases.</li>
           <li>To answer your inquiries.</li>
         </ul>
@@ -135,9 +142,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <ul>
           <li>Settings, images and videos are stored only on your iPhone (including the storage shared between the app and its widgets). They are never sent to BCNOFNe's servers. Whether they are included in your iPhone backups follows your Apple settings.</li>
           <li>Moving wallpapers and recordings are added to the Photos app only when you choose to save them (the app uses add-only permission and does not read your photo library). Only Sorotte's own screen is recorded.</li>
-          <li>Files made with "Share with someone" go only to the destination you choose (AirDrop, LINE, Files, etc.). They contain the settings, icons, photos and videos you selected, and do not pass through BCNOFNe.</li>
-          <li>Whether you paste an exported sheet or prompt into ChatGPT or similar services (for example, with "AI restyle") is your own action. Sorotte does not send anything to those services, and what you paste is subject to their terms.</li>
-          <li>Deleting the app removes its data from your iPhone (items saved to the Photos app remain). BCNOFNe holds none of your data, so no deletion request is needed.</li>
+          <li>Files made with "Share the Whole Set" or "Make and share a set" go only to the destination you choose (AirDrop, LINE, Files, or your own storage such as BOOTH or Google Drive). They contain the settings, icons, art, photos and videos you selected, plus the set name, creator name, social handle and device ID. They do not pass through BCNOFNe, and Sorotte never hosts your files. A promo image is exported only when you choose to save or share it.</li>
+          <li>Because the device ID is stored in your iPhone's Keychain, it remains after you delete the app. If you use iCloud Keychain, Apple syncs it between devices signed in to the same Apple ID. It is never sent to BCNOFNe's servers.</li>
+          <li>With "Customize all with AI", you can save a sheet of your icons to the Photos app and copy a prompt describing the art you want. Whether you paste them into ChatGPT or similar services is your own action. Sorotte does not send anything to those services, and what you paste is subject to their terms.</li>
+          <li>Deleting the app removes its data from your iPhone (items saved to the Photos app and the device ID in the Keychain remain). BCNOFNe holds none of your data, so no deletion request is needed.</li>
           <li>You can cancel the monthly or yearly plan in your iPhone's Settings › your name › Subscriptions.</li>
         </ul>
         <p>As with any internet connection, the servers you connect to receive your IP address.</p>
@@ -146,7 +154,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <p>We do not share the information we handle with third parties except:</p>
         <ul>
           <li>when it is sent to the services in section 8 for their stated purposes;</li>
-          <li>when you choose a destination with "Share with someone";</li>
+          <li>when you choose a destination with "Share the Whole Set" or "Make and share a set";</li>
           <li>when required by law.</li>
         </ul>
 
