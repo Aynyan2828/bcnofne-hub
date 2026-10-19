@@ -2,7 +2,7 @@
 title: SubScope（サブスコープ）
 summary: 契約中のサブスクの更新日・ひと月の合計・解約の締め切りを、見張り番のぼくが見張ってお知らせするアプリ。よくあるサブスクはチェックでまとめて登録できるばい。
 url: https://apps.apple.com/jp/app/id6819530548
-price: 無料
+price: 基本無料
 platform: iOS
 category: アプリ
 icon: ../../assets/app-subscope-icon.png

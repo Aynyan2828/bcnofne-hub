@@ -66,7 +66,7 @@ const jsonLd = [
       'Home Screen widgets',
       'Export and import',
     ],
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY', description: '無料・SubScope Pro は買い切りまたは月額のアプリ内課金 / Free with optional in-app purchase' },
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY', description: '基本無料・SubScope Pro は買い切りまたは月額のアプリ内課金 / Free with optional in-app purchase' },
     author: { '@type': 'Person', '@id': new URL(`${base}/`, Astro.site).href + '#owner', name: 'あゆにゃん', url: 'https://x.com/Aynyann' },
     publisher: { '@type': 'Organization', name: 'BCNOFNe〜ボクのフネ〜', url: new URL(`${base}/`, Astro.site).href },
   },
@@ -79,7 +79,7 @@ const jsonLd = [
 ---
 <BaseLayout
   title="SubScope｜サブスク管理・解約忘れ防止アプリ / Subscription Manager for iPhone"
-  description="サブスクの更新日・合計・解約の締め切りを見張って知らせる iPhone アプリ SubScope。よくあるサブスクはチェックでまとめて登録、App Store のサブスクはスクショから読み取り。AI クレジットの使い切り予測も。無料・データは iPhone の中だけ。"
+  description="サブスクの更新日・合計・解約の締め切りを見張って知らせる iPhone アプリ SubScope。よくあるサブスクはチェックでまとめて登録、App Store のサブスクはスクショから読み取り。AI クレジットの使い切り予測も。基本無料・データは iPhone の中だけ。"
   ogImage="og/og-subscope.jpg"
   extraJsonLd={jsonLd}
 >
@@ -90,7 +90,7 @@ const jsonLd = [
       <div style="display:flex; align-items:center; gap:16px; margin-bottom: 1.5rem;">
         <Image src={icon} alt="SubScope のアイコン" width={88} height={88} style="border-radius: 20px;" />
         <div>
-          <span class="eyebrow">iPhone App ・ 無料</span>
+          <span class="eyebrow">iPhone App ・ 基本無料</span>
           <h1 style="margin:0; font-size: clamp(1.6rem, 5vw, 2.2rem);">SubScope（サブスコープ）</h1>
         </div>
       </div>
