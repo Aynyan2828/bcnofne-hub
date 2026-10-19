@@ -1,0 +1,136 @@
+---
+// ShiftWake の紹介ページ（GEO：AI の答えに引用されやすい「質問→答え」と構造化データ）。日本語・英語を 1 枚に。
+// 2026-10-19 新設。SubScope・Sorotte のページと同じ作り（MobileApplication・FAQPage・スマートバナー）。
+// 中身の正本はアプリの README・CHANGELOG・JobPreset（shiftwake-app）と App Store の説明文。
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+import icon from '../../assets/app-shiftwake-icon.png';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pageUrl = new URL(`${base}/shiftwake/`, Astro.site).href;
+const APP_ID = '6785128543';
+const storeJa = `https://apps.apple.com/jp/app/id${APP_ID}`;
+const storeEn = `https://apps.apple.com/us/app/id${APP_ID}`;
+const privacyUrl = 'https://aynyan2828.github.io/shiftwake/';
+
+// よくある質問（画面に出す文と構造化データは同じ物を使う）
+const FAQ_JA = [
+  ['シフト勤務で、毎回アラームをかけ直すのが大変です。', 'ShiftWake は iPhone の標準カレンダーに書いた「①」「②」などのシフト記号を読み取り、その日に合った時刻へアラームを自動でセットします。一度ルールを作れば、あとはカレンダーにシフトを入れるだけです。'],
+  ['マナーモードや集中モードでも鳴りますか？', '鳴ります。iOS 26 の AlarmKit を使った本物のアラームなので、サイレントや集中モードでも時計アプリのアラームと同じように鳴ります。'],
+  ['看護師の 3 交代や工場の交代勤務にも使えますか？', '使えます。看護師（3 交代・2 交代）、工場（2 交代・3 交代）、基本の①②のひな形があり、選んだ後に時刻や名前を自由に変えられます。'],
+  ['勤務開始の何分前に起こす、という設定はできますか？', 'できます。「固定の時刻」のほかに「予定の開始の◯分前」でも起こせるので、日によって始まりが違う勤務にも合わせられます。'],
+  ['急にシフトが変わったらどうなりますか？', 'カレンダーの変更に合わせてアラームを自動で付け直し、増えた・減ったアラームを通知でお知らせします。'],
+  ['カレンダーの予定は外に送られますか？', '送られません。カレンダーは iPhone の中で読むだけで、予定の内容を外部のサーバーへ送ることはありません。ルールと設定も iPhone の中だけに保存します。広告・トラッキングもありません。'],
+  ['無料で使えますか？', '無料で、ルールを 2 件まで使えます（早番①と遅番②の 2 交代ならこれで足ります）。ShiftWake Pro（月額 200 円、または買い切り 1,500 円）でルールが無制限になります。'],
+  ['どの iPhone で使えますか？', 'iOS 26 以降の iPhone で使えます。時計アプリで設定した着信音はアプリでは使えないため、アプリの中にあるアラーム音から選んでください。'],
+];
+const FAQ_EN = [
+  ['I work shifts and keep resetting my alarms. Can this help?', 'Yes. ShiftWake reads shift symbols such as "①" and "②" from your iPhone\'s Calendar and sets the right alarm for each day automatically. Set up your rules once, then just put your shifts in the calendar.'],
+  ['Does it ring in Silent mode or Focus?', 'Yes. It uses AlarmKit on iOS 26, so alarms ring like Clock alarms even in Silent mode and Focus.'],
+  ['Does it work for nurses and factory rotations?', 'Yes. There are presets for nurses (3-shift and 2-shift), factories (2-shift and 3-shift) and a basic ①② setup, all fully editable.'],
+  ['Can it wake me a set time before my shift starts?', 'Yes. Choose a fixed time or "N minutes before the event starts".'],
+  ['What happens when my shift changes?', 'ShiftWake re-syncs when your calendar changes and notifies you which alarms were added or removed.'],
+  ['Is my calendar data sent anywhere?', 'No. The calendar is read on your iPhone only, and rules and settings stay on your device. No ads, no tracking.'],
+  ['Is it free?', 'Free for up to 2 rules. ShiftWake Pro (monthly or lifetime) unlocks unlimited rules.'],
+];
+
+const jsonLd = [
+  {
+    '@type': 'MobileApplication',
+    '@id': pageUrl + '#app',
+    name: 'ShiftWake',
+    alternateName: ['ShiftWake：シフト勤務の自動アラーム', 'シフトウェイク'],
+    applicationCategory: 'UtilitiesApplication',
+    applicationSubCategory: 'Shift work alarm',
+    operatingSystem: 'iOS 26.0+',
+    inLanguage: ['ja', 'en'],
+    url: pageUrl,
+    downloadUrl: storeJa,
+    installUrl: storeJa,
+    sameAs: [storeJa, storeEn],
+    image: new URL(icon.src, Astro.site).href,
+    description: 'iPhone の標準カレンダーのシフト記号（①②など）を読み取り、その日の起きる時刻へアラームを自動でセットするシフト勤務向けの目覚ましアプリ。iOS 26 の AlarmKit でサイレント・集中モードでも鳴る。看護師・工場のひな形、予定の◯分前、シフト変更への自動追従。 / An alarm app for shift workers that reads shift symbols from your iPhone Calendar and sets AlarmKit alarms automatically.',
+    featureList: [
+      'Reads shift symbols from the iPhone Calendar',
+      'AlarmKit alarms that ring in Silent mode and Focus',
+      'Presets for nurses (3-shift, 2-shift) and factories (2-shift, 3-shift)',
+      'Fixed time or N minutes before the event',
+      'Automatic re-sync and notice when shifts change',
+      'Emergency message shortcut when you oversleep',
+      'Dark and light mode',
+    ],
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY', description: '基本無料（ルール 2 件まで）・ShiftWake Pro は月額 200 円または買い切り 1,500 円のアプリ内課金 / Free with optional in-app purchase' },
+    author: { '@type': 'Person', '@id': new URL(`${base}/`, Astro.site).href + '#owner', name: 'あゆにゃん', url: 'https://x.com/Aynyann' },
+    publisher: { '@type': 'Organization', name: 'BCNOFNe〜ボクのフネ〜', url: new URL(`${base}/`, Astro.site).href },
+  },
+  {
+    '@type': 'FAQPage',
+    '@id': pageUrl + '#faq',
+    mainEntity: [...FAQ_JA, ...FAQ_EN].map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
+];
+---
+<BaseLayout
+  title="ShiftWake｜シフト勤務の自動アラーム・夜勤や交代勤務の寝坊防止 / Shift Work Alarm for iPhone"
+  description="カレンダーのシフト記号（①②など）を読んで、その日のアラームを自動でセットする iPhone アプリ ShiftWake。iOS 26 の AlarmKit でサイレントでも鳴る。看護師・工場の交代勤務のひな形つき。基本無料・予定は iPhone の外に出さん。"
+  extraJsonLd={jsonLd}
+>
+  {/* Safari で開くと、上に「App Store で入手」の帯が出る（Apple のスマートバナー） */}
+  <meta slot="head" name="apple-itunes-app" content={`app-id=${APP_ID}`} />
+  <main id="main" class="section">
+    <div class="container paper" style="max-width: 720px;">
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom: 1.5rem;">
+        <Image src={icon} alt="ShiftWake のアイコン" width={88} height={88} style="border-radius: 20px;" />
+        <div>
+          <span class="eyebrow">iPhone App ・ 基本無料</span>
+          <h1 style="margin:0; font-size: clamp(1.6rem, 5vw, 2.2rem);">ShiftWake（シフトウェイク）</h1>
+        </div>
+      </div>
+      <p><a href="#en">English below</a></p>
+
+      <p><a class="btn" href={storeJa}>App Store でダウンロード</a></p>
+
+      <p>ShiftWake は、iPhone のカレンダーに書いたシフト記号を読み取って、その日に合った時刻へアラームを自動でセットするシフト勤務向けの目覚ましアプリです。早番・遅番・夜勤のたびにアラームを直す手間と、かけ忘れの寝坊をなくします。</p>
+
+      <h2 class="h3">できること</h2>
+      <ul>
+        <li><strong>カレンダーから自動セット</strong>：「①」「②」などの記号を読んで、その日のアラームを予約。</li>
+        <li><strong>サイレントでも鳴る</strong>：iOS 26 の AlarmKit を使った本物のアラーム。</li>
+        <li><strong>職種のひな形</strong>：看護師（3 交代・2 交代）・工場（2 交代・3 交代）・基本①②。</li>
+        <li><strong>予定の◯分前</strong>：固定の時刻のほか、勤務開始の何分前にも起こせます。</li>
+        <li><strong>シフト変更に追従</strong>：カレンダーが変わったら付け直して、増減を通知。</li>
+        <li><strong>寝坊した時の連絡</strong>：定型文入りのメッセージ作成画面をすぐ開けます（送信は自分で）。</li>
+      </ul>
+      <p>無料でルール 2 件まで。ShiftWake Pro（月額 200 円、または買い切り 1,500 円）でルールが無制限になります。</p>
+
+      <h2 class="h3">よくある質問</h2>
+      <dl class="faq">
+        {FAQ_JA.map(([q, a]) => (<><dt>{q}</dt><dd>{a}</dd></>))}
+      </dl>
+
+      <h2 class="h3">お問い合わせ</h2>
+      <p>不具合・ご要望は <a href={`${base}/#contact`}>お問い合わせ</a>からご連絡ください。</p>
+      <p><a href={privacyUrl}>プライバシーポリシー</a></p>
+
+      <hr style="margin: 3rem 0; opacity: .3;" />
+
+      <div lang="en" id="en">
+        <h2>ShiftWake — automatic alarms for shift workers</h2>
+        <p><a class="btn" href={storeEn}>Download on the App Store</a></p>
+        <p>ShiftWake reads shift symbols from your iPhone Calendar and sets the right alarm for each day automatically, so you never forget to reset your alarm for early, late or night shifts.</p>
+        <h3>FAQ</h3>
+        <dl class="faq">
+          {FAQ_EN.map(([q, a]) => (<><dt>{q}</dt><dd>{a}</dd></>))}
+        </dl>
+        <p>Contact: <a href={`${base}/#contact`}>contact form</a> ・ <a href={privacyUrl}>Privacy Policy</a></p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .h3 { font-size: 1.17em; }
+  .faq dt { font-weight: 700; margin-top: 1.1rem; }
+  .faq dd { margin: 0.35rem 0 0; opacity: 0.9; }
+</style>
