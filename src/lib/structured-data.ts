@@ -9,7 +9,7 @@ export const ORG_DESCRIPTION =
   '機関士AI「AYN（あゆにゃん）」を看板にした、日本の個人プロジェクト。iPhone アプリ・睡眠/作業BGM・AIラジオ・音楽配信・水彩イラストを出している。';
 
 // コンテンツ md に無いけど「同じ運営者」と示したいプロフィール
-const EXTRA_SAME_AS = ['https://www.threads.com/@aynyan28', 'https://zenn.dev/aynyan'];
+const EXTRA_SAME_AS = ['https://www.threads.com/@aynyan28', 'https://zenn.dev/aynyan', 'https://coconala.com/users/6047857'];
 
 // App Store のカテゴリ（schema.org の applicationCategory）。appId で引く
 const APP_CATEGORY: Record<string, string> = {
@@ -61,6 +61,7 @@ export function ownerNode(site: URL) {
       'https://note.com/aynyan_sui_ice',
       'https://bsky.app/profile/aynyan.bsky.social',
       'https://lit.link/aynyann',
+      'https://coconala.com/users/6047857',
     ],
   };
 }
