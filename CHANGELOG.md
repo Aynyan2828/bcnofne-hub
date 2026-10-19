@@ -1,5 +1,13 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-10-19 (2) — 扶養メーターと ShiftWake の紹介ページ（GEO）
+
+マスター要望「扶養メーターとシフトウェイクも SubScope・Sorotte と同じ GEO 対策を」。
+- `/fuyou-meter/`・`/shiftwake/` を新設。MobileApplication と FAQPage の構造化データ、よくある質問、Safari のスマートバナー
+- 中身の正本はアプリのソース（baito-pay-app の WallType・Pro、shiftwake-app の README・JobPreset）と App Store の説明。壁の金額は 2026 年（令和8年分）
+- トップの JSON-LD のアプリは、紹介ページがあれば url をそのページ・downloadUrl を App Store に。llms.txt にも 2 ページ
+- トップのカードのリンク先は App Store のまま（見た目は変えとらん）
+
 ## 2026-10-19 — GEO（生成AI検索）向けに JSON-LD と llms.txt を厚くする
 
 Gemini の GEO 診断を受けた点検。「誰が・何を出しとるか」を AI に機械で読ませる。

@@ -41,6 +41,8 @@ const APP_PAGE: Record<string, string> = {
   sorotte: '/sorotte/',
   subscope: '/subscope/',
   angleon: '/angleon/',
+  fuyometer: '/fuyou-meter/',
+  shiftwake: '/shiftwake/',
 };
 
 /** サイト全体で固定の @id（ページごとに変わらんように site のルートで作る） */
@@ -135,7 +137,8 @@ export async function buildGraph(site: URL, page: { url: string; title: string; 
       '@id': APP_PAGE[appId] ? new URL(APP_PAGE[appId], site).href + '#app' : id.root + '#app-' + appId,
       name: a.data.title,
       description: a.data.summary,
-      url: a.data.url,
+      url: APP_PAGE[appId] ? new URL(APP_PAGE[appId], site).href : a.data.url,
+      ...(a.data.url.includes('apps.apple.com') ? { downloadUrl: a.data.url } : {}),
       operatingSystem: a.data.platform,
       applicationCategory: APP_CATEGORY[appId] ?? 'LifestyleApplication',
       ...(a.data.icon ? { image: abs(a.data.icon.src) } : {}),

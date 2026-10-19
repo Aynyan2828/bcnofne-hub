@@ -1,0 +1,138 @@
+---
+// 扶養メーターの紹介ページ（GEO：AI の答えに引用されやすい「質問→答え」と構造化データ）。日本語中心・英語は短く。
+// 2026-10-19 新設。SubScope・Sorotte のページと同じ作り（MobileApplication・FAQPage・スマートバナー）。
+// 壁の金額は 2026 年（令和8年分）基準。正本はアプリの WallType（baito-pay-app/BaitoPayApp/Models/AppSettings.swift）。
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+import icon from '../../assets/app-baitopay-icon.png';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pageUrl = new URL(`${base}/fuyou-meter/`, Astro.site).href;
+const APP_ID = '6781950133';
+const storeJa = `https://apps.apple.com/jp/app/id${APP_ID}`;
+const privacyUrl = 'https://aynyan2828.github.io/fuyou-meter/';
+
+// よくある質問（画面に出す文と構造化データは同じ物を使う）
+const FAQ_JA = [
+  ['扶養の壁まで、今年あといくら・あと何時間働けるか分かりますか？', '分かります。勤務した時間を入れると、時給と割増から給料を自動で計算し、選んだ壁まで「あと何円・あと何時間」をメーターで表示します。今月あといくらまで働けるかの目安も出ます。'],
+  ['自分にはどの扶養の壁が関係あるのか分かりません。', '扶養されている相手（配偶者・親など）、年齢、学生かどうか、勤務先の人数、週の契約時間を入れると、関係ある壁だけを低い順に表示します。いちばん手前の壁を自動でメーターに使うこともできます。'],
+  ['2026年の扶養の壁はいくらですか？', 'アプリは 2026 年（令和8年分）の基準で計算します。社会保険の扶養は 130 万円（19〜22 歳の配偶者以外は 150 万円、60 歳以上は 180 万円）、税は配偶者控除・扶養控除が 136 万円、19〜22 歳の特定親族特別控除の満額が 159 万円、本人の所得税が 178 万円です。106 万円の壁（月 8.8 万円の賃金要件）は 2026 年 10 月に撤廃されました。'],
+  ['深夜・残業・休日の割増は計算されますか？', 'されます。深夜（22 時〜翌 5 時）・残業・休日の割増を自動で足して給料を計算します。割増率は自分で変えられます。'],
+  ['交通費は年収に入りますか？', '社会保険の壁（130・150・180 万円）は交通費込みで数え、税の壁は交通費を除いて数えます。アプリはこの違いを自動で分けて計算します。'],
+  ['バイトを掛け持ちしています。合計で見られますか？', '扶養メーター PRO で、勤務先ごとの時給・交通費・割増をまとめて合計し、壁までの残りを判定できます。'],
+  ['勤務先の決まりなど、自分で決めた上限も使えますか？', '使えます。名前と金額、交通費を含めるかを決めて、自分の壁を作れます（無料）。'],
+  ['データはどこに保存されますか？ログインは要りますか？', 'ログインは不要で、データは iPhone の中だけに保存します。PRO の iCloud バックアップは自分の iCloud に保存します。'],
+  ['無料で使えますか？', '基本の機能は無料です。扶養メーター PRO（月額 300 円、または買い切り 1,500 円）で、年末の着地予測・掛け持ちの合算・ホーム画面ウィジェット・壁が近づいた時の通知・働き損ゾーンの表示・iCloud バックアップが使えます。'],
+  ['計算結果はそのまま信じて大丈夫ですか？', '計算は目安です。実際の給料や扶養の判定は、勤務先・健康保険組合・税務署の判断によります。気になる時は勤務先や専門家に確認してください。'],
+];
+const FAQ_EN = [
+  ['What is Fuyou Meter?', 'An iPhone app for part-time workers and students in Japan who want to stay under the income thresholds for dependent status (the "fuyou walls"). Log your hours and it shows how much more you can earn, in yen and in hours, before you reach the threshold that applies to you.'],
+  ['Which thresholds does it use?', 'The 2026 Japanese rules: 1.3 million yen for social insurance (1.5 million for ages 19–22 other than spouses, 1.8 million for 60+), 1.36 million for the spouse and dependent deductions, 1.59 million for the special relative deduction (ages 19–22) and 1.78 million for your own income tax.'],
+  ['Is my data sent anywhere?', 'No. No login is needed and data stays on your iPhone. The optional PRO iCloud backup is saved to your own iCloud.'],
+];
+
+const jsonLd = [
+  {
+    '@type': 'MobileApplication',
+    '@id': pageUrl + '#app',
+    name: '扶養メーター',
+    alternateName: ['扶養メーター｜扶養の壁・手取り・年収計算', 'Fuyou Meter', 'ふようメーター'],
+    applicationCategory: 'FinanceApplication',
+    applicationSubCategory: 'Part-time income tracker',
+    operatingSystem: 'iOS 17.0+',
+    inLanguage: ['ja'],
+    url: pageUrl,
+    downloadUrl: storeJa,
+    installUrl: storeJa,
+    sameAs: [storeJa],
+    image: new URL(icon.src, Astro.site).href,
+    description: 'パート・学生バイトの給料を記録して、2026 年基準の扶養の壁（130・136・150・159・178・180 万円）まで「あと何円・あと何時間」働けるかを見せる iPhone アプリ。関係ある壁だけを判定、深夜・残業・休日の割増を自動計算、社保の壁は交通費込み。ログイン不要・データは iPhone の中だけ。 / An iPhone app that tracks part-time pay and shows how much more you can earn before reaching Japan\'s 2026 dependent-status income thresholds.',
+    featureList: [
+      '扶養の壁まで あと何円・あと何時間 のメーター',
+      'あなたに関係ある壁だけを判定（扶養の相手・年齢・学生・勤務先の人数・週の時間）',
+      '今月あといくらまでの目安',
+      '深夜・残業・休日の割増を自動計算',
+      '社会保険の壁は交通費込み・税の壁は交通費抜き',
+      '自分で決めた壁',
+      '年末の着地予測（PRO）',
+      '掛け持ちの合算（PRO）',
+      'ホーム画面ウィジェット（PRO）',
+      '壁が近づいた時の通知（PRO）',
+      'iCloud バックアップ（PRO）',
+    ],
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY', description: '基本無料・扶養メーター PRO は月額 300 円または買い切り 1,500 円のアプリ内課金' },
+    author: { '@type': 'Person', '@id': new URL(`${base}/`, Astro.site).href + '#owner', name: 'あゆにゃん', url: 'https://x.com/Aynyann' },
+    publisher: { '@type': 'Organization', name: 'BCNOFNe〜ボクのフネ〜', url: new URL(`${base}/`, Astro.site).href },
+  },
+  {
+    '@type': 'FAQPage',
+    '@id': pageUrl + '#faq',
+    mainEntity: [...FAQ_JA, ...FAQ_EN].map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
+];
+---
+<BaseLayout
+  title="扶養メーター｜扶養の壁まであといくら働ける？パート・学生の給料管理アプリ"
+  description="パート・学生バイトの給料を記録して、2026 年基準の扶養の壁（130・136・178 万円ほか）まで「あと何円・あと何時間」働けるかを見せる iPhone アプリ。関係ある壁だけを判定、割増は自動計算。基本無料・ログイン不要・データは iPhone の中だけ。"
+  extraJsonLd={jsonLd}
+>
+  {/* Safari で開くと、上に「App Store で入手」の帯が出る（Apple のスマートバナー） */}
+  <meta slot="head" name="apple-itunes-app" content={`app-id=${APP_ID}`} />
+  <main id="main" class="section">
+    <div class="container paper" style="max-width: 720px;">
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom: 1.5rem;">
+        <Image src={icon} alt="扶養メーターのアイコン" width={88} height={88} style="border-radius: 20px;" />
+        <div>
+          <span class="eyebrow">iPhone App ・ 基本無料</span>
+          <h1 style="margin:0; font-size: clamp(1.6rem, 5vw, 2.2rem);">扶養メーター</h1>
+        </div>
+      </div>
+      <p><a href="#en">English below</a></p>
+
+      <p><a class="btn" href={storeJa}>App Store でダウンロード</a></p>
+
+      <p>扶養メーターは、パートや学生バイトの給料を記録して、扶養の壁まで「あと何円・あと何時間」働けるかをメーターで見せる iPhone アプリです。壁の金額は 2026 年（令和8年分）の基準。機関士AI の AYN が、壁が近づいたらそっと知らせます。ログインは不要で、データは iPhone の中だけに保存します。</p>
+
+      <h2 class="h3">できること</h2>
+      <ul>
+        <li><strong>あといくら・あと何時間</strong>：選んだ壁までの残りを、お金と時間の両方で。今月あといくらまでの目安も。</li>
+        <li><strong>関係ある壁だけ</strong>：扶養の相手・年齢・学生かどうか・勤務先の人数・週の時間から、自分に効く壁を低い順に。</li>
+        <li><strong>割増は自動</strong>：深夜・残業・休日の割増を足して計算。社会保険の壁は交通費込み、税の壁は交通費抜きで数えます。</li>
+        <li><strong>自分の壁</strong>：家族手当など勤務先の基準も、名前と金額を入れて作れます。</li>
+      </ul>
+      <p>基本の機能は無料。扶養メーター PRO（月額 300 円、または買い切り 1,500 円）で、年末の着地予測・掛け持ちの合算・ウィジェット・壁接近の通知・働き損ゾーン・iCloud バックアップが使えます。</p>
+
+      <h2 class="h3">よくある質問</h2>
+      <dl class="faq">
+        {FAQ_JA.map(([q, a]) => (<><dt>{q}</dt><dd>{a}</dd></>))}
+      </dl>
+
+      <h2 class="h3">もっと詳しく</h2>
+      <p>扶養の壁そのものの説明は、note のマガジン「年収の壁 2026」に書いています（<a href="https://note.com/aynyan_sui_ice">note</a>）。</p>
+
+      <h2 class="h3">お問い合わせ</h2>
+      <p>不具合・ご要望は <a href={`${base}/#contact`}>お問い合わせ</a>からご連絡ください。</p>
+      <p><a href={privacyUrl}>プライバシーポリシー</a></p>
+
+      <hr style="margin: 3rem 0; opacity: .3;" />
+
+      <div lang="en" id="en">
+        <h2>Fuyou Meter — how much more can I work?</h2>
+        <p><a class="btn" href={storeJa}>Download on the App Store</a></p>
+        <p>Fuyou Meter is an iPhone app for part-time workers and students in Japan. Log your hours and it shows how much more you can earn, in yen and in hours, before you hit the income threshold for dependent status that applies to you, using the 2026 rules. The app is in Japanese.</p>
+        <h3>FAQ</h3>
+        <dl class="faq">
+          {FAQ_EN.map(([q, a]) => (<><dt>{q}</dt><dd>{a}</dd></>))}
+        </dl>
+        <p>Contact: <a href={`${base}/#contact`}>contact form</a> ・ <a href={privacyUrl}>Privacy Policy</a></p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .h3 { font-size: 1.17em; }
+  .faq dt { font-weight: 700; margin-top: 1.1rem; }
+  .faq dd { margin: 0.35rem 0 0; opacity: 0.9; }
+</style>
