@@ -11,6 +11,7 @@ order: 20
 status: active
 appId: shiftwake
 tagline: シフト勤務の目覚まし
+taglineEn: Automatic alarms for shift workers
 ---
 
 早番・遅番・夜勤で、毎回アラームを直すのはもう大変やろ。

@@ -11,6 +11,7 @@ order: 4
 status: active
 appId: sorotte
 tagline: iPhone を、そろえて着せ替え
+taglineEn: Theme your iPhone home screen as a matching set
 featured: true
 hook: |
   アイコンを、形にそろえる。

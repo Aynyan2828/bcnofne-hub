@@ -14,6 +14,7 @@ const cardBase = {
   appId: z.string().optional(),
   // /apps.json 用の短い一言（未指定なら summary を使う）。
   tagline: z.string().optional(),
+  taglineEn: z.string().optional(),
 };
 
 // アプリ：アイコン画像つき

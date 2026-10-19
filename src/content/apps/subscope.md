@@ -11,6 +11,7 @@ order: 30
 status: active
 appId: subscope
 tagline: 解約忘れを防ぐサブスク管理
+taglineEn: Subscription tracker so you never forget to cancel
 ---
 
 契約中のサブスクの更新日とひと月の合計をまとめて見張り、解約の締め切り前に知らせる iPhone アプリ。

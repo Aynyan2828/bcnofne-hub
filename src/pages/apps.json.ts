@@ -16,6 +16,7 @@ export const GET: APIRoute = async ({ site }) => {
       id: entry.data.appId ?? entry.id.replace(/\.md$/, ''),
       name: entry.data.title,
       tagline: entry.data.tagline ?? entry.data.summary,
+      ...(entry.data.taglineEn ? { taglineEn: entry.data.taglineEn } : {}),
       icon: `${base}/icons/${entry.data.appId ?? entry.id.replace(/\.md$/, '')}.png`,
       url: entry.data.url,
     }));

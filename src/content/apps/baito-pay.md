@@ -11,6 +11,7 @@ order: 10
 status: active
 appId: fuyometer
 tagline: 扶養の壁を見える化
+taglineEn: See how much you can earn before hitting Japan's dependent-income limits
 ---
 
 扶養の壁を気にしながらバイトする人のための、シンプルな収入管理アプリ。
