@@ -7,8 +7,10 @@ interface Props {
   lang?: 'ja' | 'en';
   /** hreflang（言語違いの対ページ）。path は base 抜きのルート相対 */
   alternates?: { lang: string; path: string }[];
+  /** ページだけの構造化データ（@graph に足す） */
+  extraJsonLd?: Record<string, unknown>[];
 }
-const { title, description, ogImage = 'og/og-default.jpg', lang = 'ja', alternates = [] } = Astro.props;
+const { title, description, ogImage = 'og/og-default.jpg', lang = 'ja', alternates = [], extraJsonLd = [] } = Astro.props;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 const altUrl = (path: string) => new URL(basePath + path, Astro.site).href;
 
@@ -56,6 +58,7 @@ const jsonLd = {
       inLanguage: lang,
       publisher: { '@id': canonical + '#org' },
     },
+    ...extraJsonLd,
   ],
 };
 ---

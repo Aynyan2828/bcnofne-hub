@@ -14,6 +14,7 @@
 - [トップ（公式ハブ）](https://bcnofne.com/): アプリ・ラジオ・音楽・SNS・AYN の紹介を1枚にまとめたページ
 - [Angleon（アングリオン）](https://bcnofne.com/angleon/): 制作中の iPhone アプリ。ぐちゃぐちゃの立体落書き線を回すと、決まった角度でだけ絵が浮かぶ。ブラウザで試せるデモと事前登録あり
 - [Angleon プライバシーポリシー](https://bcnofne.com/angleon/privacy/)
+- [Sorotte（ソロッテ）](https://bcnofne.com/sorotte/): iPhone の着せ替えアプリ（審査中）。アイコンを推しの絵とハート・星・六芒星の形にそろえるウィジェット、一枚絵のホーム画面、ロック画面の動く壁紙、充電アニメ。絵師さんが作った着せ替えセット（zip）を受け取って開くだけ・自分の絵でセットを作って配るのも無料。広告なし。日本語・英語。よくある質問あり
 - [AYNにまかせんしゃい（ショートカット配布）](https://bcnofne.com/shortcuts/): iPhone ショートカットの配布所
 - [公開中アプリの一覧（JSON）](https://bcnofne.com/apps.json): アプリ名・説明・ストアURLの機械可読リスト
 
