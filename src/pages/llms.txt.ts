@@ -54,6 +54,7 @@ export const GET: APIRoute = async () => {
     '\n## SNS・読みもの\n',
     ...social.map((s) => line(s.data.title, s.data.url, s.data.summary)),
     line('Threads', 'https://www.threads.com/@aynyan28', '日々の制作と AI まわりの話'),
+    line('Zenn', 'https://zenn.dev/aynyan', '個人開発と AI 自動化の技術記事'),
     '',
   ];
 
