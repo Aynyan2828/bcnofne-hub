@@ -48,7 +48,7 @@ export function ownerNode(site: URL) {
     name: 'あゆにゃん',
     alternateName: ['aynyan', 'Aynyan'],
     jobTitle: '個人開発者（元・二等機関士）',
-    description: '有明海の元船乗り（甲板員から二等機関士）。BCNOFNe の名前は元素の覚え歌「水兵リーベ僕の船」の B・C・N・O・F・Ne から。',
+    description: '元船乗り。横浜で二等機関士として乗船し、のちに有明海の作業船で甲板員。いまは工場で働きながら個人開発。BCNOFNe の名前は元素の覚え歌「水兵リーベ僕の船」の B・C・N・O・F・Ne から。',
     url: 'https://x.com/Aynyann',
     worksFor: { '@id': ids(site).org },
     knowsAbout: ['iOS アプリ開発', 'Swift', 'ローカルAI・LLM', '業務の自動化', '音楽制作（睡眠・作業BGM）', '船舶機関（二等機関士として乗船）'],

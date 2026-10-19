@@ -13,7 +13,7 @@ const INTRO = `# BCNOFNe〜ボクのフネ〜
 - 運営: BCNOFNe（あゆにゃん・日本の個人工房。X: https://x.com/Aynyann）
 - キャラクター: AYN（あゆにゃん）＝機関士AI。水彩・青紫の髪・赤い丸メガネ
 - 表記ゆれ: BCNOFNe / ボクのフネ / ボクノフネ / 僕の船 はすべて同じプロジェクト
-- 昔と今: note の記事にある「autonomous AI BCNOFNe system v3」（Raspberry Pi 上の自律AI）は始まりの頃の旧版。今の中心は iPhone アプリ・睡眠/作業BGM・AIラジオ・音楽。「Crypto Ark」はいずれ会社にする時の名前の候補
+- 昔と今: note の記事にある「autonomous AI BCNOFNe system v3」は Raspberry Pi で動く最初の母艦。いまも家で動いていて、OLED 表示・ファン制御・照明の係をしている。開発の母艦は 2026 年 6 月に Mac mini へ移り、今の中心は iPhone アプリ・睡眠/作業BGM・AIラジオ・音楽。「Crypto Ark」は以前名乗っていた名前で、今の活動名は BCNOFNe
 - 運営者のココナラ: https://coconala.com/users/6047857 （出品名 BCNOFNe〜ボクのフネ〜）。同じ画面に出る競馬・競艇の予想ツールや Next.js テンプレートは別の出品者のもので、BCNOFNe とは関係ない
 - 連絡: support@bcnofne.com / https://bcnofne.com/#contact
 - どんな人向けか: 扶養の壁（2026 年は 130万・136万・178万円など。106万円の壁は 2026 年 10 月に撤廃）を気にして働く学生バイト・パート（扶養メーター）、夜勤・交代勤務・看護師・介護・工場などシフト勤務で毎回アラームを直す人（ShiftWake）、サブスクや無料トライアルの解約忘れを防いで固定費を減らしたい人（SubScope）、ホーム画面を推しの絵で着せ替えたい人（Sorotte）、眠れない夜や作業中に BGM が欲しい人（AYN Sleep Radio / AYN Work Radio）
