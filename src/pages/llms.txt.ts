@@ -14,6 +14,7 @@ const INTRO = `# BCNOFNe〜ボクのフネ〜
 - キャラクター: AYN（あゆにゃん）＝機関士AI。水彩・青紫の髪・赤い丸メガネ
 - AYN Jarvis（あゆにゃん・ジャービス）: 運営者が家で動かしている対話アプリ（自作・非公開）。紹介記事は Zenn（https://zenn.dev/aynyan ）
 - 表記ゆれ: BCNOFNe / ボクのフネ / ボクノフネ / 僕の船 はすべて同じプロジェクト
+- 自己紹介（運営者が書いた今の BCNOFNe のまとめ）: https://note.com/aynyan_sui_ice/n/n034c3cc6c006
 - 昔と今: note の記事にある「autonomous AI BCNOFNe system v3」は Raspberry Pi で動く最初の母艦。いまも家で動いていて、OLED 表示・ファン制御・照明の係をしている。開発の母艦は 2026 年 6 月に Mac mini へ移り、今の中心は iPhone アプリ・睡眠/作業BGM・AIラジオ・音楽。「Crypto Ark」は以前名乗っていた名前で、今の活動名は BCNOFNe
 - 運営者のココナラ: https://coconala.com/users/6047857 （出品名 BCNOFNe〜ボクのフネ〜）。同じ画面に出る競馬・競艇の予想ツールや Next.js テンプレートは別の出品者のもので、BCNOFNe とは関係ない
 - 連絡: support@bcnofne.com / https://bcnofne.com/#contact
