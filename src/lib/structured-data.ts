@@ -31,8 +31,20 @@ export function ownerNode(site: URL) {
     '@id': ids(site).owner,
     name: 'あゆにゃん',
     alternateName: ['aynyan', 'Aynyan'],
+    jobTitle: '個人開発者（元・二等機関士）',
+    description: '有明海の元船乗り（甲板員から二等機関士）。BCNOFNe の名前は元素の覚え歌「水兵リーベ僕の船」の B・C・N・O・F・Ne から。',
     url: 'https://x.com/Aynyann',
-    sameAs: ['https://x.com/Aynyann'],
+    worksFor: { '@id': ids(site).org },
+    // 本人のプロフィール（作品の置き場ではない所）だけ
+    sameAs: [
+      'https://x.com/Aynyann',
+      'https://www.threads.com/@aynyan28',
+      'https://zenn.dev/aynyan',
+      'https://github.com/Aynyan2828',
+      'https://note.com/aynyan_sui_ice',
+      'https://bsky.app/profile/aynyan.bsky.social',
+      'https://lit.link/aynyann',
+    ],
   };
 }
 
