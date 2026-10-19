@@ -24,6 +24,25 @@ const visible = (e: { data: { status: string } }) =>
 const byOrder = (a: { data: { order: number } }, b: { data: { order: number } }) =>
   a.data.order - b.data.order;
 
+// 運営者（人）＝あゆにゃん。看板の AYN とは別（2026-10-19 マスター：運営は X のアカウントで）
+export function ownerNode(site: URL) {
+  return {
+    '@type': 'Person',
+    '@id': ids(site).owner,
+    name: 'あゆにゃん',
+    alternateName: ['aynyan', 'Aynyan'],
+    url: 'https://x.com/Aynyann',
+    sameAs: ['https://x.com/Aynyann'],
+  };
+}
+
+// 自前の紹介ページがあるアプリは、そのページの JSON-LD と同じ @id にそろえる
+const APP_PAGE: Record<string, string> = {
+  sorotte: '/sorotte/',
+  subscope: '/subscope/',
+  angleon: '/angleon/',
+};
+
 /** サイト全体で固定の @id（ページごとに変わらんように site のルートで作る） */
 export function ids(site: URL) {
   const root = new URL('/', site).href;
@@ -31,6 +50,7 @@ export function ids(site: URL) {
     root,
     org: root + '#org',
     ayn: root + '#ayn',
+    owner: root + '#owner',
     artist: root + '#artist',
     website: root + '#website',
   };
@@ -73,6 +93,7 @@ export async function buildGraph(site: URL, page: { url: string; title: string; 
     logo: abs('/apple-touch-icon.png'),
     image: page.image,
     email: 'support@bcnofne.com',
+    founder: { '@id': id.owner },
     sameAs: [...new Set(sameAs)],
   };
 
@@ -110,8 +131,8 @@ export async function buildGraph(site: URL, page: { url: string; title: string; 
     const appId = a.data.appId ?? a.id;
     const price = priceOf(a.data.price);
     return {
-      '@type': 'SoftwareApplication',
-      '@id': id.root + '#app-' + appId,
+      '@type': 'MobileApplication',
+      '@id': APP_PAGE[appId] ? new URL(APP_PAGE[appId], site).href + '#app' : id.root + '#app-' + appId,
       name: a.data.title,
       description: a.data.summary,
       url: a.data.url,
@@ -166,7 +187,7 @@ export async function buildGraph(site: URL, page: { url: string; title: string; 
 
   return {
     '@context': 'https://schema.org',
-    '@graph': [org, ayn, website, webpage, ...appNodes, artist, ...releaseNodes, ...podcastNode],
+    '@graph': [org, ownerNode(site), ayn, website, webpage, ...appNodes, artist, ...releaseNodes, ...podcastNode],
   };
 }
 
@@ -183,7 +204,9 @@ export function buildLiteGraph(site: URL, page: { url: string; title: string; de
         alternateName: ORG_ALT_NAMES,
         url: id.root,
         logo: new URL('/apple-touch-icon.png', site).href,
+        founder: { '@id': id.owner },
       },
+      ownerNode(site),
       {
         '@type': 'WebSite',
         '@id': id.website,

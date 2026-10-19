@@ -15,6 +15,8 @@ interface Props {
   lang?: 'ja' | 'en';
   /** 言語違いの対になるページ（hreflang）。base 抜きのルート相対パス */
   alternates?: { lang: string; path: string }[];
+  /** ページだけの構造化データ（アプリの SoftwareApplication・FAQPage など）。SEO の @graph に足す */
+  extraJsonLd?: Record<string, unknown>[];
 }
 const {
   title = 'BCNOFNe〜ボクのフネ〜｜機関士AI AYN の公式ハブ',
@@ -22,6 +24,7 @@ const {
   ogImage,
   lang = 'ja',
   alternates = [],
+  extraJsonLd = [],
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -75,7 +78,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Yomogi&family=Yusei+Magic&display=swap" rel="stylesheet" />
-    <SEO title={title} description={description} lang={lang} alternates={alternates} {...(ogImage ? { ogImage } : {})} />
+    <SEO title={title} description={description} lang={lang} alternates={alternates} extraJsonLd={extraJsonLd} {...(ogImage ? { ogImage } : {})} />
     <slot name="head" />
   </head>
   <body>

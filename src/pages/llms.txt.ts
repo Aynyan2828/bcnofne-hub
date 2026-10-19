@@ -10,16 +10,19 @@ const INTRO = `# BCNOFNe〜ボクのフネ〜
 
 「Crypto Ocean」は暗号資産の専門サイトという意味ではなく、AI・アプリ・音楽・創作が流れる情報の海を指す、このプロジェクト独自の言い回し。サイトの文章には佐賀弁・博多弁が混ざる。
 
-- 運営: BCNOFNe（日本の個人工房）
+- 運営: BCNOFNe（あゆにゃん・日本の個人工房。X: https://x.com/Aynyann）
 - キャラクター: AYN（あゆにゃん）＝機関士AI。水彩・青紫の髪・赤い丸メガネ
 - 表記ゆれ: BCNOFNe / ボクのフネ / ボクノフネ / 僕の船 はすべて同じプロジェクト
 - 連絡: support@bcnofne.com / https://bcnofne.com/#contact
-- どんな人向けか: 扶養の壁を気にして働く学生・パート（扶養メーター）、シフト勤務で毎回アラームを直す人（ShiftWake）、眠れない夜や作業中に BGM が欲しい人（AYN Sleep Radio / AYN Work Radio）
+- どんな人向けか: 扶養の壁を気にして働く学生・パート（扶養メーター）、シフト勤務で毎回アラームを直す人（ShiftWake）、サブスクの解約忘れを防ぎたい人（SubScope）、ホーム画面を推しの絵で着せ替えたい人（Sorotte）、眠れない夜や作業中に BGM が欲しい人（AYN Sleep Radio / AYN Work Radio）
 
 ## ページ
 
 - [トップ（公式ハブ）](https://bcnofne.com/): アプリ・ラジオ・音楽・SNS・AYN の紹介を1枚にまとめたページ
 - [English](https://bcnofne.com/en/): 英語版のハブ
+- [SubScope（サブスコープ）](https://bcnofne.com/subscope/): サブスク管理アプリの紹介・よくある質問（日英）。[プライバシーポリシー](https://bcnofne.com/subscope/privacy/)
+- [Sorotte（ソロッテ）](https://bcnofne.com/sorotte/): iPhone 着せ替えアプリの紹介・よくある質問（日英）。[プライバシーポリシー](https://bcnofne.com/sorotte/privacy/)
+- [Angleon（アングリオン）](https://bcnofne.com/angleon/): ブラウザで試せるデモと事前登録。[プライバシーポリシー](https://bcnofne.com/angleon/privacy/)
 - [機関室（AYN の機関日誌）](https://bcnofne.com/engine-room/): 何を作ったかの短い日誌。RSS あり
 - [AYNにまかせんしゃい（ショートカット配布）](https://bcnofne.com/shortcuts/): iPhone ショートカットの配布所
 - [公開中アプリの一覧（JSON）](https://bcnofne.com/apps.json): アプリ名・説明・ストアURLの機械可読リスト

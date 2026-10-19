@@ -5,8 +5,49 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Footer from '../../components/Footer.astro';
 import icon from '../../assets/app-sorotte-icon.png';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pageUrl = new URL(`${base}/sorotte/`, Astro.site).href;
+
+// よくある質問（2026-10-19 GEO：AI の答えに引用されやすい「質問→答え」の形。画面に出す文と構造化データは同じ物を使う）
+const FAQ_JA = [
+  ['iPhone のホーム画面のアイコンを、ハートや星の形に並べられますか？', 'はい。Sorotte のウィジェットを置くと、アプリのアイコンをハート・星・六芒星などの形に並べられます。指で描いた形にも並べられます（Sorotte Pro）。アイコンを押すと、そのアプリが開きます。'],
+  ['好きな絵（推しの絵）でアイコンをそろえられますか？', 'はい。絵を 1 枚選ぶと、よく使うアプリのアイコンがその絵になじむ色と形でそろい、ホーム画面が一枚の絵のように見えます。'],
+  ['絵師さんが作った着せ替えを受け取るには？', '絵師さんや友だちから届いた zip ファイルを「Sorotte で開く」だけです。最初の画面の「もらったセットで着せ替え」からも選べます。受け取りは無料です。'],
+  ['自分の絵で着せ替えセットを作って配れますか？', 'はい。最初の画面の「自分の絵でセットを作って配る」で、絵・形・セット名と作者名を選ぶと、zip と告知の画像を書き出せます。作って配るのは無料です。配る場所は LINE・AirDrop・自分の BOOTH や Google ドライブなどで、Sorotte がファイルを預かることはありません。'],
+  ['ロック画面や充電の画面も変えられますか？', 'はい。ロック画面の時計の下の丸・アプリを並べるカラーパネル・動く壁紙（Live Photo）と、充電器につないだ時のアニメを変えられます。充電アニメは自分の写真や動画からも作れます。'],
+  ['無料で使えますか？広告はありますか？', '基本の機能は無料で、広告はありません。一部の機能は Sorotte Pro（アプリ内課金）で使えます。'],
+];
+const FAQ_EN = [
+  ['Can I arrange my iPhone Home Screen icons in a heart or star shape?', 'Yes. Add a Sorotte widget to arrange your app icons in hearts, stars, hexagrams and more, or in a shape you draw with your finger (Sorotte Pro). Tapping an icon opens that app.'],
+  ['Can I match my icons to my favorite artwork?', 'Yes. Pick one picture and your most-used app icons are restyled to blend with it, so your Home Screen looks like a single piece of art.'],
+  ['How do I use a Home Screen set made by an artist?', 'Open the zip file you received with Sorotte, or choose "Apply a set you received" on the first screen. Receiving sets is free.'],
+  ['Can I make and share a set from my own art?', 'Yes. Choose "Make and share a set from your art", then pick a picture, a shape, a set name and your creator name to export a zip and a promo image. Making and sharing is free. Share it via Messages, AirDrop, or your own storage; Sorotte never hosts your files.'],
+  ['Can I customize the Lock Screen and charging screen too?', 'Yes. Sorotte covers Lock Screen circles, a color panel of apps, moving wallpapers (Live Photos), and charging animations, including ones made from your own photos and videos.'],
+  ['Is it free? Are there ads?', 'The basic features are free and there are no ads. Some features are available with Sorotte Pro (in-app purchase).'],
+];
+const jsonLd = [
+  {
+    '@type': 'SoftwareApplication',
+    '@id': pageUrl + '#app',
+    name: 'Sorotte',
+    alternateName: ['ソロッテ', 'Sorotte: Icon Themes & Widgets'],
+    applicationCategory: 'LifestyleApplication',
+    operatingSystem: 'iOS',
+    inLanguage: ['ja', 'en'],
+    url: pageUrl,
+    description: 'iPhone のアイコンを好きな絵とハート・星などの形にそろえる着せ替えアプリ。ロック画面・充電アニメ・絵師さんのセットの受け取りと配布まで。 / An iPhone customization app that matches your icons to your art and arranges them in shapes, with Lock Screen, charging animations, and shareable artist sets.',
+    featureList: ['Icons arranged in shapes (heart, star, hexagram, custom)', 'One-picture Home Screen', 'Widget templates', 'Lock Screen circles, color panel and moving wallpapers', 'Charging animations', 'Make and share Home Screen sets', 'Receive sets from artists'],
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY', description: '基本無料・Sorotte Pro はアプリ内課金 / Free with optional in-app purchase' },
+    author: { '@type': 'Person', '@id': new URL(`${base}/`, Astro.site).href + '#owner', name: 'あゆにゃん', url: 'https://x.com/Aynyann' },
+    publisher: { '@type': 'Organization', name: 'BCNOFNe〜ボクのフネ〜', url: new URL(`${base}/`, Astro.site).href },
+  },
+  {
+    '@type': 'FAQPage',
+    '@id': pageUrl + '#faq',
+    mainEntity: [...FAQ_JA, ...FAQ_EN].map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
+];
 ---
-<BaseLayout title="Sorotte（ソロッテ）｜iPhone の着せ替えアプリ / iPhone Customization" description="アイコンを形にそろえるウィジェット、一枚絵のホーム画面、ロック画面の動く壁紙、充電アニメ。iPhone を丸ごと着せ替えるアプリ Sorotte（制作中）。">
+<BaseLayout title="Sorotte（ソロッテ）｜iPhone の着せ替えアプリ / iPhone Customization" description="iPhone のアイコンを推しの絵とハート・星の形にそろえる着せ替えアプリ Sorotte。ロック画面・充電アニメ・絵師さんの着せ替えセットの受け取りと配布まで（制作中）。" extraJsonLd={jsonLd}>
   <main id="main" class="section">
     <div class="container" style="max-width: 720px;">
       <div style="display:flex; align-items:center; gap:16px; margin-bottom: 1.5rem;">
@@ -37,8 +78,14 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <li><strong>ロック画面</strong>：時計の下の丸・アプリを並べるカラーパネル・動く壁紙（Live Photo）。</li>
         <li><strong>充電アニメ</strong>：つないだ時に出るアニメ。自分の写真や動画でも作れます。</li>
         <li><strong>一式を人に渡す</strong>：作った着せ替えを 1 つのファイルにして、LINE や AirDrop で渡せます。</li>
+        <li><strong>絵師さんのセット</strong>：自分の絵でセットを作って配れます（作るのも配るのも無料）。届いたセットは開くだけで、ホーム画面がその絵でそろいます。</li>
       </ul>
       <p>広告はありません。基本の機能は無料、一部の機能は Sorotte Pro（アプリ内課金）で使えます。</p>
+
+      <h3>よくある質問</h3>
+      <dl class="faq">
+        {FAQ_JA.map(([q, a]) => (<><dt>{q}</dt><dd>{a}</dd></>))}
+      </dl>
 
       <h3>お問い合わせ</h3>
       <p>不具合・ご要望は <a href={`${base}/#contact`}>お問い合わせ</a>からご連絡ください。</p>
@@ -58,8 +105,14 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           <li><strong>Lock Screen</strong>: circles under the clock, a color panel of apps, and moving wallpapers (Live Photos).</li>
           <li><strong>Charging animations</strong>: shown when you plug in, including ones made from your own photos and videos.</li>
           <li><strong>Share a whole set</strong>: pack your customization into one file and send it with LINE or AirDrop.</li>
+          <li><strong>Artist sets</strong>: make a set from your own art and share it (free). Open a set you receive and your Home Screen matches that art.</li>
         </ul>
         <p>No ads. The basic features are free; some features are available with Sorotte Pro (in-app purchase).</p>
+
+        <h3>FAQ</h3>
+        <dl class="faq">
+          {FAQ_EN.map(([q, a]) => (<><dt>{q}</dt><dd>{a}</dd></>))}
+        </dl>
 
         <h3>Contact</h3>
         <p>For bug reports or requests, please use the <a href={`${base}/#contact`}>contact form</a>.</p>
@@ -69,3 +122,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   </main>
   <Footer />
 </BaseLayout>
+
+<style>
+  .faq dt { font-weight: 700; margin-top: 1.1rem; }
+  .faq dd { margin: 0.35rem 0 0; opacity: 0.9; }
+</style>

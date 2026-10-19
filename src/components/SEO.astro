@@ -8,8 +8,10 @@ interface Props {
   lang?: 'ja' | 'en';
   /** hreflang（言語違いの対ページ）。path は base 抜きのルート相対 */
   alternates?: { lang: string; path: string }[];
+  /** ページだけの構造化データ（@graph に足す） */
+  extraJsonLd?: Record<string, unknown>[];
 }
-const { title, description, ogImage = 'og/og-default.jpg', lang = 'ja', alternates = [] } = Astro.props;
+const { title, description, ogImage = 'og/og-default.jpg', lang = 'ja', alternates = [], extraJsonLd = [] } = Astro.props;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 const altUrl = (path: string) => new URL(basePath + path, Astro.site).href;
 
@@ -26,7 +28,8 @@ const site = Astro.site ?? new URL('https://bcnofne.com');
 const pageInfo = { url: canonical, title, description, lang, image: ogImageUrl };
 const pathNoBase = Astro.url.pathname.slice(basePath.length).replace(/\/?$/, '/');
 const isHome = pathNoBase === '/' || pathNoBase === '/en/';
-const jsonLd = isHome ? await buildGraph(site, pageInfo) : buildLiteGraph(site, pageInfo);
+const graph = isHome ? await buildGraph(site, pageInfo) : buildLiteGraph(site, pageInfo);
+const jsonLd = { ...graph, '@graph': [...graph['@graph'], ...extraJsonLd] };
 ---
 <title>{title}</title>
 <meta name="description" content={description} />
