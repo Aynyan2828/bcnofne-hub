@@ -1,5 +1,12 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-10-19 — GEO（生成AI検索）向けに JSON-LD と llms.txt を厚くする
+
+Gemini の GEO 診断を受けた点検。「誰が・何を出しとるか」を AI に機械で読ませる。
+- JSON-LD を `src/lib/structured-data.ts` に分けた。トップ（日英）は Organization・AYN・WebSite・WebPage に加えて、アプリ（SoftwareApplication）・アーティスト（MusicGroup）・EP/シングル（MusicAlbum）・AI RADIO（PodcastSeries）を content の md から自動で出す。他のページは運営者＋ページだけ
+- Organization の @id をページごとの URL からサイト共通の `https://bcnofne.com/#org` に直した（前はページごとに別の会社に見えとった）。sameAs に Work Radio・BCNOFNe Radio・Podcast・Spotify・note・Substack・GitHub・LINE・SUZURI・楽天ROOM・Threads を足した
+- `/llms.txt` を手書きの public/llms.txt から、content の md で自動生成する `src/pages/llms.txt.ts` に替えた。音楽・Substack・X・Instagram・TikTok・Threads・制作中アプリ・英語版・機関室が載る
+
 ## 2026-10-07 — フッターに運営者と連絡先・Litlink を外す
 
 Claude for Startups の審査（サイト・会社メール・会社名の一致を見る）向け。日本語・英語の両方に出る。

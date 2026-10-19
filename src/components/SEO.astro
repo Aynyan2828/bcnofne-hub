@@ -1,4 +1,5 @@
 ---
+import { buildGraph, buildLiteGraph } from '../lib/structured-data';
 // SEO: title/description/OGP/Twitter Card/JSON-LD をまとめて出力
 interface Props {
   title: string;
@@ -16,63 +17,19 @@ const altUrl = (path: string) => new URL(basePath + path, Astro.site).href;
 
 // 絶対URL化（OGP は絶対URL必須）
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const siteUrl = new URL(basePath + '/', Astro.site).href;
 const ogImageUrl = new URL(
   import.meta.env.BASE_URL.replace(/\/$/, '') + '/' + ogImage.replace(/^\//, ''),
   Astro.site,
 ).href;
 
-// 構造化データ（Person / Organization / WebSite）
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Organization',
-      '@id': canonical + '#org',
-      name: 'BCNOFNe〜ボクのフネ〜',
-      url: canonical,
-      logo: ogImageUrl,
-      founder: { '@id': siteUrl + '#owner' },
-      sameAs: [
-        'https://www.youtube.com/@AYNSleepRadio',
-        'https://x.com/Aynyann',
-        'https://www.tiktok.com/@aynyan2828',
-        'https://www.instagram.com/aynyan28',
-        'https://bsky.app/profile/aynyan.bsky.social',
-        'https://lit.link/aynyann',
-      ],
-    },
-    {
-      // 運営者（人）＝あゆにゃん（2026-10-19 マスター：運営は AYN やなくあゆにゃん・X のアカウントで）
-      '@type': 'Person',
-      '@id': siteUrl + '#owner',
-      name: 'あゆにゃん',
-      alternateName: ['aynyan', 'Aynyan'],
-      url: 'https://x.com/Aynyann',
-      sameAs: ['https://x.com/Aynyann'],
-    },
-    {
-      // 看板のキャラクター（運営者ではない）
-      '@type': 'Person',
-      '@id': canonical + '#ayn',
-      name: 'AYN（あゆにゃん）',
-      alternateName: '機関士AI AYN',
-      description: 'BCNOFNe から生まれた機関士AI。Crypto Ocean を一緒に航海する相棒。',
-      image: ogImageUrl,
-      memberOf: { '@id': canonical + '#org' },
-    },
-    {
-      '@type': 'WebSite',
-      '@id': canonical + '#website',
-      url: canonical,
-      name: title,
-      description,
-      inLanguage: lang,
-      publisher: { '@id': canonical + '#org' },
-    },
-    ...extraJsonLd,
-  ],
-};
+// 構造化データ（JSON-LD）。トップ（日英）は全部入り、他のページは運営者＋ページだけ。
+// 中身は src/lib/structured-data.ts（content の md から組み立てる）
+const site = Astro.site ?? new URL('https://bcnofne.com');
+const pageInfo = { url: canonical, title, description, lang, image: ogImageUrl };
+const pathNoBase = Astro.url.pathname.slice(basePath.length).replace(/\/?$/, '/');
+const isHome = pathNoBase === '/' || pathNoBase === '/en/';
+const graph = isHome ? await buildGraph(site, pageInfo) : buildLiteGraph(site, pageInfo);
+const jsonLd = { ...graph, '@graph': [...graph['@graph'], ...extraJsonLd] };
 ---
 <title>{title}</title>
 <meta name="description" content={description} />
