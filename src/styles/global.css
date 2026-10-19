@@ -507,3 +507,22 @@ html, body { overflow-x: clip; }
   vertical-align: -0.14em;
 }
 
+
+/* ── 読み物の紙（プライバシーポリシー・アプリの紹介ページ）─────────────
+   2026-10-19 マスター：文字の後ろに海の絵が透けて読めん（波の白に字が溶けた）。
+   文字の後ろに紙を 1 枚敷く。周りは海の絵がそのまま見える */
+.paper {
+  background: rgba(251, 252, 255, 0.94);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(20px, 5vw, 44px) clamp(18px, 5vw, 48px);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: var(--c-ink);
+}
+.paper p, .paper li, .paper dd { line-height: 1.85; }
+.paper h3 { color: var(--c-blue-deep); margin-top: 2rem; }
+.paper a { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 480px) {
+  .paper { margin-inline: -4px; }
+}
