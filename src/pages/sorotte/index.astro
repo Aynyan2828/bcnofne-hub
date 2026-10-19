@@ -37,6 +37,7 @@ const jsonLd = [
     description: 'iPhone のアイコンを好きな絵とハート・星などの形にそろえる着せ替えアプリ。ロック画面・充電アニメ・絵師さんのセットの受け取りと配布まで。 / An iPhone customization app that matches your icons to your art and arranges them in shapes, with Lock Screen, charging animations, and shareable artist sets.',
     featureList: ['Icons arranged in shapes (heart, star, hexagram, custom)', 'One-picture Home Screen', 'Widget templates', 'Lock Screen circles, color panel and moving wallpapers', 'Charging animations', 'Make and share Home Screen sets', 'Receive sets from artists'],
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY', description: '基本無料・Sorotte Pro はアプリ内課金 / Free with optional in-app purchase' },
+    author: { '@type': 'Person', '@id': new URL(`${base}/`, Astro.site).href + '#owner', name: 'あゆにゃん', url: 'https://x.com/Aynyann' },
     publisher: { '@type': 'Organization', name: 'BCNOFNe〜ボクのフネ〜', url: new URL(`${base}/`, Astro.site).href },
   },
   {

@@ -16,6 +16,7 @@ const altUrl = (path: string) => new URL(basePath + path, Astro.site).href;
 
 // 絶対URL化（OGP は絶対URL必須）
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const siteUrl = new URL(basePath + '/', Astro.site).href;
 const ogImageUrl = new URL(
   import.meta.env.BASE_URL.replace(/\/$/, '') + '/' + ogImage.replace(/^\//, ''),
   Astro.site,
@@ -31,6 +32,7 @@ const jsonLd = {
       name: 'BCNOFNe〜ボクのフネ〜',
       url: canonical,
       logo: ogImageUrl,
+      founder: { '@id': siteUrl + '#owner' },
       sameAs: [
         'https://www.youtube.com/@AYNSleepRadio',
         'https://x.com/Aynyann',
@@ -41,6 +43,16 @@ const jsonLd = {
       ],
     },
     {
+      // 運営者（人）＝あゆにゃん（2026-10-19 マスター：運営は AYN やなくあゆにゃん・X のアカウントで）
+      '@type': 'Person',
+      '@id': siteUrl + '#owner',
+      name: 'あゆにゃん',
+      alternateName: ['aynyan', 'Aynyan'],
+      url: 'https://x.com/Aynyann',
+      sameAs: ['https://x.com/Aynyann'],
+    },
+    {
+      // 看板のキャラクター（運営者ではない）
       '@type': 'Person',
       '@id': canonical + '#ayn',
       name: 'AYN（あゆにゃん）',

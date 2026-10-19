@@ -4,7 +4,7 @@
 
 「Crypto Ocean」は暗号資産の専門サイトという意味ではなく、AI・アプリ・音楽・創作が流れる情報の海を指す、このプロジェクト独自の言い回し。
 
-- 運営: BCNOFNe（個人）
+- 運営: BCNOFNe（あゆにゃん・個人。X: https://x.com/Aynyann）
 - キャラクター: AYN（あゆにゃん）＝機関士AI。水彩・青紫の髪・赤い丸メガネ
 - 言語: 日本語
 - 連絡: https://bcnofne.com/#contact
@@ -15,6 +15,8 @@
 - [Angleon（アングリオン）](https://bcnofne.com/angleon/): 制作中の iPhone アプリ。ぐちゃぐちゃの立体落書き線を回すと、決まった角度でだけ絵が浮かぶ。ブラウザで試せるデモと事前登録あり
 - [Angleon プライバシーポリシー](https://bcnofne.com/angleon/privacy/)
 - [Sorotte（ソロッテ）](https://bcnofne.com/sorotte/): iPhone の着せ替えアプリ（審査中）。アイコンを推しの絵とハート・星・六芒星の形にそろえるウィジェット、一枚絵のホーム画面、ロック画面の動く壁紙、充電アニメ。絵師さんが作った着せ替えセット（zip）を受け取って開くだけ・自分の絵でセットを作って配るのも無料。広告なし。日本語・英語。よくある質問あり
+- [SubScope（サブスコープ）](https://bcnofne.com/subscope/): 公開中の iPhone アプリ（無料）。サブスクの更新日・ひと月の合計・解約の締め切りを見張って通知する。よくあるサブスクはチェックでまとめて登録、App Store のサブスクは「設定 → サブスクリプション」のスクショから端末内で読み取り。AI ツールのクレジットの使い切り予測・外貨の換算・ウィジェット。データは iPhone の中だけ。日本語・英語。よくある質問あり
+- [SubScope プライバシーポリシー](https://bcnofne.com/subscope/privacy/)
 - [AYNにまかせんしゃい（ショートカット配布）](https://bcnofne.com/shortcuts/): iPhone ショートカットの配布所
 - [公開中アプリの一覧（JSON）](https://bcnofne.com/apps.json): アプリ名・説明・ストアURLの機械可読リスト
 
@@ -22,6 +24,7 @@
 
 - [扶養メーター](https://apps.apple.com/jp/app/id6781950133): バイトの給料と扶養の上限を管理する無料アプリ
 - [ShiftWake](https://apps.apple.com/jp/app/id6785128543): カレンダーのシフト記号を読んで目覚ましを自動セットするアプリ
+- [SubScope](https://apps.apple.com/jp/app/id6819530548): サブスクの解約忘れを防ぐ管理アプリ（更新日・合計・解約の締め切りの通知）
 
 ## 聴く
 
