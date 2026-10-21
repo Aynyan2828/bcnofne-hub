@@ -21,12 +21,12 @@ const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
           <div class="section-avatar">
             <Image src={aynOk} alt="サムズアップするAYN" width={112} height={112} loading="eager" />
           </div>
-          <span class="eyebrow">Shortcuts</span>
-          <h1>AYNにまかせんしゃい</h1>
-          <p class="lead">ズボラでよか。めんどいことは、ぼくが。</p>
+          <span class="eyebrow" data-type data-type-step="40">Shortcuts</span>
+          <h1 data-type data-type-delay="200" data-type-step="55">AYNにまかせんしゃい</h1>
+          <p class="lead" data-type data-type-delay="650" data-type-step="40">ズボラでよか。めんどいことは、ぼくが。</p>
           <p class="howto">
-            <span>PCの人はQRをスマホで読んでね。</span>
-            <span>iPhoneならリンクで直接どうぞ。</span>
+            <span data-type data-type-delay="1100" data-type-step="24">PCの人はQRをスマホで読んでね。</span>
+            <span data-type data-type-delay="1400" data-type-step="24">iPhoneならリンクで直接どうぞ。</span>
           </p>
         </div>
 
@@ -43,15 +43,15 @@ const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
 <template id="sc-card-tpl">
   <article class="sc-card">
     <div class="sc-card__head">
-      <h2 class="sc-card__title" data-title></h2>
+      <h2 class="sc-card__title" data-title data-type data-type-delay="120" data-type-step="45"></h2>
       <span class="sc-card__badge" data-safety hidden>端末内で完結・通信なし</span>
     </div>
     <p class="sc-card__cat" data-cat hidden></p>
-    <p class="sc-card__desc" data-desc></p>
+    <p class="sc-card__desc" data-desc data-type data-type-delay="480" data-type-step="14"></p>
     <div class="sc-card__qr">
       <img data-qr alt="" width="132" height="132" loading="lazy" />
     </div>
-    <a class="sc-card__cta" data-go target="_blank" rel="noopener noreferrer">
+    <a class="sc-card__cta" data-go data-type data-type-delay="900" data-type-step="40" target="_blank" rel="noopener noreferrer">
       iPhoneで追加する
       <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
@@ -101,7 +101,11 @@ const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
           }
           frag.appendChild(node);
         }
+        const typed = Array.from(frag.querySelectorAll('[data-type]'));
         grid.appendChild(frag);
+        // トップと同じ文字の演出（TextFx）。演出を止めとる環境では tfxAdd が無いけん、そのまま出る
+        if (window.tfxAdd) window.tfxAdd(typed);
+        else typed.forEach((el) => el.classList.add('is-typed'));
       } catch (_) {
         if (empty) empty.hidden = false;
       }
@@ -110,6 +114,22 @@ const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
 </script>
 
 <style>
+  /* 丸い AYN（Section.astro の見た目をこのページにも。前は四角で左に寄っとった） */
+  .section-avatar {
+    width: clamp(76px, 14vw, 104px);
+    aspect-ratio: 1;
+    margin: 0 auto 0.9rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-soft);
+    background: var(--c-mist);
+  }
+  .section-avatar :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
   .lead {
     color: var(--c-ink-soft);
     margin-top: 0.4rem;

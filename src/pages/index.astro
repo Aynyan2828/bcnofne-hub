@@ -84,6 +84,14 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
       avatar={aynOk}
       avatarAlt="サムズアップするAYN"
     >
+      {/* ショートカット集への入口（プロフィールの bcnofne.com から 2 タップで届くように・2026-10-21） */}
+      <div class="scband" data-scband>
+        <a class="scband__bar" href={`${base}/shortcuts/`}>
+          <img class="scband__face" src={aynOk.src} alt="" width="30" height="30" loading="lazy" />
+          <span class="scband__text">無料の iPhone ショートカット集</span>
+          <span class="scband__arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
       {featured && (
         <Featured
           title={featured.data.title}
@@ -368,6 +376,25 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
   }
 </script>
 
+<script>
+  // ショートカット集の帯：画面に入ったら is-in を付けて、カットインを 1 回だけ流す
+  (() => {
+    const band = document.querySelector('[data-scband]');
+    if (!band) return;
+    if (!('IntersectionObserver' in window)) { band.classList.add('is-in'); return; }
+    const io = new IntersectionObserver((es) => {
+      for (const e of es) {
+        if (!e.isIntersecting) continue;
+        band.classList.add('is-in');
+        io.disconnect();
+      }
+    }, { threshold: 0.6 });
+    io.observe(band);
+    // 見張りが一度も呼ばれん環境の保険：止まった帯で出す
+    setTimeout(() => band.classList.add('is-in'), 8000);
+  })();
+</script>
+
 <style>
   /* Other Apps などの小見出し（港の中の区切り） */
   .subhead {
@@ -532,4 +559,97 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
     display: block;
   }
   .shelfvideo--scene { aspect-ratio: 2 / 3; }
+
+  /* ショートカット集への帯（アプリの港・2026-10-21）。画面に入ったら斜めにカットイン→止まって、
+     矢印がゆっくり揺れ、光がときどき走る。動きは CSS だけ（JS は「画面に入った」の印を付けるだけ）。
+     JS が来ん・動きを減らす設定の人は、最初から止まった帯で出す */
+  .scband {
+    display: flex;
+    justify-content: flex-end;
+    /* 画面の右端までのばす（container の余白をはみ出して、右端にくっつける） */
+    margin: 0 calc(50% - 50vw) clamp(1.1rem, 3vw, 1.6rem) 0;
+    overflow: hidden;           /* 右から入ってくる間、はみ出しを切る */
+    padding: 0.4rem 0;
+  }
+  .scband__bar {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: min(88vw, 34rem);   /* 画面の 9 割弱（広い画面では伸ばしすぎん） */
+    padding: 0.6em 1.4em 0.6em 1.6em;
+    /* 左は斜めに切った帯・右は画面の端にくっつく四角 */
+    clip-path: polygon(1.1em 0, 100% 0, 100% 100%, 0 100%);
+    background: var(--grad-ink);
+    color: #fff;
+    font-size: 0.92rem;
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .scband__bar:hover { color: #fff; text-decoration: none; }
+  .scband__face {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    object-fit: cover;
+    flex: none;
+    background: #fff;
+  }
+  .scband__text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .scband__arrow { display: inline-block; flex: none; }
+  /* 帯の上を走る光 */
+  .scband__bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.55) 50%, transparent 65%);
+    transform: translateX(-120%);
+    pointer-events: none;
+    z-index: -1;
+  }
+  /* カットインの後ろに残る光の筋 */
+  .scband::before {
+    content: '';
+    position: absolute;
+    width: 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html.reveal-on .scband:not(.is-in) .scband__bar { opacity: 0; transform: translateX(110%); }
+    .scband { position: relative; }
+    .scband.is-in .scband__bar {
+      animation: scband-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;   /* シュッと入って右端でピタッと止まる（行き過ぎると端から離れて見える） */
+    }
+    .scband.is-in::before {
+      left: 0; right: 0; top: 50%;
+      height: 3px;
+      width: auto;
+      margin-top: -1.5px;
+      background: linear-gradient(270deg, transparent, rgba(255, 255, 255, 0.95), rgba(167, 196, 255, 0.6), transparent);
+      transform-origin: right center;
+      animation: scband-streak 0.9s ease-out both;
+      pointer-events: none;
+    }
+    .scband.is-in .scband__arrow { animation: scband-nudge 1.6s ease-in-out 1s infinite; }
+    .scband.is-in .scband__bar::after { animation: scband-shine 4.2s ease-in-out 1.2s infinite; }
+  }
+  @keyframes scband-in {
+    0%   { opacity: 0; transform: translateX(110%); }
+    25%  { opacity: 1; }
+    100% { opacity: 1; transform: none; }
+  }
+  @keyframes scband-streak {
+    0%   { transform: scaleX(0); opacity: 1; }
+    60%  { transform: scaleX(1); opacity: 0.9; }
+    100% { transform: scaleX(1); opacity: 0; }
+  }
+  @keyframes scband-nudge {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(5px); }
+  }
+  @keyframes scband-shine {
+    0%   { transform: translateX(-120%); }
+    30%, 100% { transform: translateX(120%); }
+  }
 </style>

@@ -41,7 +41,7 @@
 
     // JIZURA の SCRAMBLE_POOL を海の字に寄せたもの
     // まとめて書き始める単位（カード・主役アプリ・計器など）
-    const GROUP = '.card, .feat, .ship, .feed, .latest';
+    const GROUP = '.card, .feat, .ship, .feed, .latest, .sc-card';
 
     const POOL =
       'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン' +
@@ -221,6 +221,8 @@
       { rootMargin: '0px 0px -8% 0px', threshold: 0.2 }
     );
     for (const el of targets) io.observe(el);
+    // あとから描く物（ショートカット集のカードなど・取得してから作る）にも同じ演出をかける口
+    window.tfxAdd = (els) => { for (const el of els) { split(el); io.observe(el); } };
 
     // IO を作れたのに一度も呼ばれん環境の保険（Reveal と同じ）: 演出を捨てて全部出す
     setTimeout(() => {
