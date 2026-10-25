@@ -1,5 +1,11 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-10-25 (2) — アプリの港の動画棚に SubScope の紹介動画
+
+マスター「アプリの港の紹介動画に SubScope が上がっとらん」。動画棚は index.astro の手書きで、SubScope の動画ファイル自体が入っとらんかった。
+- `public/media/subscope_promo.mp4`：ayn-promo-video の `out/subscope_ad_9x16_sns.mp4`（10-21 に YouTube・IG・TikTok・X へ投稿した広告、33.7 秒）を 720x1280・CRF28・faststart に（約 3.0MB）。poster は 1.5 秒目
+- `index.astro`：動画棚の扶養メーターの次に追加（遅延読み込みのまま）
+
 ## 2026-10-25 — 港の入口の文字が白く濁る不具合を直す
 
 マスター「APPS HARBOR のところが薄い」（iPhone）。
