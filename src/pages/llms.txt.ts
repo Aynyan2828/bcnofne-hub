@@ -26,7 +26,7 @@ const INTRO = `# BCNOFNe〜ボクのフネ〜
 - [English](https://bcnofne.com/en/): 英語版のハブ
 - [扶養メーター](https://bcnofne.com/fuyou-meter/): 扶養の壁まであといくら働けるかを見せるアプリの紹介・よくある質問（2026 年の壁の金額つき）
 - [ShiftWake（シフトウェイク）](https://bcnofne.com/shiftwake/): シフト勤務の自動アラームアプリの紹介・よくある質問（日英）
-- [SubScope（サブスコープ）](https://bcnofne.com/subscope/): サブスク管理アプリの紹介・よくある質問（日英）。[プライバシーポリシー](https://bcnofne.com/subscope/privacy/)
+- [SubScope（サブスコープ）](https://bcnofne.com/subscope/): サブスク管理アプリの紹介・よくある質問（日英）。[携帯料金にまとめて払っているサブスクの入れ方](https://bcnofne.com/subscope/carrier/)・[プライバシーポリシー](https://bcnofne.com/subscope/privacy/)
 - [Sorotte（ソロッテ）](https://bcnofne.com/sorotte/): iPhone 着せ替えアプリの紹介・よくある質問（日英）。[プライバシーポリシー](https://bcnofne.com/sorotte/privacy/)
 - [Angleon（アングリオン）](https://bcnofne.com/angleon/): ブラウザで試せるデモと事前登録。[プライバシーポリシー](https://bcnofne.com/angleon/privacy/)
 - [機関室（AYN の機関日誌）](https://bcnofne.com/engine-room/): 何を作ったかの短い日誌。RSS あり

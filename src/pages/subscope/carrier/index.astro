@@ -1,0 +1,155 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Footer from '../../../components/Footer.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// 各社の公式のご案内（確認日 2026-10-26）。画面の名前は各社の表記のまま
+const OFFICIAL = {
+  docomo: 'https://service.smt.docomo.ne.jp/keitai_payment/term/check.html',
+  au: 'https://www.au.com/support/faq/detail/21/a00000000121/',
+  softbank: 'https://www.softbank.jp/support/faq/view/10630',
+  rakuten: 'https://network.mobile.rakuten.co.jp/guide/payment/usage-details/',
+};
+---
+<BaseLayout
+  title="携帯料金にまとめて払っているサブスクの入れ方 | SubScope"
+  description="キャリア決済（携帯料金と一緒に払う）のサブスクは領収書がメールに届かないことがあります。携帯会社のページで利用履歴をスクショして SubScope に入れる方法（ドコモ・au・ソフトバンク・楽天モバイル）。"
+>
+  <main id="main" class="section">
+    <div class="container paper" style="max-width: 720px;">
+      <div class="section-head section-head--left" style="text-align:left">
+        <span class="eyebrow">SubScope</span>
+        <h1 class="title">携帯料金にまとめて払っているサブスクを SubScope に入れる</h1>
+      </div>
+      <p><a href="#en">English below</a></p>
+
+      <p>アプリや動画サービスの料金を「携帯料金と一緒に払う（キャリア決済）」にしていると、領収書がメールに届かないことがあります。そういう物は、携帯会社のページで利用履歴を開いて、スクリーンショットを撮ってから SubScope に入れてください。</p>
+
+      <h2 class="h3">入れ方は 2 つ</h2>
+      <ol>
+        <li>SubScope の「スクショから読み取る」でそのまま読む（端末の中だけで読み取ります）</li>
+        <li>スクショや明細の PDF を AI に渡し、SubScope の「AI に作ってもらう」でコピーしたプロンプトを貼る → 出てきた返事を SubScope に貼る</li>
+      </ol>
+
+      <aside class="note">
+        <p>スクショを撮る前に、電話番号・お名前・決済番号が写っていたら、写真アプリの編集で隠してから使ってください。AI に渡すかどうかはご自身の判断でお願いします。</p>
+      </aside>
+
+      <h3>ドコモ（d払い）</h3>
+      <ul>
+        <li>アプリ：d払いアプリ →「利用履歴」</li>
+        <li>Web：d払いの「ご利用明細を確認する」→「ご利用履歴・継続課金一覧」（ネットワーク暗証番号が要ります）</li>
+        <li>毎月払っている物は「継続課金一覧」にまとまっています。ここをスクショするのがいちばん早いです。終了マークが付いている物は解約済みです</li>
+      </ul>
+      <p class="official">公式のご案内：<a href={OFFICIAL.docomo} rel="noopener" target="_blank">ドコモ</a></p>
+
+      <h3>au・UQ mobile・povo（au PAY（auかんたん決済））</h3>
+      <ul>
+        <li>アプリ：au PAY アプリ →「取引履歴」→ 月を選ぶ →「au PAY（auかんたん決済）」→「詳細を見る」</li>
+        <li>Web：au PAY サイト →「履歴照会」→ 月を選ぶ →「au PAY（auかんたん決済）」→「詳細を見る」</li>
+        <li>毎月払っている物は「毎月課金しているサービスの確認方法」（au のヘルプ）で見られます</li>
+      </ul>
+      <p class="official">公式のご案内：<a href={OFFICIAL.au} rel="noopener" target="_blank">au</a></p>
+
+      <h3>ソフトバンク・ワイモバイル（ソフトバンクまとめて支払い）</h3>
+      <ul>
+        <li>アプリ：My SoftBank アプリ →「お支払い料金」の「ソフトバンクまとめて支払い」→「ご利用明細の確認」</li>
+        <li>Web：My SoftBank →「ご利用履歴」の「確認する」</li>
+        <li>毎月の物は、2〜3 か月分の履歴を並べて撮ると AI が周期を判断しやすくなります</li>
+      </ul>
+      <p class="official">公式のご案内：<a href={OFFICIAL.softbank} rel="noopener" target="_blank">ソフトバンク</a></p>
+
+      <h3>楽天モバイル（楽天モバイルキャリア決済）</h3>
+      <ul>
+        <li>my 楽天モバイル で「楽天モバイルキャリア決済」の利用履歴を開く（詳しくは楽天モバイルの「ご利用履歴の確認方法」）</li>
+      </ul>
+      <p class="official">公式のご案内：<a href={OFFICIAL.rakuten} rel="noopener" target="_blank">楽天モバイル</a></p>
+
+      <h3>うまくいかない時</h3>
+      <ul>
+        <li>金額や周期が分からない物は、SubScope の確認画面で「要確認」に入ります。チェックを付けて、あとで編集画面で直せます</li>
+        <li>同じ物がもう入っている時は、最初は上書きしません</li>
+      </ul>
+
+      <p class="checked">確認日：2026-10-26（各社の画面は変わることがあります）</p>
+      <p><a href={`${base}/subscope/`}>SubScope の紹介に戻る</a></p>
+
+      <hr style="margin: 3rem 0; opacity: .3;" />
+
+      <div lang="en" id="en">
+        <div class="section-head section-head--left" style="text-align:left">
+          <span class="eyebrow">SubScope</span>
+          <h2 class="title">Adding subscriptions you pay through your phone bill</h2>
+        </div>
+
+        <p>If you pay for an app or video service "together with your phone bill" (carrier billing), the receipt may never arrive by email. For those, open your billing history on your mobile carrier's page, take screenshots, and add them to SubScope.</p>
+        <p>The steps below are for carriers in Japan, so screen names are shown as they appear on Japanese screens, with an English explanation.</p>
+
+        <h3>Two ways to add them</h3>
+        <ol>
+          <li>Read the screenshots directly with "Read from screenshots" in SubScope (reading happens only on your device).</li>
+          <li>Give the screenshots or a PDF statement to an AI, paste the prompt you copied in SubScope's "Ask an AI to make a list", then paste the AI's reply into SubScope.</li>
+        </ol>
+
+        <aside class="note">
+          <p>Before using a screenshot, hide your phone number, name and payment numbers with the Photos app's editing tools if they appear. Whether to give them to an AI is your own decision.</p>
+        </aside>
+
+        <h3>docomo (d払い / d Barai)</h3>
+        <ul>
+          <li>App: d払い app → 「利用履歴」 (usage history)</li>
+          <li>Web: 「ご利用明細を確認する」 (check statement) on the d払い site → 「ご利用履歴・継続課金一覧」 (usage history and recurring charges). Your network PIN is required.</li>
+          <li>Monthly charges are grouped in 「継続課金一覧」 (recurring charges list). A screenshot of this list is the quickest way. Items marked as ended have been canceled.</li>
+        </ul>
+        <p class="official">Official guide: <a href={OFFICIAL.docomo} rel="noopener" target="_blank">docomo</a></p>
+
+        <h3>au, UQ mobile, povo (au PAY (auかんたん決済 / au Easy Payment))</h3>
+        <ul>
+          <li>App: au PAY app → 「取引履歴」 (transaction history) → choose the month → 「au PAY（auかんたん決済）」 → 「詳細を見る」 (see details)</li>
+          <li>Web: au PAY site → 「履歴照会」 (history) → choose the month → 「au PAY（auかんたん決済）」 → 「詳細を見る」 (see details)</li>
+          <li>Monthly charges can be checked with 「毎月課金しているサービスの確認方法」 (how to check monthly services) in au's help.</li>
+        </ul>
+        <p class="official">Official guide: <a href={OFFICIAL.au} rel="noopener" target="_blank">au</a></p>
+
+        <h3>SoftBank, Y!mobile (ソフトバンクまとめて支払い / SoftBank Carrier Billing)</h3>
+        <ul>
+          <li>App: My SoftBank app → 「ソフトバンクまとめて支払い」 under 「お支払い料金」 (payments) → 「ご利用明細の確認」 (check statement)</li>
+          <li>Web: My SoftBank → 「確認する」 (check) under 「ご利用履歴」 (usage history)</li>
+          <li>For monthly charges, screenshots of 2–3 months side by side make it easier for an AI to work out the billing cycle.</li>
+        </ul>
+        <p class="official">Official guide: <a href={OFFICIAL.softbank} rel="noopener" target="_blank">SoftBank</a></p>
+
+        <h3>Rakuten Mobile (楽天モバイルキャリア決済 / Rakuten Mobile Carrier Billing)</h3>
+        <ul>
+          <li>Open the 「楽天モバイルキャリア決済」 usage history in my 楽天モバイル (my Rakuten Mobile). See Rakuten Mobile's 「ご利用履歴の確認方法」 (how to check usage history) for details.</li>
+        </ul>
+        <p class="official">Official guide: <a href={OFFICIAL.rakuten} rel="noopener" target="_blank">Rakuten Mobile</a></p>
+
+        <h3>If something doesn't work</h3>
+        <ul>
+          <li>Anything whose price or billing cycle is unclear goes into "Needs review" on SubScope's review screen. Tick it, and fix it later in the edit screen.</li>
+          <li>If the same subscription is already in SubScope, it isn't overwritten by default.</li>
+        </ul>
+
+        <p class="checked">Checked on October 26, 2026 (carriers' screens may change).</p>
+        <p><a href={`${base}/subscope/#en`}>Back to SubScope</a></p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .title { margin: 0; font-size: clamp(1.4rem, 4.6vw, 2rem); line-height: 1.4; }
+  .h3 { font-size: 1.17em; }
+  .note {
+    margin: 1.5rem 0;
+    padding: 0.9rem 1.1rem;
+    border-left: 4px solid var(--c-blue-deep);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.04);
+  }
+  .note p { margin: 0; }
+  .official { margin-top: 0.4rem; font-size: 0.95em; }
+  .checked { margin-top: 2rem; opacity: 0.8; font-size: 0.95em; }
+</style>
