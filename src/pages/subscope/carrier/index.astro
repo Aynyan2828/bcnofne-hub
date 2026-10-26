@@ -7,6 +7,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const OFFICIAL = {
   docomo: 'https://service.smt.docomo.ne.jp/keitai_payment/term/check.html',
   au: 'https://www.au.com/support/faq/detail/21/a00000000121/',
+  auMonthly: 'https://www.au.com/support/faq/details/00/0000/000021/pg00002105/',
   softbank: 'https://www.softbank.jp/support/faq/view/10630',
   rakuten: 'https://network.mobile.rakuten.co.jp/guide/payment/usage-details/',
 };
@@ -47,7 +48,7 @@ const OFFICIAL = {
       <ul>
         <li>アプリ：au PAY アプリ →「取引履歴」→ 月を選ぶ →「au PAY（auかんたん決済）」→「詳細を見る」</li>
         <li>Web：au PAY サイト →「履歴照会」→ 月を選ぶ →「au PAY（auかんたん決済）」→「詳細を見る」</li>
-        <li>毎月払っている物は「毎月課金しているサービスの確認方法」（au のヘルプ）で見られます</li>
+        <li>毎月払っている物は「<a href={OFFICIAL.auMonthly} rel="noopener" target="_blank">毎月課金しているサービスの確認方法</a>」（au のヘルプ）で見られます</li>
       </ul>
       <p class="official">公式のご案内：<a href={OFFICIAL.au} rel="noopener" target="_blank">au</a></p>
 
@@ -68,6 +69,7 @@ const OFFICIAL = {
       <h3>うまくいかない時</h3>
       <ul>
         <li>金額や周期が分からない物は、SubScope の確認画面で「要確認」に入ります。チェックを付けて、あとで編集画面で直せます</li>
+        <li>周期が分からない物は、確認画面で周期を選ぶと入れられます</li>
         <li>同じ物がもう入っている時は、最初は上書きしません</li>
       </ul>
 
@@ -107,7 +109,7 @@ const OFFICIAL = {
         <ul>
           <li>App: au PAY app → 「取引履歴」 (transaction history) → choose the month → 「au PAY（auかんたん決済）」 → 「詳細を見る」 (see details)</li>
           <li>Web: au PAY site → 「履歴照会」 (history) → choose the month → 「au PAY（auかんたん決済）」 → 「詳細を見る」 (see details)</li>
-          <li>Monthly charges can be checked with 「毎月課金しているサービスの確認方法」 (how to check monthly services) in au's help.</li>
+          <li>Monthly charges can be checked with 「<a href={OFFICIAL.auMonthly} rel="noopener" target="_blank">毎月課金しているサービスの確認方法</a>」 (how to check monthly services) in au's help.</li>
         </ul>
         <p class="official">Official guide: <a href={OFFICIAL.au} rel="noopener" target="_blank">au</a></p>
 
@@ -128,6 +130,7 @@ const OFFICIAL = {
         <h3>If something doesn't work</h3>
         <ul>
           <li>Anything whose price or billing cycle is unclear goes into "Needs review" on SubScope's review screen. Tick it, and fix it later in the edit screen.</li>
+          <li>If the billing cycle is unknown, choose one on the review screen to add it.</li>
           <li>If the same subscription is already in SubScope, it isn't overwritten by default.</li>
         </ul>
 
@@ -150,6 +153,8 @@ const OFFICIAL = {
     background: rgba(0, 0, 0, 0.04);
   }
   .note p { margin: 0; }
+  /* 長い名前や URL がスマホ幅からはみ出さないように */
+  .paper :global(li), .paper :global(p) { overflow-wrap: anywhere; }
   .official { margin-top: 0.4rem; font-size: 0.95em; }
   .checked { margin-top: 2rem; opacity: 0.8; font-size: 0.95em; }
 </style>
