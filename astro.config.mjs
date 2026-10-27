@@ -15,7 +15,8 @@ export default defineConfig({
   site: SITE,
   base: BASE,
   trailingSlash: 'ignore',
-  integrations: [sitemap()],
+  // TikTok 認可の戻り先は検索に載せん
+  integrations: [sitemap({ filter: (page) => !page.includes('/tiktok/callback') })],
   image: {
     // 静的サイトなのでビルド時に最適化（sharp）
     responsiveStyles: true,

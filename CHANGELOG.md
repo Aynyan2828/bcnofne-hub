@@ -1,5 +1,11 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-10-27 (9) — TikTok 認可の戻り先ページ（未公開）
+
+TikTok の動画ごとの数字を Bridge に出すため、TikTok API for Business の Redirect URL を用意。
+- `tiktok/callback/`：戻ってきた認可コードを表示してコピーできるだけの静的ページ。送信・解析なし、表示後に URL からコードを消す。noindex・サイトマップから外す
+- 共通レイアウトを使わず単体ページにした（外部の演出スクリプトを読ませんため）
+
 ## 2026-10-27 (8) — ShiftWake・扶養メーターのプライバシーポリシーを bcnofne.com に移す
 
 マスター「ポリシーを bcnofne.com に移して、バラバラなのを片付けた方が整ってていい」。
