@@ -197,5 +197,5 @@ function mount({ stage, svg, read }, value) {
 
 hairline({
   name: "studio", means: "AYN's broadcast booth: four faders are the four stations, and every device on the desk answers the pointer.",
-  rules: [1, 2, 6, 8], range: [0, 45, 90], tour: [[60, 150], [175, 120], [140, 175], null], mount,
+  rules: [1, 2, 6, 8], range: [0, 45, 90], tour: [[120, 90], [230, 130], [180, 180], null], mount,
 });

@@ -130,10 +130,11 @@ function mount({ stage, svg, read }, value) {
     const now = performance.now();
     if (a >= 0) {
       // turn forward to cylinder a's firing TDC, the nearest one ahead
-      const cur = theta(now) - spin;
+      // the whole angle (tween + idle turned so far) lands on a's firing TDC, the nearest one ahead
+      const cur = theta(now);
       let to = phase(a) + 720 * Math.floor((cur - phase(a)) / 720);
       while (to < cur) to += 720;
-      tset(base, to, now, 0);
+      tset(base, to - spin, now, 0);
     }
     act = a;
     read.textContent = a < 0 ? "rest" : "fire " + (a + 1) + " · " + ORDER.join("-");
