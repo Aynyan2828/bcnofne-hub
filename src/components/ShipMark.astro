@@ -3,10 +3,12 @@
 // ロゴは正本 BCNOFNe_Logo.jpeg の白抜きをそのまま使う（描き直さん）。指を当てた所が持ち上がる（public/brand/logo-lift.js）。
 // トップを重くせんよう、画面に近づいた時だけ JS と画像を読む。JS が無い時はロゴの静止画。
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+// ビルドごとの版数。public の JS・画像は名前が変わらんけん、古いキャッシュと混ざらんよう ?v= を付ける
+const ver = Date.now().toString(36);
 ---
 <section class="section section--mist shipmark" aria-labelledby="shipmark-title">
   <div class="container shipmark__inner">
-    <div class="shipmark__scene" data-logo-lift data-base={base} role="img" aria-label="BCNOFNe のロゴ。情報の海に浮かぶ箱舟。指を当てた所が持ち上がる">
+    <div class="shipmark__scene" data-logo-lift data-base={base} data-ver={ver} role="img" aria-label="BCNOFNe のロゴ。情報の海に浮かぶ箱舟。指を当てた所が持ち上がる">
       <noscript><img class="shipmark__still" src={`${base}/brand/logo/mark-96.webp`} alt="" width="96" height="111" /></noscript>
     </div>
     <p class="shipmark__line" id="shipmark-title">情報の海に浮かぶ箱舟 — BCNOFNe</p>
@@ -19,7 +21,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     if (!el) return;
     const go = () => {
       const s = document.createElement('script');
-      s.src = `${el.dataset.base || ''}/brand/logo-lift.js`;
+      s.src = `${el.dataset.base || ''}/brand/logo-lift.js?v=${el.dataset.ver || ''}`;
       document.head.appendChild(s);
     };
     if (!('IntersectionObserver' in window)) return go();

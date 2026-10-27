@@ -13,10 +13,11 @@ interface Props {
 }
 const { name, label, tone = 'paper' } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+// ビルドごとの版数。public の JS は名前が変わらんけん、古いキャッシュと混ざらんよう ?v= を付ける
+const ver = Date.now().toString(36);
 ---
 <figure class:list={['hlf', `hlf--${tone}`]}>
-  <div class="hlf__stage" data-hlf={name} data-hlf-base={base} role="img" aria-label={label}></div>
-  <figcaption class="hlf__read" data-hlf-read={name} aria-hidden="true">rest</figcaption>
+  <div class="hlf__stage" data-hlf={name} data-hlf-base={base} data-hlf-ver={ver} role="img" aria-label={label}></div>
 </figure>
 
 <script>
@@ -50,9 +51,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       if (text === null) read.textContent = 'rest';
     };
     const start = (stage) => {
-      const b = stage.dataset.hlfBase || '';
-      kernel = kernel || load(`${b}/hairline/hairline-kernel.js`);
-      kernel.then(() => load(`${b}/hairline/${stage.dataset.hlf}.js`, true)).catch((e) => console.warn('hairline: 読み込めんかった', e));
+      const b = stage.dataset.hlfBase || '', v = stage.dataset.hlfVer || '';
+      kernel = kernel || load(`${b}/hairline/hairline-kernel.js?v=${v}`);
+      kernel.then(() => load(`${b}/hairline/${stage.dataset.hlf}.js?v=${v}`, true)).catch((e) => console.warn('hairline: 読み込めんかった', e));
     };
     window.__hlf = true;
     const go = () => {
@@ -91,16 +92,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     --hairline-mid: #6fa6cf;
     --hairline-lo: #3a6a90;
   }
-  .hlf__read {
-    position: absolute;
-    right: 0.4rem;
-    top: 0.2rem;
-    font: 0.72rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-    letter-spacing: 0.04em;
-    color: #8a6a1f;
-    pointer-events: none;
-  }
-  .hlf--night .hlf__read { color: #e8c46a; }
 
   /* 部品ごとの色（main_engine の水彩の配色） */
   .hlf__stage :global([data-part] :where(path, polygon, ellipse):not(.nf)) { fill: var(--part-fill); }

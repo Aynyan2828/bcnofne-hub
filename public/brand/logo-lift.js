@@ -10,10 +10,10 @@
   if (!scene || scene.dataset.ready) return;
   scene.dataset.ready = "1";
   const base = scene.dataset.base || "";
-  const dir = `${base}/brand/logo`;
+  const dir = `${base}/brand/logo`, v = `?v=${scene.dataset.ver || ""}`;  /* ビルドごとの版数 */
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
 
-  fetch(`${dir}/dots.json`).then((r) => r.json()).then(start).catch((e) => console.warn("logo-lift: 読み込めんかった", e));
+  fetch(`${dir}/dots.json${v}`).then((r) => r.json()).then(start).catch((e) => console.warn("logo-lift: 読み込めんかった", e));
 
   function start(meta) {
     const W = meta.W, H = meta.H;
@@ -55,7 +55,7 @@
 
     /* タイル（しぶきを抜いたロゴ）。画像は CSS に 1 回だけ書く */
     const T = 18, LIFT = 150, R = 84, tiles = [];
-    plane.style.setProperty("--ll-img", `url(${dir}/sea.webp)`);
+    plane.style.setProperty("--ll-img", `url(${dir}/sea.webp${v})`);
     for (let j = 0; j < Math.ceil(H / T); j++) for (let i = 0; i < Math.ceil(W / T); i++) {
       const el = document.createElement("div");
       el.className = "ll-tile";
@@ -69,7 +69,7 @@
       const sh = document.createElement("img"), el = document.createElement("img");
       sh.className = "ll-shadow"; el.className = "ll-dot";
       for (const n of [sh, el]) {
-        n.src = `${dir}/${d.name}.webp`; n.alt = ""; n.decoding = "async";
+        n.src = `${dir}/${d.name}.webp${v}`; n.alt = ""; n.decoding = "async";
         n.style.cssText = `left:${d.x}px;top:${d.y}px;width:${d.w}px;height:${d.h}px`;
         plane.appendChild(n);
       }
