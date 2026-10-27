@@ -1,5 +1,12 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-10-27 (4) — 仕上げ（試作・未公開）
+
+- ロゴと一行の間を詰めた（`ShipMark.astro`）。使わんようになった `public/hairline/radio.js` を外した
+- `engine.js`：指した気筒までクランクを回す時、待機中に回った分が二重に入って、光る気筒と表示がずれとったのを直した
+- `studio.js`：見本の一周の止まり所を rack → monitor → fader · radio に（前は空振り）
+- 検品用の一覧：`~/bcnofne/vendor/hairline-test/QA_handoff.md`
+
 ## 2026-10-27 (3) — 聴く港を放送ブースに、フッターの上に「フネのしるし」（試作・未公開）
 
 マスター「放送ブースはあらかたいい」「ロゴは近くを通ったらなだらかに高く持ち上がる感じ」。ブランチ `feat/engine-room-hairline` だけ。
