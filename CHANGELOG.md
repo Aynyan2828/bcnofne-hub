@@ -1,5 +1,12 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-10-27 — 機関室の上に、点火して回る線画のエンジン（試作・未公開）
+
+マスター「エンジンルーム、直すところ直してから、試しに置いたやつ作ってみよう」。ブランチ `feat/engine-room-hairline` だけ・main には入れとらん。
+- `src/components/HairlineEngine.astro`：Hairline（MIT・Lucas Marques）の線画で舶用の直列 6 気筒。クランクがゆっくり回り、ヘッドカバーが点火順 1-5-3-6-2-4 に持ち上がって赤く光る。指した気筒の点火までクランクが回る。部品ごとの水彩の色（ヘッドカバー＝ピンク・ブロック＝水色・台＝薄緑・フライホイール＝紫・ターボ＝オレンジ）
+- `public/hairline/`：kernel（先頭に著作権表示と MIT 許諾文）・`engine.js`（図の写し・元は `~/bcnofne/vendor/hairline-test`）・`LICENSE.txt`
+- `engine-room/index.astro`：ヒーローを PC は 2 列（文・エンジン）、スマホは文の下にエンジン。動きを減らす設定の時はクランクが止まる
+
 ## 2026-10-25 (2) — アプリの港の動画棚に SubScope の紹介動画
 
 マスター「アプリの港の紹介動画に SubScope が上がっとらん」。動画棚は index.astro の手書きで、SubScope の動画ファイル自体が入っとらんかった。

@@ -1,0 +1,72 @@
+---
+// 機関室のエンジン（直列 6 気筒・点火順 1-5-3-6-2-4）。Hairline（MIT・Lucas Marques）の線画エンジンで描く。
+// 中身は public/hairline/（kernel は著作権表示と MIT 許諾文つき・図は vendor/hairline-test/engine.js の写し）。
+// 色は部品ごと（data-part）に上塗り：ヘッドカバー＝ピンク・ブロック＝水色・台＝薄緑・フライホイール＝紫・ターボ＝オレンジ。
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<figure class="hl-engine">
+  <div id="hl-engine-stage" class="hl-engine__stage"></div>
+  <figcaption class="hl-engine__read" id="hl-engine-read" aria-hidden="true">rest</figcaption>
+</figure>
+
+<script is:inline>
+  // Hairline の見本ページ（bench）の mount を 1 枚用に縮めた物。図のファイルが hairline({...}) を呼ぶ
+  window.hairline = (figure) => {
+    const stage = document.getElementById('hl-engine-stage');
+    const out = document.getElementById('hl-engine-read');
+    if (!stage || !window.HL) return;
+    HL.inject(document);
+    stage.setAttribute('data-hairline', figure.name);
+    stage.setAttribute('role', 'img');
+    stage.setAttribute('aria-label', '直列 6 気筒のエンジン。点火する気筒のヘッドカバーが 1-5-3-6-2-4 の順に持ち上がる');
+    const svg = HL.mk('svg', { viewBox: '0 0 400 320', 'aria-hidden': 'true' }, stage);
+    let text = null;
+    const read = {
+      get textContent() { return text; },
+      set textContent(v) { text = v == null ? '' : String(v); if (out) out.textContent = text; },
+    };
+    figure.mount({ stage, svg, read }, figure.range[1]);
+    if (text === null) read.textContent = 'rest';
+  };
+</script>
+<script is:inline defer src={`${base}/hairline/hairline-kernel.js`}></script>
+<script is:inline defer src={`${base}/hairline/engine.js`}></script>
+
+<style>
+  .hl-engine {
+    margin: 0;
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+  }
+  .hl-engine__stage {
+    width: 100%;
+    /* 紺の計器の上に、水彩の部品をのせる */
+    --hairline-plate: #12304a;
+    --hairline-hi: #ff5a4a;
+    --hairline-edge: #9fd4f5;
+    --hairline-mid: #6fa6cf;
+    --hairline-lo: #3a6a90;
+  }
+  .hl-engine__read {
+    position: absolute;
+    right: 0.4rem;
+    top: 0.2rem;
+    font: 0.72rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.04em;
+    color: #e8c46a;
+    pointer-events: none;
+  }
+  /* 部品ごとの色（main_engine の水彩の配色） */
+  .hl-engine__stage :global([data-part] :where(path, polygon, ellipse):not(.nf)) { fill: var(--part-fill); }
+  .hl-engine__stage :global([data-part] :where(path, polygon, ellipse, line)) { stroke: var(--part-line); }
+  .hl-engine__stage :global([data-part] .lo) { stroke-opacity: 0.45; }
+  .hl-engine__stage :global([data-part] .hi) { stroke: var(--hl-hi); stroke-width: 1.6; }
+  .hl-engine__stage :global([data-part='head']) { --part-fill: #f6c3d0; --part-line: #b8476b; }
+  .hl-engine__stage :global([data-part='block']) { --part-fill: #c4e3f5; --part-line: #2f78ad; }
+  .hl-engine__stage :global([data-part='bed']) { --part-fill: #d3ecdc; --part-line: #3f8f63; }
+  .hl-engine__stage :global([data-part='flywheel']) { --part-fill: #ddd0f3; --part-line: #6c4fb0; }
+  .hl-engine__stage :global([data-part='turbo']) { --part-fill: #f9d2b1; --part-line: #cf6a22; }
+  .hl-engine__stage :global([data-part='exhaust']) { --part-fill: #eef1f4; --part-line: #7d8b9a; }
+  .hl-engine__stage :global(.dot) { fill: #12304a; }
+</style>

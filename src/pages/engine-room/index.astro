@@ -6,6 +6,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Footer from '../../components/Footer.astro';
 import Icon from '../../components/Icon.astro';
+import HairlineEngine from '../../components/HairlineEngine.astro';
 import aynThinking from '../../assets/ayn/ayn-thinking.png';
 import { getWorklog, fmtLogDate, logAnchor, logLines } from '../../lib/worklog';
 
@@ -23,6 +24,10 @@ const description =
         <span></span><span></span><span></span>
       </div>
       <div class="container er-hero__inner">
+        <div class="er-hero__engine">
+          <HairlineEngine />
+        </div>
+        <div class="er-hero__text">
         <div class="er-hero__avatar">
           <Image src={aynThinking} alt="考えごとをする AYN" width={120} height={120} />
         </div>
@@ -35,6 +40,7 @@ const description =
         <div class="er-hero__links">
           <a class="er-pill" href={`${base}/`}>← 港にもどる</a>
           <a class="er-pill" href={`${base}/engine-room/rss.xml`}>RSS で追いかける</a>
+        </div>
         </div>
       </div>
     </header>
@@ -107,7 +113,14 @@ const description =
   .er-hero__gauge span:nth-child(1) { top: 22%; }
   .er-hero__gauge span:nth-child(2) { top: 50%; opacity: 0.18; }
   .er-hero__gauge span:nth-child(3) { bottom: 16%; }
-  .er-hero__inner { position: relative; }
+  .er-hero__inner { position: relative; display: grid; gap: 0.6rem; justify-items: center; }
+  .er-hero__engine { width: min(100%, 440px); order: 2; }
+  .er-hero__text { order: 1; }
+  @media (min-width: 900px) {
+    .er-hero__inner { grid-template-columns: 1fr 1fr; align-items: center; gap: 2rem; }
+    .er-hero__engine { order: 2; }
+    .er-hero__inner .br-wide { display: none; }
+  }
   .er-hero__avatar :global(img) {
     width: 104px;
     height: 104px;
