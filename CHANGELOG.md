@@ -1,5 +1,11 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-10-27 (10) — TikTok 連携アプリのプライバシーポリシー・利用規約・アイコン
+
+TikTok 開発者アプリ（BCNOFNe Insights・自分の動画の数字を読む内部ツール）の登録で、サンドボックスでも規約・プライバシーの URL とアイコンが必須やった。
+- `tiktok/privacy/`・`tiktok/terms/`：日本語・English。SubScope の privacy と同じ見た目。読むのは自分のアカウントの公開動画の数字だけ、第三者に渡さん、トークンは手元だけ
+- `public/tiktok/icon-1024.png`：開発者ポータルに上げるアイコン（1024×1024）
+
 ## 2026-10-27 (9) — TikTok 認可の戻り先ページ（未公開）
 
 TikTok の動画ごとの数字を Bridge に出すため、TikTok API for Business の Redirect URL を用意。

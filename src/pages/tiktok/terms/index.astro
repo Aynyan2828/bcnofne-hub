@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Footer from '../../../components/Footer.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<BaseLayout title="BCNOFNe Insights 利用規約 / Terms of Service" description="BCNOFNe Insights（TikTok の自分の動画の数字を読む内部ツール）の利用規約（日本語・English）。">
+  <main id="main" class="section">
+    <div class="container paper" style="max-width: 720px;">
+      <div class="section-head section-head--left" style="text-align:left">
+        <span class="eyebrow">Terms</span>
+        <h2>BCNOFNe Insights 利用規約</h2>
+      </div>
+      <p>最終更新：2026-10-27 ／ 運営者：BCNOFNe（aynyan）<br /><a href="#en">English version below</a></p>
+
+      <h3>対象</h3>
+      <p>BCNOFNe Insights は、BCNOFNe が自分の TikTok アカウントの動画の数字を見るための内部ツールです。利用者は運営者本人だけで、一般の方への提供・販売はしていません。</p>
+
+      <h3>TikTok の規約</h3>
+      <p>このツールは TikTok の公式 API を使います。TikTok の利用規約と開発者向けの規約に従って使います。</p>
+
+      <h3>保証と責任</h3>
+      <p>このツールは現状のまま使うもので、表示される数字の正確さや、いつでも使えることは保証しません。数字の正本は TikTok アプリ・TikTok Studio の表示です。</p>
+
+      <h3>変更</h3>
+      <p>この規約を変える時は、このページで最終更新日とあわせてお知らせします。扱う情報については<a href={`${base}/tiktok/privacy/`}>プライバシーポリシー</a>をご覧ください。ご質問は<a href={`${base}/#contact`}>お問い合わせ</a>からどうぞ。</p>
+
+      <hr style="margin: 3rem 0; opacity: .3;" />
+
+      <div lang="en" id="en">
+        <div class="section-head section-head--left" style="text-align:left">
+          <span class="eyebrow">Terms</span>
+          <h2>BCNOFNe Insights Terms of Service</h2>
+        </div>
+        <p>Last updated: October 27, 2026 / Operator: BCNOFNe (aynyan)</p>
+
+        <h3>Scope</h3>
+        <p>BCNOFNe Insights is an internal tool that BCNOFNe uses to look at the performance of videos on its own TikTok account. The only user is the operator; it is not offered or sold to the public.</p>
+
+        <h3>TikTok's terms</h3>
+        <p>The tool uses TikTok's official APIs and is used in line with TikTok's Terms of Service and developer terms.</p>
+
+        <h3>No warranty</h3>
+        <p>The tool is provided as is. We do not guarantee that the numbers shown are accurate or that the tool is always available. The TikTok app and TikTok Studio are the source of truth for the numbers.</p>
+
+        <h3>Changes</h3>
+        <p>If these terms change, we will update this page and its date. See the <a href={`${base}/tiktok/privacy/`}>Privacy Policy</a> for the data the tool handles, and reach us through the <a href={`${base}/#contact`}>contact form</a>.</p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
