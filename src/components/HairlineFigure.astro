@@ -1,11 +1,11 @@
 ---
-// 線画の動く図（Hairline・MIT・Lucas Marques）。engine＝機関室・radio＝聴く港・pier＝アプリの港。
+// 線画の動く図（Hairline・MIT・Lucas Marques）。engine＝機関室・studio＝聴く港（放送ブース）・pier＝アプリの港。radio は前の版。
 // 中身は public/hairline/（kernel は著作権表示と MIT 許諾文つき・図は ~/bcnofne/vendor/hairline-test/*.js の写し）。
 // トップを重くせんよう、図が画面に近づいた時だけ kernel と図の JS を読む（kernel は 1 回だけ）。
 // 色は部品ごと（data-part）に水彩の配色を上塗り。tone="night" は紺の計器の上用。
 interface Props {
   /** 図の名前（public/hairline/<name>.js） */
-  name: 'engine' | 'radio' | 'pier';
+  name: 'engine' | 'studio' | 'radio' | 'pier';
   /** 読み上げ用の説明 */
   label: string;
   /** 下地：paper＝紙の上（明るい）、night＝紺の上 */
@@ -71,7 +71,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .hlf {
     margin: 0 auto;
     width: 100%;
-    max-width: 440px;
+    max-width: 100%;
     position: relative;
   }
   .hlf__stage {
@@ -106,12 +106,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .hlf__stage :global([data-part] :where(path, polygon, ellipse, line)) { stroke: var(--part-line); }
   .hlf__stage :global([data-part] .lo) { stroke-opacity: 0.45; }
   .hlf__stage :global([data-part] .hi) { stroke: var(--hl-hi); stroke-width: 1.6; }
-  .hlf__stage :global(:is([data-part='head'], [data-part='key'], [data-part='crate-shiftwake'])) { --part-fill: #f6c3d0; --part-line: #b8476b; }
-  .hlf__stage :global(:is([data-part='block'], [data-part='body'])) { --part-fill: #c4e3f5; --part-line: #2f78ad; }
-  .hlf__stage :global(:is([data-part='bed'], [data-part='crate-fuyou'])) { --part-fill: #d3ecdc; --part-line: #3f8f63; }
-  .hlf__stage :global(:is([data-part='flywheel'], [data-part='speaker'], [data-part='crate-subscope'])) { --part-fill: #ddd0f3; --part-line: #6c4fb0; }
-  .hlf__stage :global(:is([data-part='turbo'], [data-part='dial'], [data-part='deck'])) { --part-fill: #f9d2b1; --part-line: #cf6a22; }
-  .hlf__stage :global(:is([data-part='exhaust'], [data-part='aerial'], [data-part='pile'], [data-part='bollard'])) { --part-fill: #eef1f4; --part-line: #7d8b9a; }
+  .hlf__stage :global(:is([data-part='head'], [data-part='key'], [data-part='crate-shiftwake'], [data-part='mixer'], [data-part='headphones'])) { --part-fill: #f6c3d0; --part-line: #b8476b; }
+  .hlf__stage :global(:is([data-part='block'], [data-part='body'], [data-part='rack'])) { --part-fill: #c4e3f5; --part-line: #2f78ad; }
+  .hlf__stage :global(:is([data-part='bed'], [data-part='crate-fuyou'], [data-part='mouse'], [data-part='cup'])) { --part-fill: #d3ecdc; --part-line: #3f8f63; }
+  .hlf__stage :global(:is([data-part='flywheel'], [data-part='speaker'], [data-part='crate-subscope'], [data-part='mic'])) { --part-fill: #ddd0f3; --part-line: #6c4fb0; }
+  .hlf__stage :global(:is([data-part='turbo'], [data-part='dial'], [data-part='deck'], [data-part='desk'])) { --part-fill: #f9d2b1; --part-line: #cf6a22; }
+  .hlf__stage :global(:is([data-part='exhaust'], [data-part='aerial'], [data-part='pile'], [data-part='bollard'], [data-part='monitor'], [data-part='keyboard'], [data-part='macmini'])) { --part-fill: #eef1f4; --part-line: #7d8b9a; }
   .hlf__stage :global(.dot) { fill: #12304a; }
   .hlf__stage :global(.dot.off) { fill: #a9c8e2; }
 </style>

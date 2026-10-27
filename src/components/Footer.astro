@@ -19,7 +19,7 @@ const links = [
 <footer class="footer">
   <div class="container footer__inner">
     <div class="footer__brand">
-      <p class="footer__name">{lang === 'en' ? 'BCNOFNe' : 'BCNOFNe〜ボクのフネ〜'}</p>
+      <p class="footer__name"><img class="footer__mark" src={`${base}/brand/logo/mark-96.webp`} alt="" width="32" height="37" loading="lazy" decoding="async" />{lang === 'en' ? 'BCNOFNe' : 'BCNOFNe〜ボクのフネ〜'}</p>
       <p class="footer__tag">{lang === 'en'
         ? 'A one-person studio, sailing with an AI engineer named AYN.'
         : '機関士AI AYN と、情報の海を航海するばい。'}</p>
@@ -46,6 +46,8 @@ const links = [
 </footer>
 
 <style>
+  /* フネのしるし（小さい静止ロゴ・動かさん） */
+  .footer__mark { width: 32px; height: auto; vertical-align: -0.55em; margin-right: 0.45em; }
   .footer {
     /* ★Hero と同じグラデ(--grad-hero)は下の端が明るい水色(#9fb6e6)で、一番下の
        著作権表示（白）が 2.9〜3.5 しか出とらんかった。フッターは下まで夜の紺のまま */

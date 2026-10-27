@@ -1,5 +1,12 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-10-27 (3) — 聴く港を放送ブースに、フッターの上に「フネのしるし」（試作・未公開）
+
+マスター「放送ブースはあらかたいい」「ロゴは近くを通ったらなだらかに高く持ち上がる感じ」。ブランチ `feat/engine-room-hairline` だけ。
+- `index.astro`：聴く港の頭の卓上ラジオを、AYN の放送ブース（`public/hairline/studio.js`・ラック・モニター・HHKB 風キーボード・ミキサー 4 本＝4 局・マイク・ヘッドホンなど）に置き換え
+- `ShipMark.astro`（新）：フッターの上に BCNOFNe のロゴを大きく 1 つ＋「情報の海に浮かぶ箱舟 — BCNOFNe」。正本ロゴの白抜きをそのまま使い、船・波はタイルで、しぶきの丸 19 個は丸ごと、指の近くほど高く浮く（`public/brand/logo-lift.js`・外部読み込みなし）。近づいた時だけ読む。画像は WebP（しぶき抜きのロゴ 33KB＋丸）
+- `Footer.astro`：名前の横に小さい静止ロゴ（`public/brand/logo/mark-96.webp`・7KB）。全ページに出る
+
 ## 2026-10-27 (2) — トップのアプリの港に桟橋、聴く港にラジオ（試作・未公開）
 
 マスター「他にも bcnofne.com に似合うやつ作ってみて、良さそうなら置こう」。ブランチ `feat/engine-room-hairline` だけ。

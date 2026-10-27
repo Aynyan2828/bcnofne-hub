@@ -19,6 +19,7 @@ import Contact from '../components/Contact.astro';
 import Feed from '../components/Feed.astro';
 import Footer from '../components/Footer.astro';
 import HairlineFigure from '../components/HairlineFigure.astro';
+import ShipMark from '../components/ShipMark.astro';
 import LangSwitch from '../components/LangSwitch.astro';
 
 // 見出しの丸AYN・大きな水彩シーン
@@ -203,8 +204,8 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
       avatar={aynNight}
       avatarAlt="おやすみのAYN"
     >
-      {/* 卓上ラジオの 4 局ボタン。指した局のボタンが沈んで針が振れる（Hairline・試作 2026-10-27） */}
-      <div class="hlf-slot"><HairlineFigure name="radio" label="卓上ラジオ。sleep・work・radio・ai radio の 4 局のボタンがあって、指した局に針が振れる" /></div>
+      {/* AYN の放送ブース。机の機材がそれぞれ動く・ミキサーの 4 本＝4 局（Hairline・試作 2026-10-27） */}
+      <div class="hlf-slot hlf-slot--wide"><HairlineFigure name="studio" label="AYN の放送ブース。ラックサーバー・モニター・キーボード・ミキサー・マイク・ヘッドホンなどがあって、指した機材が動く。ミキサーの 4 本のフェーダーは sleep・work・radio・ai radio の 4 局" /></div>
       <LatestVideo />
       <div>
         <HScroll label="チャンネル一覧" size="card" hint={`${channels.length}チャンネル`}>
@@ -376,6 +377,8 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
 
     <About />
     <Contact />
+    {/* フネのしるし：ロゴを大きく 1 つ。指を当てた所が持ち上がる（試作 2026-10-27） */}
+    <ShipMark />
   </main>
   <Footer />
   <AynNavigator />
@@ -416,6 +419,7 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
 <style>
   /* 港の動く線画（Hairline）の置き場所 */
   .hlf-slot { max-width: 420px; margin: 0 auto 1.6rem; }
+  .hlf-slot--wide { max-width: 560px; }
   /* Other Apps などの小見出し（港の中の区切り） */
   .subhead {
     display: flex;
