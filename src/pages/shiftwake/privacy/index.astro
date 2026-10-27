@@ -1,0 +1,103 @@
+---
+// ShiftWake のプライバシーポリシーとサポート（日本語・English）。
+// 2026-10-27 aynyan2828.github.io/shiftwake/（repo shiftwake）から本文をそのまま移した。旧 URL は ASC の差し替えが済むまで残す。
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Footer from '../../../components/Footer.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<BaseLayout title="ShiftWake プライバシーポリシー / Privacy Policy" description="シフト連動アラームアプリ ShiftWake が扱う情報とサポート窓口（日本語・English）。">
+  <main id="main" class="section">
+    <div class="container paper" style="max-width: 720px;">
+      <div class="section-head section-head--left" style="text-align:left">
+        <span class="eyebrow">Privacy</span>
+        <h2>ShiftWake プライバシーポリシー</h2>
+      </div>
+      <p>最終更新：2026-10-15<br /><a href="#en">English version below</a> ・ <a href="#support">サポート / Support</a></p>
+<h3>1. 本ポリシーの対象</h3>
+<p>本ポリシーは、Wataru Ishibashiが提供するiPhoneアプリ「ShiftWake」の情報の取扱いを説明します。Apple、RevenueCat、カレンダー同期サービス、メッセージやメールの各サービスによる取扱いには、それぞれの方針が適用されます。</p>
+<h3>2. 本アプリの概要</h3>
+<p>ShiftWakeは、iPhoneのカレンダーに登録されたシフトの記号やキーワードに合わせてアラームを予約するアプリです。利用者が操作した場合には、勤務予定の作成や、緊急連絡用のメッセージ作成も補助します。基本機能は無料、有料機能の購入・復元にはAppleとRevenueCatを利用します。</p>
+<h3>3. 取り扱う情報</h3>
+<ul>
+<li>カレンダー：勤務を判別し予約を作るための予定名、開始日時、対象カレンダー等の情報。</li>
+<li>設定：勤務ルール、アラーム時刻、音、予約状態等。</li>
+<li>端末内カウンタ：利用開始日、過去の予約時刻を経過した件数、レビュー依頼、Pro画面の表示回数等。予約時刻の経過件数は実際の起床の確認ではありません。</li>
+<li>任意の緊急連絡情報：利用者が入力する宛先電話番号とメッセージ本文。</li>
+<li>購入関連：RevenueCatの匿名アプリユーザー識別子、購入履歴、購入・購読の状態等。</li>
+<li>問い合わせ：利用者がメールで送るメールアドレスと相談内容等。</li>
+</ul>
+<p>本アプリに氏名・住所・メールアドレスを登録するアカウント作成機能はありません。このことは、購入情報や任意入力の情報を一切扱わないという意味ではありません。</p>
+<h3>4. 取得方法</h3>
+<p>カレンダーへのアクセスはOSの許可画面を通じて取得します。ルールや緊急連絡情報は利用者の入力から取得し、カウンタや予約状態は機能の実行に伴って端末内で記録します。購入状態はAppleとRevenueCatを通じて取得します。問い合わせ情報は利用者がメールを送った場合に受信します。</p>
+<h3>5. 利用目的</h3>
+<p>シフトの判別、アラームの予約・更新、利用者が指定する予定の作成、有料機能の有効化・購入の復元・購読管理、レビュー依頼のタイミング調整、任意の緊急連絡文の作成、問い合わせへの対応に利用します。RevenueCatでは購入の検証と購入状況の分析にも購入関連情報が使われます。</p>
+<h3>6. 保存場所と外部送信</h3>
+<p>勤務ルール、設定、予約状態、端末内カウンタ、緊急連絡の設定は端末内に保存します。現行コードでは、カレンダー内容やこれらのカウンタを開発者のサーバーやRevenueCatへ送る処理は実装していません。
+アラームの予約では時刻や表示用のルール名・予定名等をOSのAlarmKitへ渡します。予定作成機能は端末の既定の保存先カレンダーへ書き込みます。iCloud等のカレンダー同期は利用者の設定とそのサービスの規定に従います。
+購入関連情報はAppleとRevenueCatで処理されます。緊急連絡は利用者の操作で宛先・本文をメッセージアプリへ渡し、送信は利用者が確認して行います。問い合わせメールは送信により受信者へ渡ります。
+アプリ削除でカレンダーの予定や外部サービスの購入記録まで削除されるとは限りません。不要な予定はカレンダーで削除してください。アプリ削除だけでは購読は解約されず、Appleの設定から管理します。</p>
+<h3>7. 第三者提供</h3>
+<p>カレンダーの内容を開発者が収集して第三者へ提供する機能はありません。一方、課金管理に必要な情報はAppleとRevenueCatが処理し、任意のメッセージ・メールは利用者の操作で外部サービスへ渡されます。これらの取扱いを含めて「外部に情報を一切渡さない」とは説明しません。
+現行実装では、アプリ内広告や広告目的のアプリ横断追跡は利用していません。</p>
+<h3>8. 外部サービス</h3>
+<ul>
+<li>Apple：App Store決済、購入・購読管理、OSのカレンダー/アラーム機能。<a href="https://www.apple.com/legal/privacy/">Appleプライバシーポリシー</a></li>
+<li>RevenueCat：購入検証、有料機能の権限管理、復元、購読管理、購入分析。<a href="https://www.revenuecat.com/privacy-policy">RevenueCatプライバシーポリシー</a></li>
+<li>利用者が選ぶカレンダー同期・メール・メッセージサービス：各サービスの方針と設定に従います。</li>
+</ul>
+<h3>9. 安全管理</h3>
+<p>カレンダー等の権限はOSの許可機構を利用し、利用者はiPhoneの設定から変更できます。アプリの設定等はOSが管理するアプリ領域に保存します。購入の認証・決済はAppleとRevenueCatの仕組みを利用します。利用者にも端末のパスコード設定やOS更新を推奨します。確認していない暗号化方式、独自の認証機構、完全な安全性を保証するものではありません。</p>
+<h3>10. 未成年者の利用</h3>
+<p>年齢確認のための生年月日等を入力する機能はありません。未成年者が購入やメッセージ送信を行う場合は、保護者と相談し、Appleや通信サービスの利用条件に従ってください。保護者は端末側の購入制限等を利用できます。本アプリ独自の保護者同意確認機能はありません。</p>
+<h3>11. 本ポリシーの変更</h3>
+<p>機能や外部サービス、情報の取扱いが変わる場合には本ポリシーを見直し、このページの更新日を変更します。OSの新しい許可やストア上の説明変更が必要な場合は、それぞれの手続に従います。</p>
+<h3>12. お問い合わせ</h3>
+<p>情報の取扱い・購入記録・不具合等のご質問は、nyanyanyah@gmail.comへご連絡ください。問い合わせの際は、カレンダーや連絡先の不要な個人情報、パスワード・決済情報等を送らないでください。外部サービスが保持する情報の削除・購読管理は、そのサービスの手続が必要になる場合があります。</p>
+
+      <hr style="margin: 3rem 0; opacity: .3;" />
+
+      <div lang="en" id="en">
+        <div class="section-head section-head--left" style="text-align:left">
+          <span class="eyebrow">Privacy</span>
+          <h2>ShiftWake Privacy Policy</h2>
+        </div>
+        <p>Last updated: October 15, 2026</p>
+<h3>1. Scope</h3>
+<p>This policy describes information handling by ShiftWake, an iPhone app provided by Wataru Ishibashi. Apple, RevenueCat and your calendar synchronization, messaging and email providers have their own policies.</p>
+<h3>2. About the app</h3>
+<p>ShiftWake schedules alarms using shift symbols or keywords in your iPhone Calendar. Optional user actions can create shift events or prepare an emergency message. Basic features are free; Apple and RevenueCat support paid-feature purchases and restoration.</p>
+<h3>3. Information handled</h3>
+<p>The app handles event titles, start times and calendar information needed for matching and scheduling; rules, alarm times, sounds and reservation state; local counters for setup dates, elapsed scheduled times, review requests and Pro-screen appearances; optional recipient phone numbers and message text; anonymous RevenueCat app user identifiers, purchase history and purchase/subscription status; and email addresses and message contents submitted for support. Elapsed reservation times do not confirm that someone woke up. The app has no account registration requiring a name, postal address or email; this does not mean no other information is processed.</p>
+<h3>4. How information is obtained</h3>
+<p>Calendar access uses the OS permission prompt. Rules and emergency details come from user input. Counters and reservation state are recorded locally as features run. Purchase status comes through Apple and RevenueCat. Support messages are received when you send email.</p>
+<h3>5. Purposes</h3>
+<p>Information supports shift matching, scheduling and updating alarms, creating requested events, enabling paid features, restoring purchases, managing subscriptions, choosing review-request timing, preparing optional messages and responding to support. RevenueCat also uses purchase information for validation and purchase analytics.</p>
+<h3>6. Storage and transmission</h3>
+<p>Rules, settings, reservation state, local counters and emergency settings are stored on the device. The current code does not implement sending Calendar contents or these counters to the developer&#x27;s server or RevenueCat. Alarm times and display labels, including rule/event names, are passed to the OS&#x27;s AlarmKit. Event creation writes to the device&#x27;s default calendar. Calendar synchronization follows your settings and the provider&#x27;s rules. Apple and RevenueCat process purchase-related information. Your emergency-message action passes the recipient and text to the messaging app; you review and send it. Email is transmitted when you submit it. Deleting the app may not delete Calendar events or third-party purchase records, and does not cancel subscriptions. Delete unwanted events in Calendar and manage subscriptions through Apple.</p>
+<h3>7. Third parties</h3>
+<p>The app has no feature that collects Calendar contents for the developer to distribute to third parties. However, Apple and RevenueCat process information needed for purchases, and your optional messages and email use external services. The app therefore does not claim that no information ever leaves the device. The current implementation does not use in-app ads or cross-app advertising tracking.</p>
+<h3>8. External services</h3>
+<p>Apple provides App Store payment and subscription management and OS calendar/alarm functions. RevenueCat provides validation, paid-feature access, restoration, subscription management and purchase analytics. Your chosen synchronization, messaging and email providers apply their own rules.
+<a href="https://www.apple.com/legal/privacy/">Apple Privacy</a> / <a href="https://www.revenuecat.com/privacy-policy">RevenueCat Privacy</a></p>
+<h3>9. Security</h3>
+<p>OS permissions control Calendar access and can be changed in iPhone Settings. Settings are saved in OS-managed app storage. Purchase authentication and payment use Apple and RevenueCat&#x27;s systems. Device passcodes and OS updates are recommended. This policy does not promise an unverified encryption method, a custom authentication system or complete security.</p>
+<h3>10. Minors</h3>
+<p>The app has no birth-date entry for age verification. Minors should consult their guardians before purchases or sending messages and follow Apple and communication-provider requirements. Guardians can use device purchase controls. The app has no separate parental-consent verification system.</p>
+<h3>11. Changes</h3>
+<p>When features, services or information handling change, this policy will be reviewed and the page&#x27;s update date revised. Any required new OS permissions or store disclosures follow the relevant procedures.</p>
+<h3>12. Contact</h3>
+<p>For data-handling, purchase-record or technical questions, contact nyanyanyah@gmail.com. Do not send unnecessary personal Calendar or contact details, passwords or payment credentials. External providers&#x27; records and subscriptions may require their own deletion or management procedures.</p>
+      </div>
+
+      <hr style="margin: 3rem 0; opacity: .3;" />
+
+      <div id="support">
+        <h3>サポート / Support</h3>
+<p>ご質問・不具合のご連絡は <a href="mailto:nyanyanyah@gmail.com">nyanyanyah@gmail.com</a> までお願いします。<br>
+For questions or issues, please contact <a href="mailto:nyanyanyah@gmail.com">nyanyanyah@gmail.com</a>.</p>
+        <p><a href={`${base}/shiftwake/`}>ShiftWake の紹介ページへ / About ShiftWake</a></p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

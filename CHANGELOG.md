@@ -1,5 +1,13 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-10-27 (8) — ShiftWake・扶養メーターのプライバシーポリシーを bcnofne.com に移す
+
+マスター「ポリシーを bcnofne.com に移して、バラバラなのを片付けた方が整ってていい」。
+- `shiftwake/privacy/`・`fuyou-meter/privacy/` を新設。本文は aynyan2828.github.io/shiftwake/・/fuyou-meter/（repo shiftwake・fuyou-meter）からそのまま移した（SubScope の privacy と同じ見た目）
+- 扶養メーターの旧フッター「開発：Crypto Ark」を「運営者：BCNOFNe（aynyan）」に直した
+- 両アプリの紹介ページのプライバシーポリシーのリンクを新 URL に替えた
+- 旧 URL（github.io）は ASC のプライバシーポリシー URL を差し替えるまで残す
+
 ## 2026-10-27 (7) — 港の地とカードの白を弱める・エンジンの英字を消す（未公開）
 
 マスター「各ハーバーの白が強すぎる。リンクカードも。ミュージックハーバーぐらいの白さ」「エンジンの右上の小さい英字は消して」。
