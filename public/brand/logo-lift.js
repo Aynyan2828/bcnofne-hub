@@ -3,7 +3,7 @@
  * - 船・波・月・外の輪：ロゴを細かい四角（タイル）に分け、指の近くほど高く浮く
  * - しぶきの丸 19 個：丸ごと、指が近くを通るだけで、近いほど高く浮く（タイルより上）
  * 画像は public/brand/logo/（sea.webp＝しぶきを抜いたロゴ、dotNN.webp＝しぶきの丸、dots.json＝位置）。
- * 動きを減らす設定では、ばねを使わずすぐその高さで止まる。元は ~/bcnofne/vendor/hairline-test/logo-lift。
+ * 動きを減らす設定では、ばねを使わずすぐその高さで止まる。
  */
 (() => {
   const scene = document.querySelector("[data-logo-lift]");
@@ -137,13 +137,22 @@
       const x = cx - sr.left, y = cy - sr.top, w = h[6] * x + h[7] * y + 1;
       return [(h[0] * x + h[1] * y + h[2]) / w, (h[3] * x + h[4] * y + h[5]) / w];
     };
+    /* 指（タッチ・ペン）は離した瞬間に pointerleave が来るけん、hairline の図と同じく 1.4 秒待ってから下ろす。
+       マウスは外に出たらすぐ下ろす */
+    let down = 0;
     const move = (e) => {
+      clearTimeout(down);
       const [x, y] = toPlane(e.clientX, e.clientY);
       aim(x < -20 || y < -20 || x > W + 20 || y > H + 20 ? null : [x, y]);
     };
+    const leave = (e) => {
+      clearTimeout(down);
+      if (e.pointerType === "mouse") aim(null);
+      else down = setTimeout(() => aim(null), 1400);
+    };
     scene.addEventListener("pointermove", move);
     scene.addEventListener("pointerdown", move);
-    scene.addEventListener("pointerleave", () => aim(null));
-    scene.addEventListener("pointercancel", () => aim(null));
+    scene.addEventListener("pointerleave", leave);
+    scene.addEventListener("pointercancel", leave);
   }
 })();

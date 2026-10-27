@@ -1,5 +1,11 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-10-27 (5) — 品質保証部の検品の直し（試作・未公開）
+
+検品は条件つき合格（`~/bcnofne/vendor/hairline-test/QA_report_2026-10-27.md`）。要修正 1 と注意 2 つを直した。
+- `logo-lift.js`：スマホでロゴをタップしても浮かんかった（指を離した瞬間の pointerleave で全部下ろしとった）。指・ペンは 1.4 秒待って下ろす（hairline の図と同じ）。マウスは今まで通りすぐ。頭のコメントから手元のパスを消した
+- `HairlineFigure.astro`：読み込み用のスクリプトを is:inline から通常の script にして、図を 2 回使うトップでも 1 本だけ入るようにした
+
 ## 2026-10-27 (4) — 仕上げ（試作・未公開）
 
 - ロゴと一行の間を詰めた（`ShipMark.astro`）。使わんようになった `public/hairline/radio.js` を外した

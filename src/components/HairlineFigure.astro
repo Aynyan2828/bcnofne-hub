@@ -19,7 +19,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <figcaption class="hlf__read" data-hlf-read={name} aria-hidden="true">rest</figcaption>
 </figure>
 
-<script is:inline>
+<script>
+  // is:inline を外して、部品を何回使ってもページに 1 本だけ入るようにする（Astro がまとめる）
   (() => {
     if (window.__hlf) return;
     const stages = () => document.querySelectorAll('[data-hlf]');
