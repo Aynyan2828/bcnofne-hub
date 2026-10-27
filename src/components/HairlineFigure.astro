@@ -1,11 +1,11 @@
 ---
-// 線画の動く図（Hairline・MIT・Lucas Marques）。engine＝機関室・studio＝聴く港（放送ブース）・pier＝アプリの港。
+// 線画の動く図（Hairline・MIT・Lucas Marques）。いまは engine＝機関室だけ（トップの桟橋・放送ブースは 2026-10-27 に外した）。
 // 中身は public/hairline/（kernel は著作権表示と MIT 許諾文つき・図は ~/bcnofne/vendor/hairline-test/*.js の写し）。
 // トップを重くせんよう、図が画面に近づいた時だけ kernel と図の JS を読む（kernel は 1 回だけ）。
 // 色は部品ごと（data-part）に水彩の配色を上塗り。tone="night" は紺の計器の上用。
 interface Props {
   /** 図の名前（public/hairline/<name>.js） */
-  name: 'engine' | 'studio' | 'pier';
+  name: 'engine';
   /** 読み上げ用の説明 */
   label: string;
   /** 下地：paper＝紙の上（明るい）、night＝紺の上 */

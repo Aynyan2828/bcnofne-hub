@@ -18,7 +18,6 @@ import About from '../components/About.astro';
 import Contact from '../components/Contact.astro';
 import Feed from '../components/Feed.astro';
 import Footer from '../components/Footer.astro';
-import HairlineFigure from '../components/HairlineFigure.astro';
 import ShipMark from '../components/ShipMark.astro';
 import LangSwitch from '../components/LangSwitch.astro';
 
@@ -86,8 +85,6 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
       avatar={aynOk}
       avatarAlt="サムズアップするAYN"
     >
-      {/* 桟橋に 3 つのアプリの木箱。指した箱が吊り上がる（Hairline・試作 2026-10-27） */}
-      <div class="hlf-slot"><HairlineFigure name="pier" label="桟橋に 3 つのアプリの木箱。指した箱が吊り上がる：扶養メーター・ShiftWake・SubScope" /></div>
       {/* ショートカット集への入口（プロフィールの bcnofne.com から 2 タップで届くように・2026-10-21） */}
       <div class="scband" data-scband>
         <a class="scband__bar" href={`${base}/shortcuts/`}>
@@ -204,8 +201,6 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
       avatar={aynNight}
       avatarAlt="おやすみのAYN"
     >
-      {/* AYN の放送ブース。机の機材がそれぞれ動く・ミキサーの 4 本＝4 局（Hairline・試作 2026-10-27） */}
-      <div class="hlf-slot hlf-slot--wide"><HairlineFigure name="studio" label="AYN の放送ブース。ラックサーバー・モニター・キーボード・ミキサー・マイク・ヘッドホンなどがあって、指した機材が動く。ミキサーの 4 本のフェーダーは sleep・work・radio・ai radio の 4 局" /></div>
       <LatestVideo />
       <div>
         <HScroll label="チャンネル一覧" size="card" hint={`${channels.length}チャンネル`}>
@@ -417,9 +412,6 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
 </script>
 
 <style>
-  /* 港の動く線画（Hairline）の置き場所 */
-  .hlf-slot { max-width: 420px; margin: 0 auto 1.6rem; }
-  .hlf-slot--wide { max-width: 560px; }
   /* Other Apps などの小見出し（港の中の区切り） */
   .subhead {
     display: flex;
