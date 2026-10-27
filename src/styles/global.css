@@ -222,6 +222,28 @@ html[data-tide='night'] .section::before {
 .section-head {
   margin-bottom: clamp(1.4rem, 4vw, 2.2rem);
   text-align: center;
+  position: relative;
+  isolation: isolate;
+}
+@media (max-width: 720px) {
+  /* 見出しの後ろだけ、ふんわり紙の地を敷く（2026-10-27・スマホ幅だけ）。紙だまりの白を弱めた分、
+     港の入口のすぐ下（海の写真の上）で見出しと一文が沈まんようにする。端はぼかして溶かす */
+  .section-head::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    /* 文字の幅くらいに絞る（PC で横に長い白い楕円にならんように） */
+    top: -0.8rem;
+    bottom: -2.6rem;
+    left: 50%;
+    width: min(100vw, 30em);
+    transform: translateX(-50%);
+    pointer-events: none;
+    background: radial-gradient(farthest-side, rgba(251, 252, 255, 0.9) 0%, rgba(251, 252, 255, 0.9) 72%, rgba(251, 252, 255, 0) 100%);
+  }
+  html[data-tide='night'] .section-head::before {
+    background: radial-gradient(farthest-side, rgba(243, 246, 255, 0.9) 0%, rgba(243, 246, 255, 0.88) 72%, rgba(243, 246, 255, 0) 100%);
+  }
 }
 .section-head .eyebrow {
   display: inline-block;
