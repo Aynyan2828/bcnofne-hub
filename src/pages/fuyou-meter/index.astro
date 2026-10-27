@@ -10,7 +10,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const pageUrl = new URL(`${base}/fuyou-meter/`, Astro.site).href;
 const APP_ID = '6781950133';
 const storeJa = `https://apps.apple.com/jp/app/id${APP_ID}`;
-const privacyUrl = 'https://aynyan2828.github.io/fuyou-meter/';
+const privacyUrl = `${base}/fuyou-meter/privacy/`;
 
 // よくある質問（画面に出す文と構造化データは同じ物を使う）
 const FAQ_JA = [
