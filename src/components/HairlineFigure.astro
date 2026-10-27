@@ -1,0 +1,117 @@
+---
+// 線画の動く図（Hairline・MIT・Lucas Marques）。engine＝機関室・radio＝聴く港・pier＝アプリの港。
+// 中身は public/hairline/（kernel は著作権表示と MIT 許諾文つき・図は ~/bcnofne/vendor/hairline-test/*.js の写し）。
+// トップを重くせんよう、図が画面に近づいた時だけ kernel と図の JS を読む（kernel は 1 回だけ）。
+// 色は部品ごと（data-part）に水彩の配色を上塗り。tone="night" は紺の計器の上用。
+interface Props {
+  /** 図の名前（public/hairline/<name>.js） */
+  name: 'engine' | 'radio' | 'pier';
+  /** 読み上げ用の説明 */
+  label: string;
+  /** 下地：paper＝紙の上（明るい）、night＝紺の上 */
+  tone?: 'paper' | 'night';
+}
+const { name, label, tone = 'paper' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<figure class:list={['hlf', `hlf--${tone}`]}>
+  <div class="hlf__stage" data-hlf={name} data-hlf-base={base} role="img" aria-label={label}></div>
+  <figcaption class="hlf__read" data-hlf-read={name} aria-hidden="true">rest</figcaption>
+</figure>
+
+<script is:inline>
+  (() => {
+    if (window.__hlf) return;
+    const stages = () => document.querySelectorAll('[data-hlf]');
+    let kernel = null;
+    // 図はモジュールで読む（図ごとに名前の置き場が分かれて、2 枚目が 1 枚目とぶつからん）
+    const load = (src, mod) => new Promise((ok, ng) => {
+      const s = document.createElement('script');
+      if (mod) s.type = 'module';
+      s.src = src; s.async = false; s.onload = ok; s.onerror = ng;
+      document.head.appendChild(s);
+    });
+    // 図のファイルが hairline({...}) を呼ぶ。名前で置き場所を探して mount する
+    window.hairline = (figure) => {
+      const stage = document.querySelector(`[data-hlf="${figure.name}"]`);
+      const out = document.querySelector(`[data-hlf-read="${figure.name}"]`);
+      if (!stage || !window.HL || stage.dataset.hlfMounted) return;
+      stage.dataset.hlfMounted = '1';
+      HL.inject(document);
+      stage.setAttribute('data-hairline', figure.name);
+      const svg = HL.mk('svg', { viewBox: '0 0 400 320', 'aria-hidden': 'true' }, stage);
+      let text = null;
+      const read = {
+        get textContent() { return text; },
+        set textContent(v) { text = v == null ? '' : String(v); if (out) out.textContent = text; },
+      };
+      figure.mount({ stage, svg, read }, figure.range[1]);
+      if (text === null) read.textContent = 'rest';
+    };
+    const start = (stage) => {
+      const b = stage.dataset.hlfBase || '';
+      kernel = kernel || load(`${b}/hairline/hairline-kernel.js`);
+      kernel.then(() => load(`${b}/hairline/${stage.dataset.hlf}.js`, true)).catch((e) => console.warn('hairline: 読み込めんかった', e));
+    };
+    window.__hlf = true;
+    const go = () => {
+      const all = [...stages()];
+      if (!('IntersectionObserver' in window)) { all.forEach(start); return; }
+      const io = new IntersectionObserver((es) => es.forEach((e) => {
+        if (e.isIntersecting) { io.unobserve(e.target); start(e.target); }
+      }), { rootMargin: '300px 0px' });
+      all.forEach((s) => io.observe(s));
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
+    else go();
+  })();
+</script>
+
+<style>
+  .hlf {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+  }
+  .hlf__stage {
+    width: 100%;
+    aspect-ratio: 5 / 4;
+    --hairline-plate: #fff1d6;
+    --hairline-hi: #e0322a;
+    --hairline-edge: #1f4e79;
+    --hairline-mid: #4f86b5;
+    --hairline-lo: #a9c8e2;
+  }
+  .hlf--night .hlf__stage {
+    --hairline-plate: #12304a;
+    --hairline-hi: #ff5a4a;
+    --hairline-edge: #9fd4f5;
+    --hairline-mid: #6fa6cf;
+    --hairline-lo: #3a6a90;
+  }
+  .hlf__read {
+    position: absolute;
+    right: 0.4rem;
+    top: 0.2rem;
+    font: 0.72rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.04em;
+    color: #8a6a1f;
+    pointer-events: none;
+  }
+  .hlf--night .hlf__read { color: #e8c46a; }
+
+  /* 部品ごとの色（main_engine の水彩の配色） */
+  .hlf__stage :global([data-part] :where(path, polygon, ellipse):not(.nf)) { fill: var(--part-fill); }
+  .hlf__stage :global([data-part] :where(path, polygon, ellipse, line)) { stroke: var(--part-line); }
+  .hlf__stage :global([data-part] .lo) { stroke-opacity: 0.45; }
+  .hlf__stage :global([data-part] .hi) { stroke: var(--hl-hi); stroke-width: 1.6; }
+  .hlf__stage :global(:is([data-part='head'], [data-part='key'], [data-part='crate-shiftwake'])) { --part-fill: #f6c3d0; --part-line: #b8476b; }
+  .hlf__stage :global(:is([data-part='block'], [data-part='body'])) { --part-fill: #c4e3f5; --part-line: #2f78ad; }
+  .hlf__stage :global(:is([data-part='bed'], [data-part='crate-fuyou'])) { --part-fill: #d3ecdc; --part-line: #3f8f63; }
+  .hlf__stage :global(:is([data-part='flywheel'], [data-part='speaker'], [data-part='crate-subscope'])) { --part-fill: #ddd0f3; --part-line: #6c4fb0; }
+  .hlf__stage :global(:is([data-part='turbo'], [data-part='dial'], [data-part='deck'])) { --part-fill: #f9d2b1; --part-line: #cf6a22; }
+  .hlf__stage :global(:is([data-part='exhaust'], [data-part='aerial'], [data-part='pile'], [data-part='bollard'])) { --part-fill: #eef1f4; --part-line: #7d8b9a; }
+  .hlf__stage :global(.dot) { fill: #12304a; }
+  .hlf__stage :global(.dot.off) { fill: #a9c8e2; }
+</style>

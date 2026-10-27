@@ -6,7 +6,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Footer from '../../components/Footer.astro';
 import Icon from '../../components/Icon.astro';
-import HairlineEngine from '../../components/HairlineEngine.astro';
+import HairlineFigure from '../../components/HairlineFigure.astro';
 import aynThinking from '../../assets/ayn/ayn-thinking.png';
 import { getWorklog, fmtLogDate, logAnchor, logLines } from '../../lib/worklog';
 
@@ -25,7 +25,7 @@ const description =
       </div>
       <div class="container er-hero__inner">
         <div class="er-hero__engine">
-          <HairlineEngine />
+          <HairlineFigure name="engine" tone="night" label="直列 6 気筒のエンジン。点火する気筒のヘッドカバーが 1-5-3-6-2-4 の順に持ち上がる" />
         </div>
         <div class="er-hero__text">
         <div class="er-hero__avatar">

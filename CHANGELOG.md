@@ -1,5 +1,12 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-10-27 (2) — トップのアプリの港に桟橋、聴く港にラジオ（試作・未公開）
+
+マスター「他にも bcnofne.com に似合うやつ作ってみて、良さそうなら置こう」。ブランチ `feat/engine-room-hairline` だけ。
+- `HairlineFigure.astro`（`HairlineEngine.astro` を置き換え）：engine／radio／pier を名前で出す 1 つの部品。図が画面に近づいた時だけ kernel（1 回だけ）と図の JS を読む＝トップを開いた時点では何も読まん。図はモジュールで読んで、2 枚目が 1 枚目と名前でぶつからんようにした。部品ごとの水彩の色
+- `index.astro`：アプリの港の頭に桟橋（木箱 3 つ＝扶養メーター・ShiftWake・SubScope。指した箱が吊り上がる）、聴く港の頭に卓上ラジオ（4 局ボタン＝sleep・work・radio・ai radio。指した局に針が振れる）
+- `public/hairline/radio.js`・`pier.js`：図の写し（元は `~/bcnofne/vendor/hairline-test`）
+
 ## 2026-10-27 — 機関室の上に、点火して回る線画のエンジン（試作・未公開）
 
 マスター「エンジンルーム、直すところ直してから、試しに置いたやつ作ってみよう」。ブランチ `feat/engine-room-hairline` だけ・main には入れとらん。
