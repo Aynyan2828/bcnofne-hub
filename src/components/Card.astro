@@ -27,7 +27,7 @@ const thumbRatio = image
       <div class="card__thumb" style={`aspect-ratio: ${thumbRatio};`}>
         <Image
           src={image}
-          alt=""
+          alt={`${title} のイメージ`}
           widths={[320, 480, 640]}
           sizes="(max-width: 560px) 90vw, 320px"
           loading="lazy"
