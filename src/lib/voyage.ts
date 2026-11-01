@@ -39,7 +39,7 @@ export const STATIONS: Station[] = [
 export const STATIONS_EN: Station[] = [
   { id: 'top', code: 'PORT', harbor: 'HOME PORT', label: 'Back to the home port', note: 'The top of the page' },
   { id: 'listen', code: 'RADIO', harbor: 'RADIO HARBOR', label: 'Sleep & focus music', note: 'Free BGM on YouTube' },
-  { id: 'music', code: 'MUSIC', harbor: 'MUSIC HARBOR', label: 'Listen to the EPs', note: 'Pick by mood' },
+  { id: 'music', code: 'MUSIC', harbor: 'MUSIC HARBOR', label: 'Listen to the songs', note: 'Original English songs' },
   { id: 'log', code: 'LOG', harbor: "SHIP'S LOG", label: "Read the Ship's Log", note: 'Weekly build log in English' },
   { id: 'apps', code: 'APPS', harbor: 'APPS HARBOR', label: 'See the apps', note: 'Small iOS apps' },
   { id: 'about', code: 'AYN', harbor: "AYN'S HARBOR", label: 'Meet AYN', note: 'The engineer and her ship' },
