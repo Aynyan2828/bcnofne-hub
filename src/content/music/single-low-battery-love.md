@@ -9,6 +9,8 @@ cta: 配信で聴く
 image: ../../assets/covers/low-battery-love.webp
 order: 108
 status: active
+lang: en
+summaryEn: "1% battery and I'm still thinking about you. Not giving up now."
 moods:
   - focus
 ---

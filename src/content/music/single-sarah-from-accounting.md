@@ -9,6 +9,8 @@ cta: 配信で聴く
 image: ../../assets/covers/sarah-from-accounting.webp
 order: 107
 status: active
+lang: en
+summaryEn: "Nobody notices Sarah from accounting. She knows exactly who's about to break."
 moods:
   - night
 ---

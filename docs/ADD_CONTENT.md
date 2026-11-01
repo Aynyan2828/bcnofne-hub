@@ -124,9 +124,6 @@ Social 港はリンクを3段に分けとる。`src/content/social/*.md` の `ti
 
 ---
 
-
----
-
 ## 例6: シングルを1曲足す（並びは自動）
 
 1. ジャケを 600px の webp にして `src/assets/covers/<スラッグ>.webp` に置く（入稿用 3000px から縮小）
@@ -143,6 +140,8 @@ kind: single
 cta: 配信で聴く
 image: ../../assets/covers/<スラッグ>.webp
 released: 2026-11-15   # 配信日。これを書けば並びは自動
+lang: en               # 英語の歌なら en（英語ページ /en/ のシングル棚にも出る）。日本語なら書かんでよか
+summaryEn: "English blurb"  # 英語ページ用の紹介文（lang: en の時）
 status: active
 moods:
   - focus
@@ -152,6 +151,7 @@ moods:
 - **並び**（`src/lib/singles.ts`）: `pinned: true` の曲（今は「6弦と僕の船」）が左端に固定 →
   `released` を書いた曲が新しい順 → `released` の無い既存曲（バグってごめん！以降）は今まで通り `order` 順。
 - なので新曲は `order` を考えんでよか。固定曲のすぐ右に入る。
+- 日本語ページには全部の曲、英語ページ `/en/` には `lang: en` の曲だけが同じ並びで出る。
 - HyperFollow の URL は配信ログで曲名と突き合わせて確認する。
 
 ## 公開まで

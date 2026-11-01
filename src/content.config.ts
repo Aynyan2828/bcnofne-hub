@@ -73,6 +73,11 @@ const music = defineCollection({
       //                  ＝新曲は md に released を書いて足すだけで、order を考えんでよか
       pinned: z.boolean().default(false),
       released: z.coerce.date().optional(),
+      // 歌の言語（2026-11-01）。英語ページ /en/ のシングル棚には en の曲だけ出す。
+      // 日本語ページには ja も en も全部出る。書かんかったら ja。
+      lang: z.enum(['ja', 'en']).default('ja'),
+      // 英語ページで出す紹介文（未指定なら summary を使う）
+      summaryEn: z.string().optional(),
       // 「今どんな気分？」で絞り込むためのタグ。
       // 未指定（空）＝どの気分でも出る常設カード（Spotify のような入口）。
       moods: z
