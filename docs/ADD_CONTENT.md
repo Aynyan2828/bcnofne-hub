@@ -152,7 +152,7 @@ moods:
 - **並び**（`src/lib/singles.ts`）: `pinned: true` の曲（今は「6弦と僕の船」）が左端に固定 →
   `released` を書いた曲が新しい順 → `released` の無い既存曲（バグってごめん！以降）は今まで通り `order` 順。
 - なので新曲は `order` を考えんでよか。固定曲のすぐ右に入る。
-- HyperFollow の URL は DistroKid 自動配信（distrokid-distributor）が毎日 15:00 にログへ出しとる（`Links: HyperFollow: 曲名 → URL`）。
+- HyperFollow の URL は配信ログで曲名と突き合わせて確認する。
 
 ## 公開まで
 
