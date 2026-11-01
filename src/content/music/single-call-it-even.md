@@ -9,6 +9,8 @@ cta: 配信で聴く
 image: ../../assets/covers/call-it-even.webp
 order: 109
 status: active
+lang: en
+summaryEn: "Let's call it even. Windows down, letting summer in on the drive home."
 moods:
   - night
 ---

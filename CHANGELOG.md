@@ -1,5 +1,15 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-11-01 (12) — シングル棚に「6弦と僕の船」、新曲は自動で2番目以降に入る／英語ページは英語の曲だけ
+
+- 「6弦と僕の船」（2026-11-01 配信、BCNOFNe のテーマソング）のカードを足して、シングル棚のいちばん左に固定（`pinned: true`）
+- シングル棚の並びを `src/lib/singles.ts` に一本化：固定曲 → `released`（配信日）を書いた曲を新しい順 → 書いとらん既存曲（バグってごめん！以降）は今まで通り `order` 順
+- これで新曲は md に `released:` を書いて足すだけで「6弦と僕の船」と「バグってごめん！」の間に入る。トップと `/llms.txt` で同じ並び
+- 「Forgot to Cancel (Again)」（2026-10-20 提出の英語シングル）のカードを追加
+- music に `lang`（ja / en、既定 ja）と `summaryEn` を追加。英語ページ `/en/` に「Singles」棚を作り、英語の曲（Forgot to Cancel・Sarah From Accounting・Low Battery Love・Call It Even）だけを出す
+- 英語ページの Music 欄から日本語題の EP・アルバムと気分の絞り込みを外し、英語の曲だけの Singles 棚＋末尾に Spotify にした（マスター決定）。見出し・航路の文言も EP → songs に
+- 手順は `docs/ADD_CONTENT.md` 例6
+
 ## 2026-10-28 (11) — TikTok プライバシーの保存場所を正確に
 
 Bridge は TikTok の数字の表を 6 時間ごとに非公開の Vault の GitHub にも上げとるけん、「運営者だけが見られる非公開の GitHub にも写しを置く」を日英で 1 文足した。
