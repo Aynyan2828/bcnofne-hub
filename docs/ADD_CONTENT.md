@@ -124,6 +124,36 @@ Social 港はリンクを3段に分けとる。`src/content/social/*.md` の `ti
 
 ---
 
+
+---
+
+## 例6: シングルを1曲足す（並びは自動）
+
+1. ジャケを 600px の webp にして `src/assets/covers/<スラッグ>.webp` に置く（入稿用 3000px から縮小）
+2. `src/content/music/single-<スラッグ>.md` を作る:
+
+```markdown
+---
+title: 曲名（DistroKid の表記どおり）
+summary: 1〜2文の紹介
+url: https://distrokid.com/hyperfollow/bcnofne/xxxx
+service: シングル
+category: 音楽
+kind: single
+cta: 配信で聴く
+image: ../../assets/covers/<スラッグ>.webp
+released: 2026-11-15   # 配信日。これを書けば並びは自動
+status: active
+moods:
+  - focus
+---
+```
+
+- **並び**（`src/lib/singles.ts`）: `pinned: true` の曲（今は「6弦と僕の船」）が左端に固定 →
+  `released` を書いた曲が新しい順 → `released` の無い既存曲（バグってごめん！以降）は今まで通り `order` 順。
+- なので新曲は `order` を考えんでよか。固定曲のすぐ右に入る。
+- HyperFollow の URL は DistroKid 自動配信（distrokid-distributor）が毎日 15:00 にログへ出しとる（`Links: HyperFollow: 曲名 → URL`）。
+
 ## 公開まで
 
 ```bash

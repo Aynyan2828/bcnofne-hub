@@ -1,6 +1,7 @@
 // /llms.txt（AI 向けのサイト案内・https://llmstxt.org の形）。ビルド時に静的生成する。
 // 正本は src/content/*.md ＝ アプリ・曲・SNS を md で足せば、ここにも自動で載る。
 // 冒頭の紹介文だけ手書き（下の INTRO）。
+import { sortSingles } from '../lib/singles';
 import type { APIRoute } from 'astro';
 import { loadEntities } from '../lib/structured-data';
 
@@ -41,7 +42,7 @@ export const GET: APIRoute = async () => {
   const released = apps.filter((a) => a.data.price !== '制作中');
   const wip = apps.filter((a) => a.data.price === '制作中');
   const eps = releases.filter((r) => r.data.kind !== 'single');
-  const singles = releases.filter((r) => r.data.kind === 'single');
+  const singles = sortSingles(releases.filter((r) => r.data.kind === 'single'));
 
   const parts = [
     INTRO,

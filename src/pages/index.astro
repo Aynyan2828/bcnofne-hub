@@ -1,4 +1,5 @@
 ---
+import { sortSingles } from '../lib/singles';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
@@ -42,7 +43,8 @@ const music = (await getCollection('music')).filter(visible).sort(byOrder);
 // 音の港の棚を2つに分ける。単曲が増えると EP が埋もれるため（2026-10-05）。
 // .md に kind: single と書いた分だけ下の棚に出る。書かんかったら今まで通り上の棚。
 const musicEps = music.filter((m) => m.data.kind !== 'single');
-const musicSingles = music.filter((m) => m.data.kind === 'single');
+// 並びは src/lib/singles.ts（固定曲 → 配信日の新しい順 → 既存曲）。
+const musicSingles = sortSingles(music.filter((m) => m.data.kind === 'single'));
 const social = (await getCollection('social')).filter(visible).sort(byOrder);
 
 // Apps 港の主役（featured: true の1本）。残りは Other Apps。

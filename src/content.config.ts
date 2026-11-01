@@ -67,6 +67,12 @@ const music = defineCollection({
       //   single … 単曲リリース。EP と混ざると EP が埋もれるので別の棚に出す
       // 既存の .md は kind を書いとらんので全部 ep 扱い（表示は変わらん）。
       kind: z.enum(['ep', 'single']).default('ep'),
+      // シングル棚の並び（2026-11-01）。並べ方は src/lib/singles.ts。
+      //   pinned: true … 棚のいちばん左に固定（今は「6弦と僕の船」）
+      //   released     … 配信日。書いた曲は「固定曲」と「書いとらん既存曲」の間に新しい順で入る
+      //                  ＝新曲は md に released を書いて足すだけで、order を考えんでよか
+      pinned: z.boolean().default(false),
+      released: z.coerce.date().optional(),
       // 「今どんな気分？」で絞り込むためのタグ。
       // 未指定（空）＝どの気分でも出る常設カード（Spotify のような入口）。
       moods: z
