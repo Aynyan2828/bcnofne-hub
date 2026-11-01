@@ -10,7 +10,7 @@ image: ../../assets/covers/six-strings-and-me.webp
 order: 80
 status: active
 pinned: true
-released: 2026-11-01
+released: 2026-11-02
 lang: en
 summaryEn: "BCNOFNe's theme song, now in English — one acoustic guitar and AYN's voice, side by side."
 moods:
