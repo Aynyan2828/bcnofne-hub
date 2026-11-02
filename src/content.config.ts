@@ -102,9 +102,7 @@ const social = defineCollection({
 // AYN の機関日誌（/engine-room/）。1 日 1 枚 = src/content/worklog/YYYY-MM-DD.md。
 // ayn-jarvis が下書き→マスターの「よかよ」でだけ追加される（手で足してもよか）。
 // 数字（DL 数・売上・コミット数など）は書かん約束。中身の話だけ。
-const worklog = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/worklog' }),
-  schema: ({ image }) =>
+const worklogSchema = ({ image }: { image: () => any }) =>
     z.object({
       date: z.coerce.date(),
       title: z.string(), // 一行見出し（RSS・トップの航海日誌にはこれが出る）
@@ -112,7 +110,17 @@ const worklog = defineCollection({
       image: image().optional(),
       imageAlt: z.string().optional(),
       status: z.enum(['active', 'draft', 'hidden']).default('active'),
-    }),
+    });
+
+const worklog = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/worklog' }),
+  schema: worklogSchema,
 });
 
-export const collections = { apps, channels, music, social, worklog };
+// 英語版の機関日誌（/en/engine-room/）。日本語版と同じ日付で src/content/worklog-en/YYYY-MM-DD.md。
+const worklogEn = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/worklog-en' }),
+  schema: worklogSchema,
+});
+
+export const collections = { apps, channels, music, social, worklog, worklogEn };

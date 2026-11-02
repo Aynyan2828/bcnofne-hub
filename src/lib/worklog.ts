@@ -4,10 +4,11 @@
  */
 import { getCollection, type CollectionEntry } from 'astro:content';
 
-export type WorklogEntry = CollectionEntry<'worklog'>;
+export type WorklogEntry = CollectionEntry<'worklog'> | CollectionEntry<'worklogEn'>;
 
-export async function getWorklog(): Promise<WorklogEntry[]> {
-  const all = await getCollection('worklog');
+/** lang 'en' は英語版（src/content/worklog-en/）。日誌は日本語・英語の両方を書く（2026-11-02 マスター）。 */
+export async function getWorklog(lang: 'ja' | 'en' = 'ja'): Promise<WorklogEntry[]> {
+  const all = await getCollection(lang === 'en' ? 'worklogEn' : 'worklog');
   return all
     .filter((e) => e.data.status === 'active')
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
