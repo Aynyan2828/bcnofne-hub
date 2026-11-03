@@ -21,6 +21,8 @@ import Feed from '../components/Feed.astro';
 import Footer from '../components/Footer.astro';
 import ShipMark from '../components/ShipMark.astro';
 import LangSwitch from '../components/LangSwitch.astro';
+import ThemeSongVideo from '../components/ThemeSongVideo.astro';
+import rokugenPoster from '../assets/theme/rokugen_ja.webp';
 
 // 見出しの丸AYN・大きな水彩シーン
 import aynOk from '../assets/ayn/ayn-ok.png';
@@ -75,6 +77,24 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
   <Hero />
   <VoyagerCounter />
   <main id="main">
+    {/* テーマソングの PV（2026-11-03 マスター「トップに日本語版」）。英語ページには英語版 */}
+    <Section
+      id="theme"
+      tone="amber"
+      eyebrow="Theme Song"
+      title="テーマソング「6弦と僕の船」"
+      lead="6 本の弦は、BCNOFNe で一緒に働く AI の仲間。ギター 1 本から、夜明けの海へ漕ぎ出す歌ばい。"
+    >
+      <ThemeSongVideo
+        videoId="MLVSn8Skckc"
+        title="【MV】6弦と僕の船 / AYN"
+        poster={rokugenPoster}
+        posterAlt="帆船の舳先でギターを弾くあゆにゃんと「6弦と僕の船」の文字"
+        playLabel="「6弦と僕の船」の PV を再生"
+        watchLabel="YouTube で見る"
+      />
+    </Section>
+
     <Section
       id="apps"
       tone="blue"

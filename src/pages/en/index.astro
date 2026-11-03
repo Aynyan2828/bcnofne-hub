@@ -8,6 +8,8 @@
 // カードの URL・画像は content/*.md を共有し、英語の文言だけここで持つ。
 import { sortSingles } from '../../lib/singles';
 import { getCollection, getEntry } from 'astro:content';
+import ThemeSongVideo from '../../components/ThemeSongVideo.astro';
+import rokugenPoster from '../../assets/theme/rokugen_en.webp';
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -93,6 +95,24 @@ const SOCIAL = [
   <Hero lang="en" />
   <VoyagerCounter lang="en" />
   <main id="main">
+    {/* Theme song MV (2026-11-03). The Japanese page shows the Japanese version */}
+    <Section
+      id="theme"
+      tone="amber"
+      eyebrow="Theme Song"
+      title="Six Strings and Me (Boku no Fune)"
+      lead="The six strings are the AI crew I work with every day. One guitar, rowing out to the dawn sea."
+    >
+      <ThemeSongVideo
+        videoId="KtCwO_7KAJk"
+        title="[MV] Six Strings and Me (Boku no Fune) / AYN"
+        poster={rokugenPoster}
+        posterAlt="AYN playing guitar on the bow of a sailing ship, with the title Six Strings and Me"
+        playLabel="Play the Six Strings and Me music video"
+        watchLabel="Watch on YouTube"
+      />
+    </Section>
+
     <Section
       id="listen"
       tone="teal"

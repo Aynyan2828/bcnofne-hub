@@ -1,0 +1,101 @@
+---
+/**
+ * テーマソングの PV（YouTube）を 1 本置く。2026-11-03「6弦と僕の船」。
+ * 最初は表紙の絵と再生ボタンだけ出して、押した時に初めて YouTube を読み込む
+ * （ページを重くせん・押して見た分は YouTube の再生数に入る）。自動再生はせん。
+ * 表紙の絵は YouTube のサムネと同じ物（src/assets/theme/）。
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  videoId: string;
+  title: string; // 動画の題（iframe の title・読み上げ用）
+  poster: ImageMetadata;
+  posterAlt: string;
+  playLabel: string; // 再生ボタンの読み上げ（例: 「6弦と僕の船」の PV を再生）
+  watchLabel: string; // YouTube で開くリンクの文字
+}
+
+const { videoId, title, poster, posterAlt, playLabel, watchLabel } = Astro.props;
+const watchUrl = `https://youtu.be/${videoId}`;
+---
+<div class="tsv">
+  <div class="tsv__frame" data-tsv data-video-id={videoId} data-video-title={title}>
+    <Image
+      src={poster}
+      alt={posterAlt}
+      widths={[640, 960, 1280]}
+      sizes="(max-width: 900px) 100vw, 880px"
+      class="tsv__poster"
+      loading="lazy"
+      decoding="async"
+    />
+    <button type="button" class="tsv__play" aria-label={playLabel} data-tsv-play>
+      <svg viewBox="0 0 68 48" width="68" height="48" aria-hidden="true">
+        <path class="tsv__play-bg" d="M66.5 7.7a8.6 8.6 0 0 0-6-6C55.2.3 34 .3 34 .3S12.8.3 7.5 1.7a8.6 8.6 0 0 0-6 6C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.6 8.6 0 0 0 6 6C12.8 47.7 34 47.7 34 47.7s21.2 0 26.5-1.4a8.6 8.6 0 0 0 6-6C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" />
+        <path d="M45 24 27 14v20z" fill="#fff" />
+      </svg>
+    </button>
+  </div>
+  <a class="tsv__watch" href={watchUrl} target="_blank" rel="noopener noreferrer">{watchLabel}</a>
+</div>
+
+<script>
+  for (const frame of document.querySelectorAll<HTMLElement>('[data-tsv]')) {
+    const btn = frame.querySelector('[data-tsv-play]');
+    btn?.addEventListener('click', () => {
+      const id = frame.dataset.videoId;
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1`;
+      iframe.title = frame.dataset.videoTitle || 'YouTube';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.className = 'tsv__iframe';
+      frame.replaceChildren(iframe);
+      iframe.focus();
+    }, { once: true });
+  }
+</script>
+
+<style>
+  .tsv { max-width: 880px; margin: 0 auto; text-align: center; }
+  .tsv__frame {
+    position: relative;
+    aspect-ratio: 16 / 9; /* 読み込み前から場所を取っておく（ガタつき防止） */
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #1b2340;
+    box-shadow: var(--shadow);
+  }
+  .tsv__poster { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tsv__play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .tsv__play svg { filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35)); transition: transform 0.18s ease; }
+  .tsv__play-bg { fill: rgba(33, 33, 33, 0.8); transition: fill 0.18s ease; }
+  .tsv__play:hover svg, .tsv__play:focus-visible svg { transform: scale(1.06); }
+  .tsv__play:hover .tsv__play-bg, .tsv__play:focus-visible .tsv__play-bg { fill: #ff0033; }
+  .tsv__play:focus-visible { outline: 3px solid var(--c-blue, #2f64a8); outline-offset: -6px; border-radius: var(--radius); }
+  :global(.tsv__iframe) { width: 100%; height: 100%; border: 0; display: block; }
+  .tsv__watch {
+    display: inline-block;
+    margin-top: 0.8rem;
+    padding: 0.6rem 0.4rem;
+    min-height: 44px;
+    font-size: 0.92rem;
+    font-weight: 600;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tsv__play svg, .tsv__play-bg { transition: none; }
+  }
+</style>

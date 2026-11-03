@@ -1,5 +1,10 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-11-03 — トップにテーマソングの PV
+
+日本語ページ（/）の一番上の絵のすぐ下に「テーマソング『6弦と僕の船』」の節を足して、YouTube の PV（日本語版 MLVSn8Skckc）を置いた。英語ページ（/en/）には英語版「Six Strings and Me」（KtCwO_7KAJk）。
+- `src/components/ThemeSongVideo.astro`：最初は表紙の絵（YouTube のサムネと同じ・`src/assets/theme/rokugen_ja|en.webp`）と再生ボタンだけ。押した時に初めて YouTube を読み込む（自動再生なし・ページを重くせん・押して見た分は再生数に入る）。16:9 の場所を先に取ってガタつかん。「YouTube で見る」リンクつき
+
 ## 2026-11-02 (2) — 英語の機関日誌に 10月分を追加、シングル棚は日本語版6弦を左端・英語版をその右に
 
 - `src/content/worklog-en/` に 2026-10-02〜10-31 の英訳 16 本を追加（9月分は未）
