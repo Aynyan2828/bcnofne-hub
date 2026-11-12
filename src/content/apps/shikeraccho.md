@@ -12,7 +12,7 @@ appId: shikeraccho
 tagline: 指1本で進む、時化の海のシューティング
 taglineEn: A one-finger 3D shooter on a stormy sea
 featured: true
-# 主役は時化らっちょ v2 に交代（2026-11-12 マスター。旧：featured: true は Sorotte 〜同日）。ページ /shikeraccho/ を新設
+# 主役は時化らっちょ v2 に交代（2026-11-12。旧：featured: true は Sorotte 〜同日）。ページ /shikeraccho/ を新設
 hook: |
   止まれば、時間も止まる。
   荒れた海を、指1本で。
