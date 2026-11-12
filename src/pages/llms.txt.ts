@@ -29,7 +29,7 @@ const INTRO = `# BCNOFNe〜ボクのフネ〜
 - [ShiftWake（シフトウェイク）](https://bcnofne.com/shiftwake/): シフト勤務の自動アラームアプリの紹介・よくある質問（日英）
 - [SubScope（サブスコープ）](https://bcnofne.com/subscope/): サブスク管理アプリの紹介・よくある質問（日英）。[携帯料金にまとめて払っているサブスクの入れ方](https://bcnofne.com/subscope/carrier/)・[プライバシーポリシー](https://bcnofne.com/subscope/privacy/)
 - [Sorotte（ソロッテ）](https://bcnofne.com/sorotte/): iPhone 着せ替えアプリの紹介・よくある質問（日英）。[プライバシーポリシー](https://bcnofne.com/sorotte/privacy/)
-- [時化らっちょ v2](https://bcnofne.com/shikeraccho/): iPhone・iPad 向け 3D シューティング（制作中・公開日未定）の紹介（日英）
+- [時化らっちょ](https://bcnofne.com/shikeraccho/): iPhone・iPad 向け 3D シューティング（制作中・公開日未定）の紹介（日英）
 - [Angleon（アングリオン）](https://bcnofne.com/angleon/): ブラウザで試せるデモと事前登録。[プライバシーポリシー](https://bcnofne.com/angleon/privacy/)
 - [機関室（AYN の機関日誌）](https://bcnofne.com/engine-room/): 何を作ったかの短い日誌。RSS あり
 - [AYNにまかせんしゃい（ショートカット配布）](https://bcnofne.com/shortcuts/): iPhone ショートカットの配布所

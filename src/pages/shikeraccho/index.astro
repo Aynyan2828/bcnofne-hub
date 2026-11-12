@@ -1,70 +1,175 @@
 ---
-// 時化らっちょ v2 の紹介ページ（制作中）。日本語・英語を 1 枚に。公開日・値段は決まっとらんけん書かん。
-// 2026-11-12：新設（APPS HARBOR の主役）
+// 時化らっちょ の紹介ページ（制作中）。日本語・英語を 1 枚に。公開日・値段は決まっとらんけん書かん。
+// 2026-11-12：新設。題に v2 は付けん。作りは Angleon の LP（暗いヒーロー＋カード）に合わせた（指示による）
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Footer from '../../components/Footer.astro';
+import icon from '../../assets/app-shikeraccho-icon.png';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const pageUrl = new URL(`${base}/shikeraccho/`, Astro.site).href;
 
+const title = '時化らっちょ｜指1本で進む、荒れた海の 3D シューティング（制作中）';
+const description = '荒れた海を指1本で進む 3D シューティング『時化らっちょ』。船が動くと時間が進み、止まると時間も止まる。iPhone・iPad 向けに制作中。';
 const jsonLd = [
   {
     '@type': 'VideoGame',
     '@id': pageUrl + '#game',
-    name: '時化らっちょ v2',
-    alternateName: ['Shikeraccho v2'],
+    name: '時化らっちょ',
+    alternateName: ['Shikeraccho'],
     url: pageUrl,
     gamePlatform: ['iPhone', 'iPad'],
     applicationCategory: 'Game',
     genre: ['Shooter', 'Roguelike'],
     inLanguage: ['ja', 'en'],
-    description: '指1本で進む 3D シューティング。船が動くと時間も敵も進み、止まると全部止まる。iPhone・iPad 向けに制作中。 / A one-finger 3D shooter for iPhone and iPad, currently in development. Time moves only when your ship moves.',
+    description: '指1本で進む 3D シューティング。船が動くと時間が進み、止まると時間も止まる。iPhone・iPad 向けに制作中。 / A one-finger 3D shooter for iPhone and iPad, currently in development. Time moves only when your ship moves.',
     author: { '@type': 'Organization', name: 'BCNOFNe', url: 'https://bcnofne.com/' },
   },
 ];
 ---
-<BaseLayout title="時化らっちょ v2｜指1本の 3D シューティング（制作中） / One-finger 3D Shooter" description="荒れた海を指1本で進む 3D シューティング『時化らっちょ v2』。船が動くと時間も敵も進み、止まると全部止まる。iPhone・iPad 向けに制作中。" extraJsonLd={jsonLd}>
-  <main id="main" class="section">
-    <div class="container paper" style="max-width: 720px;">
-      <span class="eyebrow">iPhone・iPad ゲーム ・ 制作中</span>
-      <h1 style="margin: .3rem 0 1rem; font-size: clamp(1.6rem, 5vw, 2.2rem);">時化らっちょ v2</h1>
-      <p><a href="#en">English below</a></p>
+<BaseLayout title={title} description={description} extraJsonLd={jsonLd}>
+  <main id="main" class="lp">
+    <!-- Hero -->
+    <header class="lp-hero">
+      <div class="container lp-hero__inner">
+        <div class="lp-hero__copy">
+          <p class="lp-hero__eyebrow">BCNOFNe の新作 iPhone・iPad ゲーム ／ 制作中</p>
+          <div class="lp-hero__brand">
+            <Image src={icon} alt="時化らっちょ のアイコン" width="72" height="72" class="lp-hero__icon" />
+            <h1 class="lp-hero__title">時化らっちょ<span>SHIKERACCHO</span></h1>
+          </div>
+          <p class="lp-hero__lead">
+            荒れた海を、指1本で進む。<br />
+            <strong>止まれば、時間も止まる。</strong>
+          </p>
+          <p class="lp-hero__sub">
+            ブラウザゲームだった『時化らっちょ』を、iPhone・iPad 向けの 3D シューティングとして作り直しています。公開日はまだ決まっとらんばい。
+          </p>
+          <div class="lp-hero__cta">
+            <a class="btn" href="#how">どんなゲームか見る</a>
+            <a class="btn btn--ghost" href="#en">English</a>
+          </div>
+        </div>
+        <div class="lp-hero__art">
+          <Image src={icon} alt="嵐の海に浮かぶ錨と帆船の水彩画" width="512" height="512" />
+        </div>
+      </div>
+    </header>
 
-      <p>『時化らっちょ v2』は、荒れた海を指1本で進む 3D シューティングです。前作のブラウザゲーム『時化らっちょ』の進化版を、iPhone・iPad 向けに作っています。いまは制作中で、公開日は決まっていません。</p>
+    <!-- How it plays -->
+    <section id="how" class="section section--mist">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">How it plays</span>
+          <h2>どんなゲームか</h2>
+        </div>
+        <div class="lp-why__grid">
+          <div class="lp-why__item">
+            <h3>指1本の操作</h3>
+            <p>スワイプやドラッグで船を動かす。弾は自動で飛ぶけん、考えるのは「どこへ進むか」だけ。</p>
+          </div>
+          <div class="lp-why__item">
+            <h3>動くと、時間が進む</h3>
+            <p>船が動くと時間が進み、止まると時間も止まる。その切り替えが遊びの真ん中。</p>
+          </div>
+          <div class="lp-why__item">
+            <h3>遊ぶたびに変わる</h3>
+            <p>その場で選ぶ装備や弾の組み合わせで、毎回ちがう航海になる。</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      <h3>どんなゲームか</h3>
-      <ul>
-        <li><strong>指1本の操作</strong>：スワイプやドラッグで船を動かします。弾は自動で飛ぶので、考えるのは「どこへ進むか」だけ。</li>
-        <li><strong>動くと時間が進む</strong>：船が動くと時間も敵も進み、止まると全部止まります。止まって考える、動いてかわす、の切り替えが遊びの中心です。</li>
-        <li><strong>水彩の世界観の 3D の敵</strong>：荒波の中から、変な生き物たちが出てきます。</li>
-        <li><strong>遊ぶたびに変わる</strong>：その場で選ぶ装備や弾の組み合わせで、毎回ちがう航海になります。</li>
-        <li><strong>お金のやり取りはありません</strong>：海の荒れ具合は相場の値動きをモチーフにしていますが、本物の暗号資産や NFT、お金のやり取りは出てきません。</li>
-      </ul>
+    <!-- World -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">World</span>
+          <h2>水彩の海と、変な生き物たち</h2>
+        </div>
+        <div class="lp-uses">
+          <div class="lp-use">
+            <span class="lp-use__n">海</span>
+            <h3>時化の海を進む</h3>
+            <p>夕焼けの紫と橙、荒れる波。透明水彩の世界を、木の帆船で進んでいく。</p>
+          </div>
+          <div class="lp-use">
+            <span class="lp-use__n">敵</span>
+            <h3>3D の敵が波から出てくる</h3>
+            <p>水彩の世界観の 3D キャラたち。海の荒れ具合は、相場の値動きをモチーフにしとる。</p>
+          </div>
+          <div class="lp-use">
+            <span class="lp-use__n">安心</span>
+            <h3>お金のやり取りはなか</h3>
+            <p>本物の暗号資産や NFT、お金のやり取りはゲームの中に出てこん。</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      <h3>これから</h3>
-      <p>つくっている途中の様子は、<a href={`${base}/engine-room/`}>機関室（機関日誌）</a>に書いていきます。公開の知らせは、このサイトと各 SNS でお知らせします。</p>
-
-      <h3>お問い合わせ</h3>
-      <p>ご質問・ご感想は<a href={`${base}/#contact`}>お問い合わせ</a>からどうぞ。</p>
-
-      <hr style="margin: 3rem 0; opacity: .3;" />
-
-      <div lang="en" id="en">
-        <h2>Shikeraccho v2 — a one-finger 3D shooter (in development)</h2>
-        <p>Shikeraccho v2 is a 3D shooter for iPhone and iPad where you sail a stormy sea with one finger. It is the sequel to our browser game Shikeraccho. It is still in development and has no release date yet.</p>
-
-        <h3>What it is</h3>
+    <!-- English -->
+    <section id="en" class="section section--mist" lang="en">
+      <div class="container lp-en">
+        <div class="section-head">
+          <span class="eyebrow">In development</span>
+          <h2>Shikeraccho — a one-finger 3D shooter</h2>
+        </div>
+        <p>Shikeraccho is a 3D shooter for iPhone and iPad where you sail a stormy sea with one finger. It started as a browser game and is being rebuilt in 3D. There is no release date yet.</p>
         <ul>
           <li><strong>One-finger controls</strong>: swipe or drag to steer. Shots fire automatically, so all you decide is where to go.</li>
-          <li><strong>Time moves when you move</strong>: when your ship moves, time and the enemies move; when it stops, everything stops.</li>
-          <li><strong>3D enemies in a watercolor world</strong>: strange sea creatures rise out of the waves.</li>
+          <li><strong>Time moves when you move</strong>: time moves when your ship moves, and stops when it stops.</li>
           <li><strong>Different every run</strong>: the gear and shots you pick on the spot change each voyage.</li>
-          <li><strong>No real money, crypto or NFTs</strong>: the rough sea is themed on market swings, but there are no real cryptocurrencies, NFTs or money transfers in the game.</li>
+          <li><strong>A watercolor sea</strong>: 3D enemies rise out of the waves. The rough sea is themed on market swings, but there are no real cryptocurrencies, NFTs or money transfers in the game.</li>
         </ul>
-
-        <h3>Contact</h3>
-        <p>Questions or feedback: please use the <a href={`${base}/#contact`}>contact form</a>.</p>
       </div>
-    </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section">
+      <div class="container lp-contact">
+        <p>公開の知らせは、このサイトと各 SNS で。ご質問・ご感想は<a href={`${base}/#contact`}>お問い合わせ</a>から。</p>
+      </div>
+    </section>
   </main>
   <Footer />
 </BaseLayout>
+
+<style>
+  /* Angleon の LP と同じ：サイトの水彩トーンに、暗い夜空のヒーローだけ差す */
+  .lp-hero {
+    background: radial-gradient(120% 120% at 50% 0%, #0b0f24 0%, #141a3a 45%, #2a3566 100%);
+    color: #fff;
+    padding-block: clamp(2.2rem, 6vw, 4rem) clamp(2rem, 5vw, 3.5rem);
+  }
+  .lp-hero__inner {
+    display: grid;
+    grid-template-columns: 1.15fr minmax(220px, 360px);
+    gap: clamp(1.4rem, 4vw, 3rem);
+    align-items: center;
+  }
+  .lp-hero__eyebrow { font-size: 0.8rem; letter-spacing: 0.18em; opacity: 0.75; margin: 0 0 0.8rem; }
+  .lp-hero__brand { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1rem; }
+  .lp-hero__icon { width: 72px; height: 72px; border-radius: 18px; box-shadow: 0 0 24px rgba(124, 108, 240, 0.55); }
+  .lp-hero__title { font-family: var(--font-display); font-size: clamp(2rem, 6vw, 3rem); line-height: 1; letter-spacing: 0.02em; }
+  .lp-hero__title span { display: block; font-size: 0.34em; letter-spacing: 0.3em; opacity: 0.8; margin-top: 0.4rem; }
+  .lp-hero__lead { font-size: clamp(1.15rem, 2.6vw, 1.5rem); line-height: 1.6; margin: 0 0 0.6rem; }
+  .lp-hero__lead strong { color: #ffc27a; text-shadow: 0 0 18px rgba(255, 170, 90, 0.5); }
+  .lp-hero__sub { opacity: 0.85; margin: 0 0 1.4rem; max-width: 42ch; }
+  .lp-hero__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .lp-hero .btn--ghost { color: #fff; border-color: rgba(255, 255, 255, 0.5); }
+  .lp-hero__art :global(img) { width: 100%; height: auto; border-radius: 26px; box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.8), 0 0 40px rgba(106, 169, 224, 0.25); border: 1px solid rgba(255, 255, 255, 0.12); display: block; }
+
+  .lp-why__grid, .lp-uses { display: grid; gap: clamp(1rem, 2.5vw, 1.4rem); grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .lp-why__item h3, .lp-use h3 { font-family: var(--font-display); font-size: 1.15rem; margin-bottom: 0.4rem; }
+  .lp-why__item p, .lp-use p { margin: 0; color: var(--c-ink-soft); }
+  .lp-use { background: var(--c-card); border: 1px solid var(--c-line); border-radius: var(--radius); padding: 1.2rem 1.3rem; box-shadow: var(--shadow-soft); }
+  .lp-use__n { display: inline-block; font-size: 0.75rem; letter-spacing: 0.2em; color: var(--c-purple); margin-bottom: 0.4rem; }
+
+  .lp-en { max-width: 720px; }
+  .lp-en ul { padding-left: 1.2rem; }
+  .lp-contact { max-width: 720px; text-align: center; color: var(--c-ink-soft); }
+
+  @media (max-width: 720px) {
+    .lp-hero__inner { grid-template-columns: 1fr; }
+    .lp-hero__art { max-width: 300px; margin: 0 auto; }
+  }
+</style>

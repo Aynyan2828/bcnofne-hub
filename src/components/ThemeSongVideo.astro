@@ -15,12 +15,13 @@ interface Props {
   posterAlt: string;
   playLabel: string; // 再生ボタンの読み上げ（例: 「6弦と僕の船」の PV を再生）
   watchLabel: string; // YouTube で開くリンクの文字
+  vertical?: boolean; // 縦の動画（YouTube ショート）。9:16 で出す
 }
 
-const { videoId, title, poster, posterAlt, playLabel, watchLabel } = Astro.props;
+const { videoId, title, poster, posterAlt, playLabel, watchLabel, vertical = false } = Astro.props;
 const watchUrl = `https://youtu.be/${videoId}`;
 ---
-<div class="tsv">
+<div class={vertical ? 'tsv tsv--v' : 'tsv'}>
   <div class="tsv__frame" data-tsv data-video-id={videoId} data-video-title={title}>
     <Image
       src={poster}
@@ -69,6 +70,8 @@ const watchUrl = `https://youtu.be/${videoId}`;
     background: #1b2340;
     box-shadow: var(--shadow);
   }
+  .tsv--v { max-width: none; }
+  .tsv--v .tsv__frame { aspect-ratio: 9 / 16; }
   .tsv__poster { width: 100%; height: 100%; object-fit: cover; display: block; }
   .tsv__play {
     position: absolute;

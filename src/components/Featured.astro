@@ -10,6 +10,7 @@
 import Icon from './Icon.astro';
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import ThemeSongVideo from './ThemeSongVideo.astro';
 
 interface Props {
   eyebrow?: string;
@@ -22,6 +23,8 @@ interface Props {
   icon?: ImageMetadata;
   demo?: string;
   demoPoster?: string;
+  youtube?: string;
+  youtubePoster?: ImageMetadata;
   extraLinks?: { label: string; url: string }[];
 }
 const {
@@ -35,6 +38,8 @@ const {
   icon,
   demo,
   demoPoster,
+  youtube,
+  youtubePoster,
   extraLinks = [],
 } = Astro.props;
 
@@ -63,7 +68,20 @@ const hookLines = (hook ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
       ))}
     </div>
   </div>
-  {demo && (
+  {youtube && youtubePoster && (
+    <div class="feat__art" data-reveal="right">
+      <ThemeSongVideo
+        vertical
+        videoId={youtube}
+        title={`${title} の紹介ショート`}
+        poster={youtubePoster}
+        posterAlt={`${title} の紹介ショートの表紙`}
+        playLabel={`${title} の紹介ショートを再生`}
+        watchLabel="YouTube で見る"
+      />
+    </div>
+  )}
+  {!youtube && demo && (
     <div class="feat__art" data-reveal="right">
       {/* 主役だけは自動で流す（マスター指定 2026-09-26）。音なし・画面内再生・画面外で停止。
           動きを減らす設定／データセーバーの人には流さん（LazyVideos が判断） */}
