@@ -36,6 +36,9 @@ const apps = defineCollection({
       // 主役枠のデモ動画（public/ 配下の絶対パス。例: /media/angleon_promo.mp4）
       demo: z.string().optional(),
       demoPoster: z.string().optional(),
+      // 主役枠に置く YouTube ショートの動画 ID と表紙の絵（あれば demo より先に出す）
+      youtube: z.string().optional(),
+      youtubePoster: image().optional(),
       // 主役枠の追加ボタン（デモ・制作記録・事前登録など）
       extraLinks: z
         .array(z.object({ label: z.string(), url: z.string() }))
