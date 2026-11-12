@@ -1,18 +1,19 @@
 ---
 title: Sorotte（ソロッテ）
-summary: アイコンを好きな形に並べて、一枚の絵みたいなホーム画面に。ロック画面の動く壁紙、充電中のアニメまで、iPhone を丸ごと着せ替えるアプリ。いま制作中ばい。
-url: https://bcnofne.com/sorotte/
-price: 制作中
+summary: アイコンを好きな形に並べて、一枚の絵みたいなホーム画面に。ロック画面の動く壁紙、充電中のアニメまで、iPhone を丸ごと着せ替えるアプリ。絵師さんが作ったセットも、開くだけで受け取れるばい。
+url: https://apps.apple.com/jp/app/id6824176396
+price: 基本無料
 platform: iOS
 category: アプリ
 icon: ../../assets/app-sorotte-icon.png
-cta: どんなアプリか見る
+cta: App Store で見る
 order: 4
 status: active
 appId: sorotte
 tagline: iPhone を、そろえて着せ替え
 taglineEn: Theme your iPhone home screen as a matching set
-featured: true
+featured: false
+# 2026-11-12：配信開始（2026-11-04）に合わせて「公開済み」表示に。主役は時化らっちょ v2 に交代（旧：featured: true 〜同日）
 hook: |
   アイコンを、形にそろえる。
   ホーム画面が、一枚の絵になる。

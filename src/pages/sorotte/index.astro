@@ -1,11 +1,15 @@
 ---
-// Sorotte の紹介・サポートページ（制作中・App Store の「サポート URL」にも使う）。日本語・英語を 1 枚に。
+// Sorotte の紹介・サポートページ（App Store の「サポート URL」にも使う）。日本語・英語を 1 枚に。
+// 2026-11-04：配信開始に合わせて App Store へのリンク・スマートバナー・MobileApplication に（旧：制作中・SoftwareApplication 〜同日）
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Footer from '../../components/Footer.astro';
 import icon from '../../assets/app-sorotte-icon.png';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const pageUrl = new URL(`${base}/sorotte/`, Astro.site).href;
+const APP_ID = '6824176396';
+const storeJa = `https://apps.apple.com/jp/app/id${APP_ID}`;
+const storeEn = `https://apps.apple.com/us/app/id${APP_ID}`;
 
 // よくある質問（2026-10-19 GEO：AI の答えに引用されやすい「質問→答え」の形。画面に出す文と構造化データは同じ物を使う）
 const FAQ_JA = [
@@ -26,7 +30,7 @@ const FAQ_EN = [
 ];
 const jsonLd = [
   {
-    '@type': 'SoftwareApplication',
+    '@type': 'MobileApplication',
     '@id': pageUrl + '#app',
     name: 'Sorotte',
     alternateName: ['ソロッテ', 'Sorotte: Icon Themes & Widgets'],
@@ -34,6 +38,9 @@ const jsonLd = [
     operatingSystem: 'iOS',
     inLanguage: ['ja', 'en'],
     url: pageUrl,
+    downloadUrl: storeJa,
+    installUrl: storeJa,
+    sameAs: [storeJa, storeEn],
     description: 'iPhone のアイコンを好きな絵とハート・星などの形にそろえる着せ替えアプリ。ロック画面・充電アニメ・絵師さんのセットの受け取りと配布まで。 / An iPhone customization app that matches your icons to your art and arranges them in shapes, with Lock Screen, charging animations, and shareable artist sets.',
     featureList: ['Icons arranged in shapes (heart, star, hexagram, custom)', 'One-picture Home Screen', 'Widget templates', 'Lock Screen circles, color panel and moving wallpapers', 'Charging animations', 'Make and share Home Screen sets', 'Receive sets from artists'],
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'JPY', description: '基本無料・Sorotte Pro はアプリ内課金 / Free with optional in-app purchase' },
@@ -47,17 +54,21 @@ const jsonLd = [
   },
 ];
 ---
-<BaseLayout title="Sorotte（ソロッテ）｜iPhone の着せ替えアプリ / iPhone Customization" description="iPhone のアイコンを推しの絵とハート・星の形にそろえる着せ替えアプリ Sorotte。ロック画面・充電アニメ・絵師さんの着せ替えセットの受け取りと配布まで（制作中）。" extraJsonLd={jsonLd}>
+<BaseLayout title="Sorotte（ソロッテ）｜iPhone の着せ替えアプリ / iPhone Customization" description="iPhone のアイコンを推しの絵とハート・星の形にそろえる着せ替えアプリ Sorotte。ロック画面・充電アニメ・絵師さんの着せ替えセットの受け取りと配布まで。基本無料・広告なし。" extraJsonLd={jsonLd}>
+  {/* Safari で開くと、上に「App Store で入手」の帯が出る（Apple のスマートバナー） */}
+  <meta slot="head" name="apple-itunes-app" content={`app-id=${APP_ID}`} />
   <main id="main" class="section">
     <div class="container paper" style="max-width: 720px;">
       <div style="display:flex; align-items:center; gap:16px; margin-bottom: 1.5rem;">
         <Image src={icon} alt="Sorotte のアイコン" width={88} height={88} style="border-radius: 20px;" />
         <div>
-          <span class="eyebrow">iPhone App ・ 制作中</span>
-          <h2 style="margin:0">Sorotte（ソロッテ）</h2>
+          <span class="eyebrow">iPhone App ・ 基本無料</span>
+          <h1 style="margin:0; font-size: clamp(1.6rem, 5vw, 2.2rem);">Sorotte（ソロッテ）</h1>
         </div>
       </div>
       <p><a href="#en">English below</a></p>
+
+      <p style="margin-bottom:1.5rem"><a class="btn" href={storeJa}>App Store でダウンロード</a></p>
 
       <video
         src={`${base}/media/sorotte_promo.mp4`}
@@ -68,7 +79,7 @@ const jsonLd = [
         aria-label="Sorotte のデモ動画。ホーム画面・テンプレ・ロック画面のカラーパネル・充電アニメの順に見せる。"
       ></video>
 
-      <p>Sorotte（ソロッテ）は、iPhone の見た目を丸ごと着せ替えるアプリです。いま公開に向けて仕上げ中です。</p>
+      <p>Sorotte（ソロッテ）は、iPhone の見た目を丸ごと着せ替えるアプリです。</p>
 
       <h3>できること</h3>
       <ul>
@@ -94,8 +105,9 @@ const jsonLd = [
       <hr style="margin: 3rem 0; opacity: .3;" />
 
       <div lang="en" id="en">
-        <h2>Sorotte — iPhone Customization (in development)</h2>
-        <p>Sorotte lets you customize the whole look of your iPhone. We're finishing it up for release.</p>
+        <h2>Sorotte — iPhone Customization</h2>
+        <p style="margin-bottom:1.5rem"><a class="btn" href={storeEn}>Download on the App Store</a></p>
+        <p>Sorotte lets you customize the whole look of your iPhone.</p>
 
         <h3>What it does</h3>
         <ul>
