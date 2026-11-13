@@ -30,6 +30,8 @@ STYLE_ITEM_KEYS = ["id", "no", "number_ja", "slug", "name_ja", "name_en", "gener
 SCENE_ITEM_KEYS = ["id", "no", "number_ja", "slug", "name_ja", "name_en", "place_ja", "aliases",
                    "shelf", "time", "mood", "desc_ja", "prompt_en", "prompt_ja"]
 SIZES = {"s": 480, "l": 1000}
+# 作家・個人の名前を指す呼び方はサイトに出さん（法務部 2026-11-13。Vault の正本はそのまま）
+ALIAS_BLOCK = ["ミュシャ"]
 
 
 def load(p: Path):
@@ -65,6 +67,7 @@ def main():
     items = []
     for it in style["items"]:
         row = {k: it.get(k) for k in STYLE_ITEM_KEYS}
+        row["aliases"] = [a for a in row["aliases"] if not any(b in a for b in ALIAS_BLOCK)]
         if it.get("sample_image"):
             row["img"] = to_webp(v / it["sample_image"], it["id"], img_dir)
         items.append(row)

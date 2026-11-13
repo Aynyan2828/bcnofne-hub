@@ -7,6 +7,9 @@
 - アプリとして置ける（PWA）：`/prompts/manifest.webmanifest`（名前「海図帳」・start_url `/prompts/style/`・standalone）、自前のアイコン（`public/prompts/icons/kaizu.svg` → `node scripts/kaizu_icons.mjs`）、`/prompts/sw.js`（scope `/prompts/` だけ・ページと一覧用の絵を先読み・オフラインでも開ける）。サイトのほかのページは service worker の外
 - `BaseLayout` に `appleTouchIcon` を足した（既定はいままでのサイトのアイコンのまま。海図帳だけ差し替え）
 - サイトのトップ・ナビからのリンクはまだ付けとらん
+- アイコンは BCNOFNe のロゴ（正本＝Vault の白抜きロゴ。`public/prompts/icons/logo-*.png`、紙の白の地＋余白）。タブの favicon も海図帳だけ差し替え（`BaseLayout` に `favicon` の口）。前の自前の絵（`kaizu-*.png`）は使わんが残す（マスター 2026-11-13）
+- 法務部の指摘：作家名の呼び方（ミュシャ風）はサイトに出さん（`kaizu_sync.py` の ALIAS_BLOCK）。元絵も AI 画像生成と明記
+- 品質保証部の指摘：混ぜる欄の割合ボタンを「標準／ちょっとだけ／半々」に（3 つ混ぜる時に 2 つ分の割合が黙って捨てられとった）。パンくず 44px、meta の空白、textarea に lang=en
 
 ## 2026-11-03 — トップにテーマソングの PV
 

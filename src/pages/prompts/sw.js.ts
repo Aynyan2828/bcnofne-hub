@@ -18,9 +18,10 @@ export const GET: APIRoute = () => {
     ...stems.map((s) => `${p}/img/${s}-s.webp`),
     `${p}/style/mix.json`,
     `${p}/manifest.webmanifest`,
-    `${p}/icons/kaizu-180.png`,
-    `${p}/icons/kaizu-192.png`,
-    `${p}/icons/kaizu-512.png`,
+    `${p}/icons/logo-32.png`,
+    `${p}/icons/logo-180.png`,
+    `${p}/icons/logo-192.png`,
+    `${p}/icons/logo-512.png`,
   ];
   const version = `kaizu-${STYLE.version}-${Date.now()}`;
   const js = `/* 海図帳 service worker ${version} */

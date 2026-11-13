@@ -17,7 +17,7 @@ interface Props {
 const { title, description, lang = 'ja', alternates = [], langTo } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
-<BaseLayout title={title} description={description} lang={lang} alternates={alternates} appleTouchIcon="/prompts/icons/kaizu-180.png">
+<BaseLayout title={title} description={description} lang={lang} alternates={alternates} appleTouchIcon="/prompts/icons/logo-180.png" favicon="/prompts/icons/logo-32.png">
   <link slot="head" rel="manifest" href={`${base}/prompts/manifest.webmanifest`} />
   <meta slot="head" name="theme-color" content="#1f2540" />
   <meta slot="head" name="apple-mobile-web-app-capable" content="yes" />

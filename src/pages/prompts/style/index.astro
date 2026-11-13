@@ -20,13 +20,13 @@ const nameOf = (id: string) => STYLE.items.find((x) => x.id === id)?.name_ja ?? 
     <p class="note"><a href="#mix">2〜3 種を混ぜる欄へ ↓</a></p>
     <figure class="kz-source" style="margin-top:0.9rem">
       <img src={kaizuImg(STYLE.source_img, 's')} alt="見本の元絵：夜の港の岩場にいる AYN" width="480" height="480" loading="eager" decoding="async" />
-      <figcaption><b>見本の元絵</b><br />下の見本はすべて、この 1 枚（BCNOFNe のキャラクター AYN）を AI 画像生成で各画風に描き直したもの。</figcaption>
+      <figcaption><b>見本の元絵</b><br />下の見本はすべて、この 1 枚（BCNOFNe のキャラクター AYN・これも AI 画像生成で描いた絵）を、AI 画像生成で各画風に描き直したもの。</figcaption>
     </figure>
   </header>
 
   <section class="paper" aria-label="絞り込み">
     <div class="kz-filter">
-      <input type="search" id="kz-q" placeholder="探す：切り絵、版画、三番" aria-label="画風を探す" />
+      <input type="search" id="kz-q" placeholder="探す：切り絵、版画、ドット" aria-label="画風を探す" />
     </div>
     <div class="kz-filter" style="margin-top:0.6rem" id="kz-fams">
       <button class="kz-chip" type="button" data-fam="" aria-pressed="true">すべて</button>
@@ -58,11 +58,12 @@ const nameOf = (id: string) => STYLE.items.find((x) => x.id === id)?.name_ja ?? 
     <div class="row"><label class="lab" for="m3">3 つ目</label><select id="m3"></select></div>
     <div class="row" role="group" aria-label="割合">
       <span class="lab">割合</span>
-      <button class="kz-chip" type="button" data-ratio="9:1" aria-pressed="false">ちょっとだけ</button>
-      <button class="kz-chip" type="button" data-ratio="7:3" aria-pressed="true">7 対 3</button>
-      <button class="kz-chip" type="button" data-ratio="5:5" aria-pressed="false">半々</button>
+      <button class="kz-chip" type="button" data-ratio="" aria-pressed="true">標準</button>
+      <button class="kz-chip" type="button" data-ratio="ちょっとだけ" aria-pressed="false">ちょっとだけ</button>
+      <button class="kz-chip" type="button" data-ratio="半々" aria-pressed="false">半々</button>
       <input type="text" id="mrt" placeholder="例 6:4" aria-label="割合を自分で書く" />
     </div>
+    <p class="note" style="margin-top:0">標準は 2 つなら 7 対 3、3 つなら 6 対 2.5 対 1.5。自分で書く時は、2 つなら「6:4」、3 つなら「5:3:2」のように数を合わせる。</p>
     {mixSample && (
       <figure class="kz-mixsample">
         <img src={kaizuImg(mixSample.img, 's')} alt={`混ぜた見本：${mixSample.ids.map(nameOf).join(' × ')}`} width="480" height="480" loading="lazy" decoding="async" />
@@ -70,7 +71,7 @@ const nameOf = (id: string) => STYLE.items.find((x) => x.id === id)?.name_ja ?? 
       </figure>
     )}
     <label class="visually-hidden" for="mout">混ぜたプロンプト（英語）</label>
-    <textarea id="mout" readonly>読み込み中…</textarea>
+    <textarea id="mout" lang="en" readonly>読み込み中…</textarea>
     <div class="kz-btns">
       <button class="btn" type="button" id="mcen">英語をコピー</button>
       <button class="btn btn--line" type="button" id="mcja">日本語をコピー</button>
@@ -143,13 +144,12 @@ const nameOf = (id: string) => STYLE.items.find((x) => x.id === id)?.name_ja ?? 
     const order = ['use', 'keep', 'scratch', 'ratio', 'line', 'surface', 'texture', 'color', 'light', 'face', 'finish', 'avoid', 'priority'];
     return [intro, ...order.map((k) => `${head(k)}\n${sec[k]}`)].join('\n\n');
   }
-  const mix = { ratio: '7:3' };
+  const mix = { ratio: '' };
   const ids = () => ['m1', 'm2', 'm3'].map((id) => $(id).value).filter(Boolean).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
   const render = () => {
     const xs = ids();
     if (xs.length < 2) { $('mout').value = '主と副を選ぶと、ここに混ぜたプロンプト（英語）が出ます。'; return; }
-    const r = xs.length === 3 && /^\d+:\d+$/.test(mix.ratio) ? '' : mix.ratio;
-    $('mout').value = compose(xs, r, 'en') ?? `割合は画風の数（${xs.length} つ）に合わせて「7:3」のように書いてください。`;
+    $('mout').value = compose(xs, mix.ratio, 'en') ?? `割合は画風の数（${xs.length} つ）に合わせて「${xs.length === 3 ? '5:3:2' : '7:3'}」のように書いてください。`;
   };
   async function setup() {
     try {
@@ -162,7 +162,7 @@ const nameOf = (id: string) => STYLE.items.find((x) => x.id === id)?.name_ja ?? 
     $('m1').value = want && D.items.some((x: any) => x.id === want) ? want : 'ST-01';
     $('m2').value = $('m1').value === 'ST-05' ? 'ST-01' : 'ST-05';
     document.querySelectorAll<HTMLElement>('[data-ratio]').forEach((b) => b.addEventListener('click', () => {
-      mix.ratio = b.dataset.ratio!; $('mrt').value = '';
+      mix.ratio = b.dataset.ratio ?? ''; $('mrt').value = '';
       document.querySelectorAll('[data-ratio]').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); render();
     }));
     $('mrt').addEventListener('input', (e: Event) => {
@@ -170,8 +170,8 @@ const nameOf = (id: string) => STYLE.items.find((x) => x.id === id)?.name_ja ?? 
       document.querySelectorAll('[data-ratio]').forEach((x) => x.setAttribute('aria-pressed', 'false')); render();
     });
     const cp = (lang: Lang) => {
-      const xs = ids(); const r = xs.length === 3 && /^\d+:\d+$/.test(mix.ratio) ? '' : mix.ratio;
-      const txt = xs.length >= 2 && compose(xs, r, lang);
+      const xs = ids();
+      const txt = xs.length >= 2 && compose(xs, mix.ratio, lang);
       if (!txt) { (window as any).kzToast?.('主と副を選んで、割合を確かめてください'); return; }
       (window as any).kzCopy(txt, `混ぜたプロンプト（${lang === 'ja' ? '日本語' : '英語'}）`);
     };

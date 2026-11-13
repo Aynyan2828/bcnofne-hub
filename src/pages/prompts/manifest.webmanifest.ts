@@ -15,12 +15,13 @@ export const GET: APIRoute = () => {
     start_url: `${p}/style/`,
     scope: `${p}/`,
     display: 'standalone',
-    background_color: '#1f2540',
+    background_color: '#fbfcff',
     theme_color: '#1f2540',
     icons: [
-      { src: `${p}/icons/kaizu-192.png`, sizes: '192x192', type: 'image/png', purpose: 'any' },
-      { src: `${p}/icons/kaizu-512.png`, sizes: '512x512', type: 'image/png', purpose: 'any' },
-      { src: `${p}/icons/kaizu-maskable-512.png`, sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      // アイコンは BCNOFNe のロゴ（2026-11-13 マスター決定。旧：海図帳の本と羅針の絵 kaizu-*.png 〜同日・ファイルは残す）
+      { src: `${p}/icons/logo-192.png`, sizes: '192x192', type: 'image/png', purpose: 'any' },
+      { src: `${p}/icons/logo-512.png`, sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: `${p}/icons/logo-maskable-512.png`, sizes: '512x512', type: 'image/png', purpose: 'maskable' },
     ],
   };
   return new Response(JSON.stringify(manifest, null, 2), { headers: { 'Content-Type': 'application/manifest+json; charset=utf-8' } });

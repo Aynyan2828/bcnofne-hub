@@ -19,6 +19,8 @@ interface Props {
   extraJsonLd?: Record<string, unknown>[];
   /** ホーム画面に置いた時のアイコン（base 抜きのルート相対）。既定はサイトのアイコン。海図帳（/prompts/）だけ差し替える */
   appleTouchIcon?: string;
+  /** タブのアイコン（base 抜きのルート相対）。既定はサイトのアイコン */
+  favicon?: string;
 }
 const {
   title = 'BCNOFNe〜ボクのフネ〜｜機関士AI AYN の公式ハブ',
@@ -28,6 +30,7 @@ const {
   alternates = [],
   extraJsonLd = [],
   appleTouchIcon = '/apple-touch-icon.png',
+  favicon = '/favicon.png',
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -74,7 +77,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         d.dataset.tide = h >= 22 || h < 6 ? 'night' : 'day';
       })();
     </script>
-    <link rel="icon" href={`${base}/favicon.png`} type="image/png" />
+    <link rel="icon" href={`${base}${favicon}`} type="image/png" />
     <link rel="apple-touch-icon" href={`${base}${appleTouchIcon}`} />
     <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
     <!-- 手書き風フォント：本文=Yomogi(ゆる丸手書き) / 見出し=Yusei Magic(マーカー風) -->
