@@ -114,6 +114,12 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
           <span class="scband__text">無料の iPhone ショートカット集</span>
           <span class="scband__arrow" aria-hidden="true">→</span>
         </a>
+        {/* 海図帳（AI 画像生成用のプロンプト集）への入口（2026-11-13 マスター「トップからリンクつけていい」） */}
+        <a class="scband__bar" href={`${base}/prompts/`} aria-label="海図帳：AI 画像生成用のプロンプト集">
+          <img class="scband__face scband__face--logo" src={`${base}/prompts/icons/logo-180.png`} alt="" width="30" height="30" />
+          <span class="scband__text">プロンプト集「海図帳」</span>
+          <span class="scband__arrow" aria-hidden="true">→</span>
+        </a>
       </div>
       {featured && (
         <Featured
@@ -605,6 +611,9 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
      JS が来ん・動きを減らす設定の人は、最初から止まった帯で出す */
   .scband {
     display: flex;
+    flex-direction: column;     /* 帯が 2 本（ショートカット集・海図帳）。右端にそろえて縦に並べる */
+    align-items: flex-end;
+    gap: 0.5rem;
     justify-content: flex-end;
     /* 画面の右端までのばす（container の余白をはみ出して、右端にくっつける） */
     margin: 0 calc(50% - 50vw) clamp(1.1rem, 3vw, 1.6rem) 0;
@@ -637,6 +646,7 @@ const logScrolls = recentLogs.length > LOG_WINDOW_ROWS;
     flex: none;
     background: #fff;
   }
+  .scband__face--logo { background: #fbfcff; }
   .scband__text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .scband__arrow { display: inline-block; flex: none; }
   /* 帯の上を走る光 */

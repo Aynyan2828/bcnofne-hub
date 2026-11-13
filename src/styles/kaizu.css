@@ -1,0 +1,97 @@
+/* 海図帳（/prompts/）だけの見た目。サイトの紙（.paper）と海の背景はそのまま使う。
+   主役＝見本の絵。文字は紙の上にだけ置く（海の上に直接置かん）。 */
+.kz { padding-block: clamp(4.5rem, 10vw, 6rem) clamp(3rem, 8vw, 5rem); }
+.kz .container { display: grid; gap: clamp(1.2rem, 3vw, 1.8rem); }
+.kz-crumb { font-size: 0.9rem; margin: 0 0 0.6rem; color: var(--c-ink-soft); }
+.kz-crumb a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; }
+.kz-eyebrow { display: inline-block; font-size: 0.8rem; letter-spacing: 0.2em; color: var(--c-blue-deep); text-transform: uppercase; }
+.kz h1 { font-family: var(--font-display); font-size: clamp(1.7rem, 5.4vw, 2.5rem); margin: 0.2rem 0 0.5rem; }
+.kz h2 { font-family: var(--font-display); font-size: clamp(1.25rem, 3.6vw, 1.6rem); margin: 0 0 0.6rem; }
+.kz .lead { margin: 0; font-size: 1.02rem; }
+.kz .note { color: var(--c-ink-soft); font-size: 0.92rem; margin: 0.5rem 0 0; }
+
+/* 使い方の 3 段 */
+.kz-steps { list-style: none; padding: 0; margin: 0.8rem 0 0; display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.kz-steps li { background: var(--c-mist); border-radius: 14px; padding: 0.7rem 0.9rem; font-size: 0.95rem; }
+.kz-steps b { font-family: var(--font-display); font-weight: 400; color: var(--c-blue-deep); margin-right: 0.3em; }
+
+/* 棚（入口の 2 枚）。画風が主役、場所は脇役＝小さく */
+.kz-shelves { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 760px) { .kz-shelves { grid-template-columns: 1.6fr 1fr; align-items: start; } }
+.kz-shelf { display: block; color: var(--c-ink); }
+.kz-shelf:hover { text-decoration: none; }
+.kz-shelf:hover h2 { text-decoration: underline; }
+.kz-mosaic { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 0 0 0.9rem; }
+.kz-mosaic img { border-radius: 10px; aspect-ratio: 1; object-fit: cover; width: 100%; }
+.kz-go { display: inline-flex; align-items: center; gap: 0.35em; min-height: 44px; color: var(--c-blue-deep); }
+
+/* 見本の元絵 */
+.kz-source { display: flex; gap: 0.9rem; align-items: center; margin: 0; }
+.kz-source img { width: 96px; height: 96px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
+.kz-source figcaption { font-size: 0.9rem; color: var(--c-ink-soft); }
+.kz-source b { color: var(--c-ink); font-weight: 400; font-family: var(--font-display); }
+
+/* 絞り込み */
+.kz-filter { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.kz-filter input[type=search] { font: inherit; font-size: 1rem; min-height: 44px; padding: 0 0.9rem; border-radius: 999px; border: 1.5px solid var(--c-line); background: #fff; color: var(--c-ink); flex: 1 1 220px; min-width: 0; }
+.kz-chip { font: inherit; font-size: 0.92rem; min-height: 44px; padding: 0 0.95rem; border-radius: 999px; border: 1.5px solid var(--c-line); background: #fff; color: var(--c-ink); cursor: pointer; }
+.kz-chip[aria-pressed='true'] { background: var(--c-blue-deep); border-color: var(--c-blue-deep); color: #fff; }
+.kz-count { font-size: 0.9rem; color: var(--c-ink-soft); margin: 0; }
+
+/* 画風のカード（絵が主役） */
+.kz-grid { display: grid; gap: clamp(0.7rem, 2vw, 1.1rem); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 720px) { .kz-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1000px) { .kz-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.kz-card { display: block; background: rgba(251, 252, 255, 0.95); border-radius: 16px; box-shadow: var(--shadow-soft); overflow: hidden; color: var(--c-ink); transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.kz-card:hover { text-decoration: none; transform: translateY(-2px); box-shadow: var(--shadow); }
+.kz-card img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+.kz-card__body { padding: 0.55rem 0.75rem 0.75rem; }
+.kz-card__no { font-size: 0.78rem; color: var(--c-ink-soft); margin: 0; }
+.kz-card__name { font-family: var(--font-display); font-size: clamp(1rem, 3.4vw, 1.12rem); margin: 0.1rem 0 0; line-height: 1.4; }
+.kz-card__gen { font-size: 0.8rem; color: var(--c-ink-soft); margin: 0.15rem 0 0; line-height: 1.5; }
+.kz-card[hidden] { display: none; }
+
+/* 混ぜる欄 */
+.kz-mix .row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0.5rem 0; }
+.kz-mix .lab { min-width: 4.2em; font-size: 0.92rem; color: var(--c-ink-soft); }
+.kz-mix select, .kz-mix input[type=text] { font: inherit; font-size: 1rem; min-height: 44px; padding: 0 0.8rem; border-radius: 12px; border: 1.5px solid var(--c-line); background: #fff; color: var(--c-ink); max-width: 100%; min-width: 0; }
+.kz-mix select { flex: 1 1 240px; }
+.kz-mix input[type=text] { width: 8em; }
+.kz-mixsample { display: flex; gap: 0.8rem; align-items: center; margin: 0.6rem 0; }
+.kz-mixsample img { width: 120px; height: 120px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
+.kz-mixsample figcaption { font-size: 0.9rem; color: var(--c-ink-soft); }
+
+/* プロンプトの箱とコピー */
+.kz-prompt { margin: 0.6rem 0 0; }
+.kz-prompt pre, .kz-mix textarea { width: 100%; white-space: pre-wrap; word-break: break-word; font-family: ui-monospace, Menlo, monospace; font-size: 0.82rem; line-height: 1.65; color: var(--c-ink); background: var(--c-mist); border: 1px solid var(--c-line); border-radius: 12px; padding: 0.8rem 0.9rem; margin: 0.5rem 0 0; max-height: 22rem; overflow: auto; }
+.kz-mix textarea { min-height: 14rem; resize: vertical; }
+.kz-btns { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.6rem; }
+.kz .btn { min-height: 44px; border: 0; cursor: pointer; font: inherit; font-size: 0.95rem; }
+.kz .btn--line { background: #fff; color: var(--c-blue-deep); border: 1.5px solid var(--c-blue-deep); box-shadow: none; }
+.kz details > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--c-blue-deep); }
+
+/* 1 種ずつのページ */
+.kz-hero { display: grid; gap: 1rem; }
+@media (min-width: 820px) { .kz-hero { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: start; } }
+.kz-hero__img { margin: 0; }
+.kz-hero__img img { width: 100%; border-radius: 16px; box-shadow: var(--shadow-soft); }
+.kz-hero__img figcaption { font-size: 0.85rem; color: var(--c-ink-soft); margin-top: 0.4rem; }
+.kz-meta { font-size: 0.9rem; color: var(--c-ink-soft); margin: 0.4rem 0 0; }
+.kz-pager { display: flex; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap; }
+.kz-pager a { display: inline-flex; align-items: center; min-height: 44px; }
+
+/* 場所の棚（文だけ） */
+.kz-scenes { display: grid; gap: 0.9rem; }
+.kz-scene { border-top: 1px solid var(--c-line); padding-top: 0.9rem; }
+.kz-scene:first-child { border-top: 0; padding-top: 0; }
+.kz-scene h3 { font-family: var(--font-display); font-size: 1.15rem; margin: 0; font-weight: 400; color: var(--c-ink); }
+.kz-scene p { margin: 0.25rem 0 0; }
+.kz-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.35rem 0 0; padding: 0; list-style: none; }
+.kz-tags li { font-size: 0.8rem; background: var(--c-mist); color: var(--c-ink-soft); border-radius: 999px; padding: 0.1rem 0.6rem; }
+.kz-shelf-title { font-family: var(--font-display); font-size: 1.3rem; margin: 0 0 0.8rem; color: var(--c-blue-deep); }
+
+.kz-toast { position: fixed; left: 50%; bottom: max(1.2rem, env(safe-area-inset-bottom)); translate: -50% 0; z-index: 60; background: var(--c-ink); color: #fff; padding: 0.6rem 1.1rem; border-radius: 999px; font-size: 0.92rem; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; max-width: calc(100vw - 32px); }
+.kz-toast.on { opacity: 1; }
+
+/* 使ってよい範囲（入口・画風の棚・場所の棚の頭に置く） */
+.kz-terms { margin: 0.9rem 0 0; padding: 0.7rem 0.9rem; border-left: 3px solid var(--c-blue-deep); background: var(--c-mist); border-radius: 0 12px 12px 0; font-size: 0.92rem; }

@@ -1,0 +1,91 @@
+---
+// 海図帳の入口（/prompts/ と /en/prompts/ で共用）。
+// 主役＝画風の棚（見本の絵）。場所の棚は文だけの脇役なので小さく置く。
+import KaizuShell from './KaizuShell.astro';
+import { STYLE, SCENE, kaizuBase, kaizuImg } from '../lib/kaizu';
+
+interface Props { lang?: 'ja' | 'en' }
+const { lang = 'ja' } = Astro.props;
+const en = lang === 'en';
+const picks = ['ST-01', 'ST-05', 'ST-10', 'ST-14', 'ST-18', 'ST-30'].map((id) => STYLE.items.find((x) => x.id === id)!);
+const t = en
+  ? {
+      title: 'Kaizu — Prompt Chart Book for AI image generation | BCNOFNe',
+      desc: 'Kaizu is a free book of prompts for AI image generation, written by BCNOFNe: 30 painting styles you can mix, and 24 places. Copy a prompt and paste it into your image AI.',
+      eyebrow: 'Prompt Chart Book',
+      h1: 'Kaizu',
+      lead: 'A book of prompts for AI image generation. Pick a painting style, copy the prompt, and paste it into your image AI together with your own picture.',
+      steps: [['1', 'Attach your picture to the image AI.'], ['2', 'Copy a style prompt (English or Japanese) and paste it.'], ['3', 'The same picture comes back in that style.']],
+      styleH: `Painting styles (${STYLE.items.length})`,
+      styleP: 'Paper cut, woodblock, pixel art, cel animation, gold-leaf screens… Each prompt redraws your picture in one technique, and you can mix up to three.',
+      styleGo: 'Open the styles',
+      sceneH: `Places (${SCENE.items.length})`,
+      sceneP: 'Text-only prompts for backgrounds and settings: harbors, towns, rooms, nature and strange places.',
+      sceneGo: 'Open the places',
+      pageNote: 'The style and place pages are in Japanese. Every prompt is there in both English and Japanese.',
+      terms: 'You are free to use the prompts for your own image generation, including commercial use. If you can, adding the name "BCNOFNe" when you use them would make us happy (optional). Please do not republish or redistribute the sample pictures.',
+      credit: 'BCNOFNe original (no text copied from other sites). The sample pictures were made with AI image generation from one source picture of AYN, our character (the source picture is AI-generated too).',
+    }
+  : {
+      title: '海図帳（かいずちょう）｜AI 画像生成用のプロンプト集 — BCNOFNe',
+      desc: 'BCNOFNe の海図帳は、AI 画像生成用のプロンプト集。混ぜられる画風 30 種と、場所 24 か所。プロンプトをコピーして画像生成 AI に貼るだけ。',
+      eyebrow: 'Prompt Chart Book',
+      h1: '海図帳（かいずちょう）',
+      lead: 'AI 画像生成用のプロンプト集。画風を選んでプロンプトをコピーし、自分の絵と一緒に画像生成 AI に貼るだけ。',
+      steps: [['1', '画像生成 AI に、元にしたい絵を添付する。'], ['2', '画風のプロンプト（英語か日本語）をコピーして貼る。'], ['3', '同じ絵が、その画風で描き直されて返ってくる。']],
+      styleH: `画風の棚（${STYLE.items.length} 種）`,
+      styleP: '切り絵・版画・ドット絵・セル画・金屏風…。1 本で 1 つの技法に描き直す。3 つまで混ぜられる。',
+      styleGo: '画風を見る',
+      sceneH: `場所の棚（${SCENE.items.length} か所）`,
+      sceneP: '背景や世界観のためのプロンプト。港と海・街・部屋・自然・不思議な場所。見本の絵はまだなく、文だけ。',
+      sceneGo: '場所を見る',
+      pageNote: '',
+      terms: 'プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。',
+      credit: '名前・説明・プロンプトの文は BCNOFNe オリジナル（他サイトの文の転載なし）。見本の絵は、BCNOFNe のキャラクター AYN の 1 枚（見本の元絵・これも AI 画像生成で描いた絵）を、AI 画像生成で各画風に描き直したもの。',
+    };
+---
+<KaizuShell
+  title={t.title}
+  description={t.desc}
+  lang={lang}
+  langTo="prompts"
+  alternates={[
+    { lang: 'ja', path: '/prompts/' },
+    { lang: 'en', path: '/en/prompts/' },
+    { lang: 'x-default', path: '/prompts/' },
+  ]}
+>
+  <header class="paper">
+    <span class="kz-eyebrow">{t.eyebrow}</span>
+    <h1>{t.h1}</h1>
+    <p class="lead">{t.lead}</p>
+    <ol class="kz-steps">
+      {t.steps.map(([n, s]) => <li><b>{n}</b>{s}</li>)}
+    </ol>
+    {t.pageNote && <p class="note">{t.pageNote}</p>}
+    <p class="kz-terms">{t.terms}</p>
+  </header>
+
+  <div class="kz-shelves">
+    <a class="paper kz-shelf" href={`${kaizuBase}/style/`}>
+      <div class="kz-mosaic">
+        {picks.map((it) => (
+          <img src={kaizuImg(it.img!, 's')} alt={en ? `${it.name_en} sample` : `${it.name_ja}の見本`} width="480" height="480" loading="eager" decoding="async" />
+        ))}
+      </div>
+      <h2>{t.styleH}</h2>
+      <p>{t.styleP}</p>
+      <span class="kz-go">{t.styleGo} →</span>
+    </a>
+    <a class="paper kz-shelf" href={`${kaizuBase}/scene/`}>
+      <h2>{t.sceneH}</h2>
+      <p>{t.sceneP}</p>
+      <span class="kz-go">{t.sceneGo} →</span>
+    </a>
+  </div>
+
+  <figure class="paper kz-source">
+    <img src={kaizuImg(STYLE.source_img, 's')} alt={en ? 'Source picture for the samples: AYN on a rocky shore at night' : '見本の元絵：夜の港の岩場にいる AYN'} width="480" height="480" loading="lazy" decoding="async" />
+    <figcaption><b>{en ? 'Source picture for the samples' : '見本の元絵'}</b><br />{t.credit}</figcaption>
+  </figure>
+</KaizuShell>

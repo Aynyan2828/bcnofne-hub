@@ -1,5 +1,23 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-11-13 (2) — 海図帳を公開（マスター OK 22:49）
+
+- トップ（日本語）のアプリの港に、ショートカット集の帯の下へ「プロンプト集「海図帳」」の帯を 1 本。英語トップの Apps の頭に `/en/prompts/` への 1 行リンク
+- 使ってよい範囲の一文（商用可・「BCNOFNe」の名前を添えてもらえると嬉しい（任意）・見本の画像の転載・再配布はご遠慮）を、入口（日英）・画風の棚・1 種ずつ・場所の棚に
+- 入口の文を「BCNOFNe オリジナル（他サイトの文の転載なし）」に弱めた（旧：すべて BCNOFNe が書いたオリジナル 〜同日）
+- 画風の九番：商標かもしれん名前を避けて「孔版印刷」中心に（旧：一般名 リソグラフ・英名 Two-Drum Riso・URL /prompts/style/risograph/ 〜同日 → 新：/prompts/style/stencil-duplicator/）。Vault の元原稿から直して作り直し、類似チェック 要直し 0
+
+## 2026-11-13 — 海図帳（AI 画像生成用のプロンプト集）のページ（ブランチ feat/kaizu-catalog・未公開→上で公開）
+
+- `/prompts/`（入口・日英 `/en/prompts/`）、`/prompts/style/`（画風 30 種の一覧＋混ぜる欄）、`/prompts/style/<英字名>/`（30 ページ・見本の絵・英日のプロンプトのコピー）、`/prompts/scene/`（場所 24 か所・文だけ）
+- データの正本は Vault `03_Knowledge/Image_Prompts/BCNOFNe_画風カタログ/`。`python3 scripts/kaizu_sync.py` で `src/data/kaizu/`・`public/prompts/`（webp 480/1000px・混ぜる部品 mix.json）へ写す。混ぜる決まりは Vault の `tools/style_mix.py` と同じ
+- アプリとして置ける（PWA）：`/prompts/manifest.webmanifest`（名前「海図帳」・start_url `/prompts/style/`・standalone）、自前のアイコン（`public/prompts/icons/kaizu.svg` → `node scripts/kaizu_icons.mjs`）、`/prompts/sw.js`（scope `/prompts/` だけ・ページと一覧用の絵を先読み・オフラインでも開ける）。サイトのほかのページは service worker の外
+- `BaseLayout` に `appleTouchIcon` を足した（既定はいままでのサイトのアイコンのまま。海図帳だけ差し替え）
+- サイトのトップ・ナビからのリンクはまだ付けとらん
+- アイコンは BCNOFNe のロゴ（正本＝Vault の白抜きロゴ。`public/prompts/icons/logo-*.png`、紙の白の地＋余白）。タブの favicon も海図帳だけ差し替え（`BaseLayout` に `favicon` の口）。前の自前の絵（`kaizu-*.png`）は使わんが残す（マスター 2026-11-13）
+- 法務部の指摘：作家名の呼び方（ミュシャ風）はサイトに出さん（`kaizu_sync.py` の ALIAS_BLOCK）。元絵も AI 画像生成と明記
+- 品質保証部の指摘：混ぜる欄の割合ボタンを「標準／ちょっとだけ／半々」に（3 つ混ぜる時に 2 つ分の割合が黙って捨てられとった）。パンくず 44px、meta の空白、textarea に lang=en
+
 ## 2026-11-03 — トップにテーマソングの PV
 
 日本語ページ（/）の一番上の絵のすぐ下に「テーマソング『6弦と僕の船』」の節を足して、YouTube の PV（日本語版 MLVSn8Skckc）を置いた。英語ページ（/en/）には英語版「Six Strings and Me」（KtCwO_7KAJk）。

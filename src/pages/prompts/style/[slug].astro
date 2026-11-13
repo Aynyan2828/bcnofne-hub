@@ -1,0 +1,72 @@
+---
+// 海図帳・画風 1 種ずつのページ。主役＝見本の絵、次に名前、次にプロンプトのコピー。
+import KaizuShell from '../../../components/KaizuShell.astro';
+import { STYLE, type StyleItem, kaizuBase, kaizuImg, styleUrl, displayAliases } from '../../../lib/kaizu';
+
+export function getStaticPaths() {
+  return STYLE.items.map((it, i) => ({
+    params: { slug: it.slug },
+    props: { it, prev: STYLE.items[i - 1] ?? null, next: STYLE.items[i + 1] ?? null },
+  }));
+}
+interface Props { it: StyleItem; prev: StyleItem | null; next: StyleItem | null }
+const { it, prev, next } = Astro.props;
+const fam = STYLE.families[it.family as keyof typeof STYLE.families];
+const aliases = displayAliases(it.aliases, [it.name_ja]);
+---
+<KaizuShell
+  title={`${it.name_ja}（${it.general_ja}）｜画風の${it.number_ja}・海図帳 — AI 画像生成用のプロンプト — BCNOFNe`}
+  description={`AI 画像生成用の画風プロンプト「${it.name_ja}」（${it.general_ja}）。${it.desc_ja}英語と日本語のプロンプトをコピーできる。`}
+>
+  <article class="paper kz-hero">
+    <figure class="kz-hero__img">
+      <img src={kaizuImg(it.img!, 'l')} alt={`「${it.name_ja}」の見本（見本の元絵の AYN をこの画風で描き直した絵）`} width="1000" height="1000" loading="eager" decoding="async" fetchpriority="high" />
+      <figcaption>見本：「見本の元絵」を、このプロンプトで AI 画像生成した絵。</figcaption>
+    </figure>
+    <div>
+      <p class="kz-crumb"><a href={`${kaizuBase}/`}>海図帳</a> › <a href={`${kaizuBase}/style/`}>画風の棚</a> › {it.name_ja}</p>
+      <p class="kz-meta" style="margin:0">画風の{it.number_ja}・{fam}</p>
+      <h1>{it.name_ja}</h1>
+      <p class="kz-meta" style="margin-top:0">{it.general_ja} / {it.name_en}</p>
+      <p>{it.desc_ja}</p>
+      <ol class="kz-steps">
+        <li><b>1</b>画像生成 AI に、元にしたい絵を添付する。</li>
+        <li><b>2</b>下のプロンプト（英語か日本語）をコピーして貼る。</li>
+      </ol>
+      <div class="kz-btns">
+        <button class="btn" type="button" data-copy="p-en" data-label={`「${it.name_ja}」の英語のプロンプト`}>英語をコピー</button>
+        <button class="btn btn--line" type="button" data-copy="p-ja" data-label={`「${it.name_ja}」の日本語のプロンプト`}>日本語をコピー</button>
+      </div>
+      <p class="note">英語の方が、多くの画像生成 AI で効きやすい。添付する絵が無い時も、そのまま描かせられる。</p>
+      <figure class="kz-source" style="margin-top:1rem">
+        <img src={kaizuImg(STYLE.source_img, 's')} alt="見本の元絵：夜の港の岩場にいる AYN" width="480" height="480" loading="lazy" decoding="async" />
+        <figcaption><b>見本の元絵</b><br />BCNOFNe のキャラクター AYN（これも AI 画像生成で描いた絵）。全部の画風で、この 1 枚を描き直している。</figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <section class="paper" aria-labelledby="ph">
+    <h2 id="ph">プロンプト</h2>
+    <details class="kz-prompt" open>
+      <summary>英語（English）</summary>
+      <pre id="p-en" lang="en">{it.prompt_en}</pre>
+    </details>
+    <details class="kz-prompt">
+      <summary>日本語</summary>
+      <pre id="p-ja">{it.prompt_ja}</pre>
+    </details>
+    <div class="kz-btns">
+      <button class="btn" type="button" data-copy="p-en" data-label={`「${it.name_ja}」の英語のプロンプト`}>英語をコピー</button>
+      <button class="btn btn--line" type="button" data-copy="p-ja" data-label={`「${it.name_ja}」の日本語のプロンプト`}>日本語をコピー</button>
+      <a class="btn btn--line" href={`${kaizuBase}/style/?main=${it.id}#mix`}>この画風を主にして混ぜる</a>
+    </div>
+    {aliases.length > 0 && <p class="note">ほかの呼び方：{aliases.join('・')}</p>}
+    <p class="kz-terms">プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。</p>
+  </section>
+
+  <nav class="paper kz-pager" aria-label="ほかの画風">
+    {prev ? <a href={styleUrl(prev)}>← {prev.number_ja} {prev.name_ja}</a> : <span></span>}
+    <a href={`${kaizuBase}/style/`}>一覧へ</a>
+    {next ? <a href={styleUrl(next)}>{next.number_ja} {next.name_ja} →</a> : <span></span>}
+  </nav>
+</KaizuShell>

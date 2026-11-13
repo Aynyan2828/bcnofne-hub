@@ -1,0 +1,184 @@
+---
+// 海図帳・画風の棚（30 種の一覧＋混ぜる欄）。
+// 視線の順: 見出し → 見本の絵の並び → 名前 → （下の）混ぜる欄。
+// 混ぜる決まりは Vault の tools/style_mix.py と同じ（部品は public/prompts/style/mix.json を読む）。
+import KaizuShell from '../../../components/KaizuShell.astro';
+import { STYLE, kaizuBase, kaizuImg, styleUrl } from '../../../lib/kaizu';
+
+const fams = Object.entries(STYLE.families);
+const mixSample = STYLE.mix_samples[0];
+const nameOf = (id: string) => STYLE.items.find((x) => x.id === id)?.name_ja ?? id;
+---
+<KaizuShell
+  title="画風の棚（30 種）｜海図帳 — AI 画像生成用のプロンプト集 — BCNOFNe"
+  description="AI 画像生成用の画風プロンプト 30 種。切り絵・版画・ドット絵・セル画・金屏風など。添付した絵をその画風で描き直す。3 つまで混ぜられる。"
+>
+  <header class="paper">
+    <p class="kz-crumb"><a href={`${kaizuBase}/`}>海図帳</a> › 画風の棚</p>
+    <h1>画風の棚（{STYLE.items.length} 種）</h1>
+    <p class="lead">AI 画像生成用の画風プロンプト。元にしたい絵を添付して、気に入った画風のプロンプトを貼ると、同じ絵がその画風で描き直される。絵を選ぶと、プロンプトのコピーへ。</p>
+    <p class="note"><a href="#mix">2〜3 種を混ぜる欄へ ↓</a></p>
+    <p class="kz-terms">プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。</p>
+    <figure class="kz-source" style="margin-top:0.9rem">
+      <img src={kaizuImg(STYLE.source_img, 's')} alt="見本の元絵：夜の港の岩場にいる AYN" width="480" height="480" loading="eager" decoding="async" />
+      <figcaption><b>見本の元絵</b><br />下の見本はすべて、この 1 枚（BCNOFNe のキャラクター AYN・これも AI 画像生成で描いた絵）を、AI 画像生成で各画風に描き直したもの。</figcaption>
+    </figure>
+  </header>
+
+  <section class="paper" aria-label="絞り込み">
+    <div class="kz-filter">
+      <input type="search" id="kz-q" placeholder="探す：切り絵、版画、ドット" aria-label="画風を探す" />
+    </div>
+    <div class="kz-filter" style="margin-top:0.6rem" id="kz-fams">
+      <button class="kz-chip" type="button" data-fam="" aria-pressed="true">すべて</button>
+      {fams.map(([k, v]) => <button class="kz-chip" type="button" data-fam={k} aria-pressed="false">{v}</button>)}
+    </div>
+    <p class="kz-count" id="kz-count" style="margin-top:0.6rem">{STYLE.items.length} / {STYLE.items.length} 種</p>
+  </section>
+
+  <div class="kz-grid" id="kz-grid">
+    {STYLE.items.map((it, i) => (
+      <a class="kz-card" href={styleUrl(it)} data-fam={it.family}
+         data-hay={[it.name_ja, it.name_en, it.general_ja, it.general_en, it.number_ja, it.desc_ja, ...it.aliases].join(' ').toLowerCase()}>
+        <img src={kaizuImg(it.img!, 's')} alt={`「${it.name_ja}」の見本（AYN を描き直した絵）`} width="480" height="480" loading={i < 4 ? 'eager' : 'lazy'} decoding="async" />
+        <div class="kz-card__body">
+          <p class="kz-card__no">画風の{it.number_ja}・{STYLE.families[it.family as keyof typeof STYLE.families]}</p>
+          <h2 class="kz-card__name">{it.name_ja}</h2>
+          <p class="kz-card__gen">{it.general_ja}</p>
+        </div>
+      </a>
+    ))}
+  </div>
+  <p class="paper" id="kz-empty" hidden>この条件に合う画風はありません。言葉を短くするか「すべて」に戻してください。</p>
+
+  <section class="paper kz-mix" id="mix" aria-labelledby="mix-h">
+    <h2 id="mix-h">画風を混ぜる</h2>
+    <p class="note" style="margin-top:0">先に選んだ方が主（線と形の作り方）。副からは色・質感・光を借りて、1 本のプロンプトにまとめる。3 つまで。</p>
+    <div class="row"><label class="lab" for="m1">主</label><select id="m1"></select></div>
+    <div class="row"><label class="lab" for="m2">副</label><select id="m2"></select></div>
+    <div class="row"><label class="lab" for="m3">3 つ目</label><select id="m3"></select></div>
+    <div class="row" role="group" aria-label="割合">
+      <span class="lab">割合</span>
+      <button class="kz-chip" type="button" data-ratio="" aria-pressed="true">標準</button>
+      <button class="kz-chip" type="button" data-ratio="ちょっとだけ" aria-pressed="false">ちょっとだけ</button>
+      <button class="kz-chip" type="button" data-ratio="半々" aria-pressed="false">半々</button>
+      <input type="text" id="mrt" placeholder="例 6:4" aria-label="割合を自分で書く" />
+    </div>
+    <p class="note" style="margin-top:0">標準は 2 つなら 7 対 3、3 つなら 6 対 2.5 対 1.5。自分で書く時は、2 つなら「6:4」、3 つなら「5:3:2」のように数を合わせる。</p>
+    {mixSample && (
+      <figure class="kz-mixsample">
+        <img src={kaizuImg(mixSample.img, 's')} alt={`混ぜた見本：${mixSample.ids.map(nameOf).join(' × ')}`} width="480" height="480" loading="lazy" decoding="async" />
+        <figcaption>見本：{mixSample.ids.map(nameOf).join(' × ')}（{mixSample.ratio.replace(':', ' 対 ')}）</figcaption>
+      </figure>
+    )}
+    <label class="visually-hidden" for="mout">混ぜたプロンプト（英語）</label>
+    <textarea id="mout" lang="en" readonly>読み込み中…</textarea>
+    <div class="kz-btns">
+      <button class="btn" type="button" id="mcen">英語をコピー</button>
+      <button class="btn btn--line" type="button" id="mcja">日本語をコピー</button>
+    </div>
+  </section>
+</KaizuShell>
+
+<script>
+  // 絞り込み
+  const grid = document.getElementById('kz-grid')!;
+  const cards = Array.from(grid.querySelectorAll<HTMLElement>('.kz-card'));
+  const st = { q: '', fam: '' };
+  const apply = () => {
+    let n = 0;
+    const words = st.q.toLowerCase().split(/\s+/).filter(Boolean);
+    for (const c of cards) {
+      const ok = (!st.fam || c.dataset.fam === st.fam) && words.every((w) => (c.dataset.hay || '').includes(w));
+      c.hidden = !ok; if (ok) n++;
+    }
+    document.getElementById('kz-count')!.textContent = `${n} / ${cards.length} 種`;
+    document.getElementById('kz-empty')!.hidden = n > 0;
+  };
+  document.getElementById('kz-q')!.addEventListener('input', (e) => { st.q = (e.target as HTMLInputElement).value.trim(); apply(); });
+  const famBox = document.getElementById('kz-fams')!;
+  famBox.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('[data-fam]'); if (!b) return;
+    st.fam = b.dataset.fam || '';
+    famBox.querySelectorAll('[data-fam]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    apply();
+  });
+
+  // 混ぜる（Vault の style_mix.py と同じ決まり）
+  type Lang = 'en' | 'ja';
+  let D: any = null;
+  const $ = (id: string) => document.getElementById(id) as any;
+  const fmt = (t: string, o: Record<string, any>) => t.replace(/\{(\w+)\}/g, (_, k) => (o[k] ?? '') + '');
+  function parse(text: string, n: number): number[] | null {
+    const R = D.mix_rules;
+    if (!text) return R.default_ratio[n].slice();
+    text = text.trim();
+    if (R.word_ratios[text] !== undefined) { const v = R.word_ratios[text]; return n === 2 ? [1 - v, v] : [1 - v - 0.1, v, 0.1]; }
+    const nums = text.split(/[:：対/]/).filter((x) => x.trim()).map(Number);
+    if (nums.length !== n || nums.some(isNaN)) return null;
+    const sum = nums.reduce((a, b) => a + b, 0); return sum > 0 ? nums.map((x) => x / sum) : null;
+  }
+  function compose(ids: string[], ratio: string, lang: Lang): string | null {
+    const its = ids.map((id) => D.items.find((x: any) => x.id === id));
+    const w = parse(ratio, ids.length); if (!w) return null;
+    const t = D.mix_text[lang], c = D.prompt_common[lang], titles = D.prompt_sections[lang];
+    const main = its[0], sp = lang === 'en' ? ' ' : '', pct = (x: number) => Math.round(x * 100);
+    const sec: Record<string, string> = {};
+    for (const k of ['line', 'surface', 'texture', 'color', 'light', 'face', 'finish', 'avoid']) sec[k] = main.prompt_parts[lang][k];
+    const subs: string[] = [];
+    its.slice(1).forEach((it: any, i: number) => {
+      const s = w[i + 1], mp = it.mix_parts[lang], name = lang === 'ja' ? it.name_ja : it.name_en;
+      const f = (key: string, txt: string) => fmt(t[key], { name, p: pct(s), txt });
+      let whats: string[];
+      if (i === 1) { sec.light = s > 0.15 ? f('borrowed', mp.light) : sec.light + sp + f('light_lean', mp.light); whats = ['light']; }
+      else if (s <= 0.15) { sec.color = sec.color + sp + f('lean', mp.color); whats = ['color']; }
+      else {
+        sec.color = f('borrowed', mp.color) + t.keep_hue; sec.texture = f('borrowed', mp.texture); whats = ['color', 'texture'];
+        if (s >= 0.4) { sec.light = f('borrowed', mp.light); sec.line = sec.line + sp + f('line_add', mp.line); whats.push('light', 'line'); }
+      }
+      subs.push(fmt(t.sub, { name, gen: lang === 'ja' ? it.general_ja : it.general_en, p: pct(s), what: whats.map((x) => t.what[x]).join(t.and) }));
+    });
+    for (const k of ['use', 'keep', 'scratch', 'ratio']) sec[k] = c[k];
+    sec.finish += sp + t.finish_mix; sec.avoid += sp + fmt(t.avoid_mix, { n: ids.length }); sec.priority = c.priority + t.priority_mix;
+    const intro = fmt(t.intro, { n: ids.length, main: lang === 'ja' ? main.name_ja : main.name_en, main_gen: lang === 'ja' ? main.general_ja : main.general_en, mp: pct(w[0]), subs: subs.join(sp) });
+    const head = (k: string) => (lang === 'en' ? `[${titles[k]}]` : `【${titles[k]}】`);
+    const order = ['use', 'keep', 'scratch', 'ratio', 'line', 'surface', 'texture', 'color', 'light', 'face', 'finish', 'avoid', 'priority'];
+    return [intro, ...order.map((k) => `${head(k)}\n${sec[k]}`)].join('\n\n');
+  }
+  const mix = { ratio: '' };
+  const ids = () => ['m1', 'm2', 'm3'].map((id) => $(id).value).filter(Boolean).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
+  const render = () => {
+    const xs = ids();
+    if (xs.length < 2) { $('mout').value = '主と副を選ぶと、ここに混ぜたプロンプト（英語）が出ます。'; return; }
+    $('mout').value = compose(xs, mix.ratio, 'en') ?? `割合は画風の数（${xs.length} つ）に合わせて「${xs.length === 3 ? '5:3:2' : '7:3'}」のように書いてください。`;
+  };
+  async function setup() {
+    try {
+      const base = (document.querySelector('link[rel=manifest]') as HTMLLinkElement).href.replace(/manifest\.webmanifest$/, '');
+      D = await fetch(`${base}style/mix.json`).then((r) => r.json());
+    } catch { $('mout').value = '混ぜる部品を読み込めませんでした。時間をおいて開き直してください。'; return; }
+    const opts = '<option value="">（なし）</option>' + D.items.map((it: any) => `<option value="${it.id}">${it.number_ja} ${it.name_ja}</option>`).join('');
+    for (const id of ['m1', 'm2', 'm3']) { $(id).innerHTML = opts; $(id).addEventListener('change', render); }
+    const want = new URLSearchParams(location.search).get('main');
+    $('m1').value = want && D.items.some((x: any) => x.id === want) ? want : 'ST-01';
+    $('m2').value = $('m1').value === 'ST-05' ? 'ST-01' : 'ST-05';
+    document.querySelectorAll<HTMLElement>('[data-ratio]').forEach((b) => b.addEventListener('click', () => {
+      mix.ratio = b.dataset.ratio ?? ''; $('mrt').value = '';
+      document.querySelectorAll('[data-ratio]').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); render();
+    }));
+    $('mrt').addEventListener('input', (e: Event) => {
+      mix.ratio = (e.target as HTMLInputElement).value.trim();
+      document.querySelectorAll('[data-ratio]').forEach((x) => x.setAttribute('aria-pressed', 'false')); render();
+    });
+    const cp = (lang: Lang) => {
+      const xs = ids();
+      const txt = xs.length >= 2 && compose(xs, mix.ratio, lang);
+      if (!txt) { (window as any).kzToast?.('主と副を選んで、割合を確かめてください'); return; }
+      (window as any).kzCopy(txt, `混ぜたプロンプト（${lang === 'ja' ? '日本語' : '英語'}）`);
+    };
+    $('mcen').addEventListener('click', () => cp('en'));
+    $('mcja').addEventListener('click', () => cp('ja'));
+    render();
+  }
+  setup();
+</script>
