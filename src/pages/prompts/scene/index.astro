@@ -14,7 +14,7 @@ const moods = SCENE.moods as Record<string, string>;
     <p class="kz-crumb"><a href={`${kaizuBase}/`}>海図帳</a> › 場所の棚</p>
     <h1>場所の棚（{SCENE.items.length} か所）</h1>
     <p class="lead">AI 画像生成用の、背景と世界観のプロンプト。1 本で 1 枚の場所の絵になる。見本の絵はまだなく、文だけ。画風の棚のプロンプトと一緒に使ってもいい。</p>
-    <p class="kz-terms">プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。</p>
+    <p class="kz-terms">プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。使われ方を知るため、押されたボタンや開かれたページの番号・言語（混ぜた画風の組み合わせを含む）の回数だけを、当サイトの集計用サーバー（Cloudflare）に送って数えています。入れた文字は送らず、個人を特定する記録も残しません（IP アドレスは、送りすぎを防ぐために変換して 2 分だけ使い、すぐ消えます）。回数は最長 90 日で消え、Cookie や端末の識別子は使いません。</p>
     <p class="note">棚：{SCENE.shelves.map((s) => <a href={`#${s.id}`} style="display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;margin-right:0.6em">{s.name_ja}</a>)}</p>
   </header>
 
@@ -33,8 +33,8 @@ const moods = SCENE.moods as Record<string, string>;
               <pre id={`ja-${it.slug}`}>{it.prompt_ja}</pre>
             </details>
             <div class="kz-btns">
-              <button class="btn" type="button" data-copy={`en-${it.slug}`} data-label={`「${it.name_ja}」の英語のプロンプト`}>英語をコピー</button>
-              <button class="btn btn--line" type="button" data-copy={`ja-${it.slug}`} data-label={`「${it.name_ja}」の日本語のプロンプト`}>日本語をコピー</button>
+              <button class="btn" type="button" data-copy={`en-${it.slug}`} data-track={`scene:${it.id}:en`} data-label={`「${it.name_ja}」の英語のプロンプト`}>英語をコピー</button>
+              <button class="btn btn--line" type="button" data-copy={`ja-${it.slug}`} data-track={`scene:${it.id}:ja`} data-label={`「${it.name_ja}」の日本語のプロンプト`}>日本語をコピー</button>
             </div>
           </article>
         ))}
