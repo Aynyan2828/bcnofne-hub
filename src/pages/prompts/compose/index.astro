@@ -17,7 +17,7 @@ const js = LETTERING.compose_samples.find((x) => x.template === 'jacket');
     <h1>統合モード（ジャケ・サムネの組み立て）</h1>
     <p class="lead">画風・場所・構図・光・天気・文字を選ぶと、AI 画像生成用のプロンプトが 1 本にまとまる。目的のひな形（ジャケット・サムネイル・縦ショートの表紙・ポスター）を選ぶと、比率・文字の用途・切れない余白が決まる。どれか 1 つからでよい。</p>
     <p class="note"><a href={`${kaizuBase}/style/`}>画風の棚</a>・<a href={`${kaizuBase}/lettering/`}>文字の棚</a>・<a href={`${kaizuBase}/scene/`}>場所の棚</a>で見本を見てから選ぶと早い。</p>
-    <p class="kz-terms">プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。使われ方を知るため、押されたボタンや開かれたページの番号・言語（混ぜた画風の組み合わせを含む）の回数だけを、当サイトの集計用サーバー（Cloudflare）に送って数えています。入れた文字は送らず、個人を特定する記録も残しません（IP アドレスは、送りすぎを防ぐために変換して 2 分だけ使い、すぐ消えます）。回数は最長 90 日で消え、Cookie や端末の識別子は使いません。</p>
+    <p class="kz-terms">プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。プロンプトで作った絵の権利や商用の可否は、お使いの画像生成サービスの規約に従います（当サイトが許すのはプロンプトの文までです）。入れる文字に他人の名前・商標・ロゴを無断で使わず、配信ジャケは配信先の決まりもご確認ください。使われ方を知るため、押されたボタンや開かれたページの番号・言語（混ぜた画風の組み合わせを含む）の回数だけを、当サイトの集計用サーバー（Cloudflare）に送って数えています。入れた文字は送らず、個人を特定する記録も残しません（IP アドレスは、送りすぎを防ぐために変換して 2 分だけ使い、すぐ消えます）。回数は最長 90 日で消え、Cookie や端末の識別子は使いません。</p>
     {js && (
       <figure class="kz-source" style="margin-top:0.9rem">
         <img src={kaizuImg(js.img, 's')} alt="統合モードで描いた見本：ジャケット（正方形）・画風の五番・文字の二番" width="480" height="480" loading="eager" decoding="async" />
@@ -74,10 +74,10 @@ const js = LETTERING.compose_samples.find((x) => x.template === 'jacket');
       <legend>文字</legend>
       <div class="row"><label class="lab" for="lt">書体</label><select id="lt"></select></div>
       <div class="row"><label class="lab" for="tx">大きい文字</label><input type="text" class="wide" id="tx" placeholder="例 曲名・タイトル" autocomplete="off" /></div>
-      <div class="row"><label class="lab" for="sb">小さい文字</label><input type="text" class="wide" id="sb" placeholder="空＝ひな形の既定" autocomplete="off" /></div>
+      <div class="row"><label class="lab" for="sb">小さい文字</label><input type="text" class="wide" id="sb" placeholder="例 アーティスト名（空なら大きい文字だけ）" autocomplete="off" /></div>
       <div id="sets"></div>
       <div class="row"><label class="lab" for="oc">縁取りの色</label><input type="text" class="wide" id="oc" placeholder="空＝自動 例 #ffffff" autocomplete="off" /></div>
-      <p class="note">ジャケットのひな形で小さい文字を空にすると、アーティスト名の欄に「BCNOFNe〜ボクのフネ〜＿」が入る。ご自分の名前を書いてください。</p>
+      <p class="note">小さい文字は空なら入れません。アーティスト名を入れる時は、ご自分の名前か、使ってよい名前を書いてください。</p>
     </fieldset>
   </section>
 
@@ -127,6 +127,7 @@ const js = LETTERING.compose_samples.find((x) => x.template === 'jacket');
   function why(): string {
     const xs = styleIds();
     if ($('asp').value && $('asp').value !== 'keep' && !$('fr').value) return '比率を変える時は、構図も 1 つ選んでください。';
+    if (xs.length < 2 && state.ratio) return '割合は、画風を 2 つ以上選んだ時に使います。';
     if (xs.length >= 2 && !W.mixParse(state.ratio, xs.length)) return `割合は画風の数（${xs.length} つ）に合わせて「${xs.length === 3 ? '5:3:2' : '7:3'}」のように書いてください。`;
     if ($('lt').value && !$('tx').value.trim()) return '大きい文字を入れると、文字の段が入ります。';
     return EMPTY;

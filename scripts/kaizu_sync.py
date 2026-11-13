@@ -148,6 +148,10 @@ def main():
                "items": [{k: it[k] for k in COMPOSE_SC_ITEM_KEYS} for it in scene["items"]]},
         "KC": compose_shared(v),
     }
+    # サイトでは、ジャケのアーティスト名の既定を空にする（他の人のプロンプトに BCNOFNe の名前が入らんよう・法務部 2026-11-14）。
+    # 空の時は「文字は 1 行だけ：曲名」の文になる。Vault の道具（マスター用）は既定のまま
+    for tpl in compose["KC"].get("templates", {}).values():
+        tpl["sub_default"] = ""
     dump(compose, REPO / "public/prompts/compose.json")
     js_dst = REPO / "public/prompts/kaizu-compose.js"
     shutil.copyfile(v / "tools/kaizu_compose.js", js_dst)

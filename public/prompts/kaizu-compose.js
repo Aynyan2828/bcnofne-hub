@@ -133,7 +133,7 @@ function composeAll(styleIds, ratio, sceneId, ltId, text, sub, o, tplKey, lang, 
     } else out = compose(ltId, text, sub, oo, lang, [], null);
   }
   if (!out) return null;
-  if (tpl) { const big = lang === 'en' ? `[${t.format}]` : `【${t.format}】`; const r = aspect && aspect !== 'keep' ? aspect : tpl.ratio; out += `\n\n${big}\n${tpl[lang]}${lang === 'en' ? ' ' : ''}${fmtT(t.ratio, { r })}`; }
+  if (tpl) { const big = lang === 'en' ? `[${t.format}]` : `【${t.format}】`; const r = aspect && aspect !== 'keep' ? aspect : tpl.ratio; const body = !sub && tpl[lang + '_one'] ? tpl[lang + '_one'] : tpl[lang]; out += `\n\n${big}\n${body}${lang === 'en' ? ' ' : ''}${fmtT(t.ratio, { r })}`; }
   return out;
 }
 
