@@ -95,3 +95,26 @@
 
 /* 使ってよい範囲（入口・画風の棚・場所の棚の頭に置く） */
 .kz-terms { margin: 0.9rem 0 0; padding: 0.7rem 0.9rem; border-left: 3px solid var(--c-blue-deep); background: var(--c-mist); border-radius: 0 12px 12px 0; font-size: 0.92rem; }
+
+/* 文字の棚のカード：説明を 1〜2 行添える */
+.kz-card__desc { font-size: 0.8rem; color: var(--c-ink-soft); margin: 0.3rem 0 0; line-height: 1.55; }
+
+/* 統合モード（/prompts/compose/）：選ぶ所を段ごとに分ける */
+.kz-compose fieldset { border: 0; border-top: 1px solid var(--c-line); margin: 0.9rem 0 0; padding: 0.8rem 0 0; min-width: 0; }
+.kz-compose legend { font-family: var(--font-display); font-size: 1.1rem; color: var(--c-blue-deep); padding: 0 0.4em 0 0; }
+.kz-compose .row > * { min-width: 0; max-width: 100%; }
+.kz-compose .lab { flex: 0 0 6.6em; }
+/* 広い画面では、選ぶ所（左）とできたプロンプト（右・ついてくる）を横に並べる */
+.kz-compose-wrap { display: grid; gap: clamp(1.2rem, 3vw, 1.8rem); }
+.kz-jump { display: inline-flex; align-items: center; min-height: 44px; margin-left: 0.4em; }
+@media (min-width: 1000px) {
+  .kz-jump { display: none; }
+  .kz-compose-wrap { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; }
+  .kz-compose-wrap > #out-box { position: sticky; top: 5rem; }
+  .kz-compose-wrap #out { max-height: calc(100vh - 14rem); }
+}
+.kz-mix input[type=text].wide { flex: 1 1 240px; width: auto; }
+
+/* 入口：画風が主役（左の大きい 1 枚）。場所・文字・統合モードは右に小さく積む */
+.kz-shelves__side { display: grid; gap: 1rem; }
+.kz-shelves__side .kz-shelf h2 { font-size: clamp(1.1rem, 3.2vw, 1.35rem); }

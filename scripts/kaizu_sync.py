@@ -3,10 +3,16 @@
 
 正本: ~/Documents/BCNOFNe Vault/03_Knowledge/Image_Prompts/BCNOFNe_画風カタログ/
   - style.json（画風 30 種）・scene.json（場所 24 か所）・images/style/*.png
+  - lettering.json（文字 20 種）・images/lettering/*.png（見本 20 枚＋統合モードのジャケ見本）
+  - framing.json・light.json・weather.json（足す棚。統合モードだけが使う）
+  - tools/kaizu_compose.py（shared_json）・tools/kaizu_compose.js（統合モードの組み立て）
 写し先（このリポ）:
   - src/data/kaizu/style.json  … ページを作るのに要る所だけ（Astro がビルド時に読む）
   - src/data/kaizu/scene.json
-  - public/prompts/style/mix.json … 「混ぜる」欄がブラウザで読む部品だけ
+  - src/data/kaizu/lettering.json … 文字の棚の一覧用
+  - public/prompts/style/mix.json … 「混ぜる」欄と統合モードがブラウザで読む画風の部品
+  - public/prompts/compose.json   … 統合モードがブラウザで読む部品（D=文字・SC=場所・KC=ひな形と足す棚）
+  - public/prompts/kaizu-compose.js … tools/kaizu_compose.js をそのまま写す（中身は変えん）
   - public/prompts/img/*.webp     … 見本画像（一覧用 480px・1 種ずつのページ用 1000px）
 
 Vault 側は読むだけ。上書き・削除はせん。
@@ -15,6 +21,8 @@ Vault 側は読むだけ。上書き・削除はせん。
 import argparse
 import json
 import logging
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -29,6 +37,13 @@ STYLE_ITEM_KEYS = ["id", "no", "number_ja", "slug", "name_ja", "name_en", "gener
                    "aliases", "family", "desc_ja", "sample_image", "prompt_en", "prompt_ja"]
 SCENE_ITEM_KEYS = ["id", "no", "number_ja", "slug", "name_ja", "name_en", "place_ja", "aliases",
                    "shelf", "time", "mood", "desc_ja", "prompt_en", "prompt_ja"]
+LETTERING_ITEM_KEYS = ["id", "number_ja", "slug", "name_ja", "name_en", "general_ja", "aliases", "family", "desc_ja"]
+# 統合モードの JS（kaizu_compose.js）が読む所だけ。作業メモ・外部サイトの話は持ってこん
+COMPOSE_LT_ITEM_KEYS = ["id", "number_ja", "name_ja", "name_en", "general_ja", "general_en", "prompt_parts"]
+COMPOSE_LT_HEAD = ["version", "settings", "prompt_common", "prompt_sections", "prompt_order", "mix_text", "families"]
+COMPOSE_SC_ITEM_KEYS = ["id", "number_ja", "name_ja", "prompt_en", "prompt_ja", "prompt_parts"]
+ADDON_HEAD = ["version", "section_titles", "intro", "aspects", "fits", "modes", "seasons"]
+ADDON_ITEM_KEYS = ["id", "number_ja", "name_ja", "section", "part_keys", "prompt_parts"]
 SIZES = {"s": 480, "l": 1000}
 # 作家・個人の名前を指す呼び方はサイトに出さん（法務部 2026-11-13。Vault の正本はそのまま）
 ALIAS_BLOCK = ["ミュシャ"]
@@ -56,6 +71,25 @@ def to_webp(src: Path, stem: str, out_dir: Path):
     return f"{stem}"
 
 
+def drop_blocked(aliases):
+    return [a for a in aliases if not any(b in a for b in ALIAS_BLOCK)]
+
+
+def compose_shared(v: Path):
+    """Vault の kaizu_compose.shared_json() を別のプロセスで呼ぶ（Vault 側のコードはこのリポに混ぜん）"""
+    code = "import json,sys; sys.path.insert(0, sys.argv[1]); import kaizu_compose as K; print(json.dumps(K.shared_json(), ensure_ascii=False))"
+    r = subprocess.run([sys.executable, "-I", "-c", code, str(v / "tools")], capture_output=True, text=True, encoding="utf-8", check=True)
+    kc = json.loads(r.stdout)
+    # 足す棚は JS が使う所だけに絞る（文は同じ。名前・説明・作業メモは要らん）
+    for name, shelf in list(kc["addons"].items()):
+        if not shelf:
+            continue
+        slim = {k: shelf[k] for k in ADDON_HEAD if k in shelf}
+        slim["items"] = [{k: it[k] for k in ADDON_ITEM_KEYS} for it in shelf["items"]]
+        kc["addons"][name] = slim
+    return kc
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--vault", type=Path, default=DEFAULT_VAULT)
@@ -67,7 +101,7 @@ def main():
     items = []
     for it in style["items"]:
         row = {k: it.get(k) for k in STYLE_ITEM_KEYS}
-        row["aliases"] = [a for a in row["aliases"] if not any(b in a for b in ALIAS_BLOCK)]
+        row["aliases"] = drop_blocked(row["aliases"])
         if it.get("sample_image"):
             row["img"] = to_webp(v / it["sample_image"], it["id"], img_dir)
         items.append(row)
@@ -83,13 +117,43 @@ def main():
     mix = {"version": style["version"], "mix_rules": style["mix_rules"], "mix_text": style["mix_text"],
            "prompt_common": style["prompt_common"], "prompt_sections": style["prompt_sections"],
            "items": [{k: it[k] for k in ["id", "number_ja", "name_ja", "name_en", "general_ja", "general_en",
-                                         "prompt_parts", "mix_parts"]} for it in style["items"]]}
+                                         "prompt_parts", "mix_parts", "prompt_en", "prompt_ja"]} for it in style["items"]]}
     dump(mix, REPO / "public/prompts/style/mix.json")
 
     shead = {k: scene[k] for k in ["version", "updated", "shelves", "times", "moods", "addons"]}
     dump({**shead, "items": [{k: it.get(k) for k in SCENE_ITEM_KEYS} for it in scene["items"]]},
          REPO / "src/data/kaizu/scene.json", 1)
-    log.info("画風 %d 種・場所 %d か所・画像 %d 枚", len(items), len(scene["items"]),
+    # 文字の棚（一覧用）
+    lett = load(v / "lettering.json")
+    lrows = []
+    for it in lett["items"]:
+        row = {k: it.get(k) for k in LETTERING_ITEM_KEYS}
+        row["aliases"] = drop_blocked(row["aliases"])
+        if it.get("sample_image"):
+            row["img"] = to_webp(v / it["sample_image"], it["id"], img_dir)
+        lrows.append(row)
+    jacket = v / "images/lettering/COMPOSE_jacket_ST-05xLT-02.png"
+    compose_samples = []
+    if jacket.exists():
+        compose_samples.append({"template": "jacket", "style": ["ST-05"], "lettering": "LT-02",
+                                "img": to_webp(jacket, "COMPOSE_jacket_ST-05xLT-02", img_dir)})
+    lhead = {k: lett[k] for k in ["version", "updated", "families", "sample_text"]}
+    dump({**lhead, "compose_samples": compose_samples, "items": lrows}, REPO / "src/data/kaizu/lettering.json", 1)
+
+    # 統合モードの部品
+    compose = {
+        "D": {**{k: lett[k] for k in COMPOSE_LT_HEAD},
+              "items": [{k: it[k] for k in COMPOSE_LT_ITEM_KEYS} for it in lett["items"]]},
+        "SC": {"prompt_sections": scene["prompt_sections"],
+               "items": [{k: it[k] for k in COMPOSE_SC_ITEM_KEYS} for it in scene["items"]]},
+        "KC": compose_shared(v),
+    }
+    dump(compose, REPO / "public/prompts/compose.json")
+    js_dst = REPO / "public/prompts/kaizu-compose.js"
+    shutil.copyfile(v / "tools/kaizu_compose.js", js_dst)
+    log.info("写した %s", js_dst.relative_to(REPO))
+
+    log.info("画風 %d 種・場所 %d か所・文字 %d 種・画像 %d 枚", len(items), len(scene["items"]), len(lrows),
              len(list(img_dir.glob("*.webp"))))
 
 

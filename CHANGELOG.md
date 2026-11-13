@@ -1,5 +1,13 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-11-14 (2) — 海図帳に「文字の棚」と「統合モード」（ブランチ feat/kaizu-lettering-compose・未公開）
+
+- `/prompts/lettering/`（新）：文字 20 種の見本の一覧（画風の一覧と同じ見た目・番号・名前・一般名・説明・絞り込み）。カードは `/prompts/compose/?lt=LT-xx` へ。見本は大きい文字「BCNOFNe」・小さい文字「ぼくのふね」で描いたもの、と明記
+- `/prompts/compose/`（新・統合モード）：ひな形（ジャケット・サムネ・縦ショートの表紙・ポスター）・画風（主・副・3 つ目・割合）・場所・構図・比率・合わせ方・構図の扱い・光・光の扱い・レンズ・時間帯と天気・季節・文字の書体・大きい／小さい文字・文字の設定 7 つ・縁取りの色を選んで、英語／日本語をコピー。`?lt=` `?main=` で初期値。組み立ては Vault の `tools/kaizu_compose.js` をそのまま写した `/prompts/kaizu-compose.js` の `composeAll`（Python の `kaizu_compose.py` と一字一句同じ出力を確認）。コピーの送り口は文字＝shelf=lettering、画風 1 つ＝shelf=style、2〜3＝ev=mix、場所＝shelf=scene（構図・光・天気は送らん）
+- `scripts/kaizu_sync.py`：文字の見本 20 枚＋ジャケ見本を webp に、`src/data/kaizu/lettering.json`・`public/prompts/compose.json`（D・SC・KC）・`public/prompts/kaizu-compose.js` を写す。`public/prompts/style/mix.json` に `prompt_en`／`prompt_ja` を足した（既存のキーはそのまま・236 KB → 538 KB）。作家名の呼び方を外す決まり（ALIAS_BLOCK）を文字の棚にも
+- 入口（日英）に「文字の棚」「統合モード」の 2 枚（場所の棚と同じ小ささで右の列に積む。英語版は日本語ページへの案内）
+- `sw.js`：新しい 2 ページ・文字の見本（一覧用）・ジャケ見本・`compose.json`・`kaizu-compose.js` を先読み。`names.json` に `lettering`
+
 ## 2026-11-14 — 海図帳の使われ方を数える（公開・マスター OK 2026-11-14 07:54）（旧：ブランチだけ・未公開 〜2026-11-13）
 
 - コピーのボタン（画風 1 種ずつ・場所の棚）・混ぜる欄のコピー・画風の 1 種ずつのページを開いた時に、bcnofne-edge の `/kaizu/hit` へ回数だけ送る（`navigator.sendBeacon`・オフラインの時は送らん）。送るのは出来事・棚・番号・英日・混ぜた組み合わせと割合だけで、入れた文字や個人の情報は送らん

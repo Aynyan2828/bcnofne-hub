@@ -1,0 +1,222 @@
+---
+// 海図帳・統合モード（画風＋場所＋構図・光・天気＋文字＋ひな形を 1 本のプロンプトに）。
+// 組み立ては Vault の tools/kaizu_compose.js をそのまま写した /prompts/kaizu-compose.js の composeAll を使う（ここで組み立て直さん）。
+// 部品：/prompts/style/mix.json（SD＝画風）・/prompts/compose.json（D＝文字・SC＝場所・KC＝ひな形と足す棚）。
+// 初期値：?lt=LT-xx（文字の書体）・?main=ST-xx（画風の主）。何も選んどらん時は案内だけ出す。
+import KaizuShell from '../../../components/KaizuShell.astro';
+import { LETTERING, kaizuBase, kaizuImg } from '../../../lib/kaizu';
+
+const js = LETTERING.compose_samples.find((x) => x.template === 'jacket');
+---
+<KaizuShell
+  title="統合モード（ジャケ・サムネの組み立て）｜海図帳 — AI 画像生成用のプロンプト集 — BCNOFNe"
+  description="画風・場所・構図・光・天気・文字を選んで、ジャケット・サムネイル・縦ショートの表紙・ポスター用の AI 画像生成プロンプトを 1 本に組み立てる。英語と日本語をコピーできる。"
+>
+  <header class="paper">
+    <p class="kz-crumb"><a href={`${kaizuBase}/`}>海図帳</a> › 統合モード</p>
+    <h1>統合モード（ジャケ・サムネの組み立て）</h1>
+    <p class="lead">画風・場所・構図・光・天気・文字を選ぶと、AI 画像生成用のプロンプトが 1 本にまとまる。目的のひな形（ジャケット・サムネイル・縦ショートの表紙・ポスター）を選ぶと、比率・文字の用途・切れない余白が決まる。どれか 1 つからでよい。</p>
+    <p class="note"><a href={`${kaizuBase}/style/`}>画風の棚</a>・<a href={`${kaizuBase}/lettering/`}>文字の棚</a>・<a href={`${kaizuBase}/scene/`}>場所の棚</a>で見本を見てから選ぶと早い。</p>
+    <p class="kz-terms">プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。使われ方を知るため、押されたボタンや開かれたページの番号・言語（混ぜた画風の組み合わせを含む）の回数だけを、当サイトの集計用サーバー（Cloudflare）に送って数えています。入れた文字は送らず、個人を特定する記録も残しません（IP アドレスは、送りすぎを防ぐために変換して 2 分だけ使い、すぐ消えます）。回数は最長 90 日で消え、Cookie や端末の識別子は使いません。</p>
+    {js && (
+      <figure class="kz-source" style="margin-top:0.9rem">
+        <img src={kaizuImg(js.img, 's')} alt="統合モードで描いた見本：ジャケット（正方形）・画風の五番・文字の二番" width="480" height="480" loading="eager" decoding="async" />
+        <figcaption><b>統合モードで描いた見本</b><br />ひな形「ジャケット」・画風の五番・文字の二番（墨の筆文字）で組み立てたプロンプトを、見本の元絵（BCNOFNe のキャラクター AYN・これも AI 画像生成で描いた絵）と一緒に AI 画像生成に渡して描いたもの。</figcaption>
+      </figure>
+    )}
+  </header>
+
+  <div class="kz-compose-wrap">
+  <section class="paper kz-mix kz-compose" aria-labelledby="c-h">
+    <h2 id="c-h">選ぶ</h2>
+    <p class="note" style="margin-top:0">「既定」「なし」のままの所は、ひな形と各棚の決まりに任せる。<a class="kz-jump" href="#out-box">できたプロンプトへ ↓</a></p>
+
+    <fieldset>
+      <legend>仕上がりの形</legend>
+      <div class="row"><label class="lab" for="tp">ひな形</label><select id="tp"></select></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>画風</legend>
+      <p class="note">1 つならその画風、2〜3 つなら混ぜる（先に選んだ方が主）。文字の色・質感は画風に合わせる。</p>
+      <div class="row"><label class="lab" for="s1">主</label><select id="s1"></select></div>
+      <div class="row"><label class="lab" for="s2">副</label><select id="s2"></select></div>
+      <div class="row"><label class="lab" for="s3">3 つ目</label><select id="s3"></select></div>
+      <div class="row" role="group" aria-label="割合">
+        <span class="lab">割合</span>
+        <button class="kz-chip" type="button" data-ratio="" aria-pressed="true">標準</button>
+        <button class="kz-chip" type="button" data-ratio="ちょっとだけ" aria-pressed="false">ちょっとだけ</button>
+        <button class="kz-chip" type="button" data-ratio="半々" aria-pressed="false">半々</button>
+        <input type="text" id="sr" placeholder="例 6:4" aria-label="割合を自分で書く" />
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>場所と構図</legend>
+      <div class="row"><label class="lab" for="sc">場所</label><select id="sc"></select></div>
+      <div class="row"><label class="lab" for="fr">構図</label><select id="fr"></select></div>
+      <div class="row"><label class="lab" for="asp">比率</label><select id="asp"></select></div>
+      <div class="row"><label class="lab" for="fit">合わせ方</label><select id="fit"></select></div>
+      <div class="row"><label class="lab" for="frm">構図の扱い</label><select id="frm"></select></div>
+      <p class="note">比率を変える時は、構図も 1 つ選ぶ。</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>光と天気</legend>
+      <div class="row"><label class="lab" for="lg">光</label><select id="lg"></select></div>
+      <div class="row"><label class="lab" for="lgm">光の扱い</label><select id="lgm"></select></div>
+      <div class="row"><label class="lab" for="ln">レンズ</label><select id="ln"></select></div>
+      <div class="row"><label class="lab" for="tw">時間帯と天気</label><select id="tw"></select></div>
+      <div class="row"><label class="lab" for="ss">季節</label><select id="ss"></select></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>文字</legend>
+      <div class="row"><label class="lab" for="lt">書体</label><select id="lt"></select></div>
+      <div class="row"><label class="lab" for="tx">大きい文字</label><input type="text" class="wide" id="tx" placeholder="例 曲名・タイトル" autocomplete="off" /></div>
+      <div class="row"><label class="lab" for="sb">小さい文字</label><input type="text" class="wide" id="sb" placeholder="空＝ひな形の既定" autocomplete="off" /></div>
+      <div id="sets"></div>
+      <div class="row"><label class="lab" for="oc">縁取りの色</label><input type="text" class="wide" id="oc" placeholder="空＝自動 例 #ffffff" autocomplete="off" /></div>
+      <p class="note">ジャケットのひな形で小さい文字を空にすると、アーティスト名の欄に「BCNOFNe〜ボクのフネ〜＿」が入る。ご自分の名前を書いてください。</p>
+    </fieldset>
+  </section>
+
+  <section class="paper kz-mix" id="out-box" aria-labelledby="o-h">
+    <h2 id="o-h">できたプロンプト</h2>
+    <label class="visually-hidden" for="out">できたプロンプト（英語）</label>
+    <textarea id="out" lang="en" readonly>読み込み中…</textarea>
+    <div class="kz-btns">
+      <button class="btn" type="button" id="cen">英語をコピー</button>
+      <button class="btn btn--line" type="button" id="cja">日本語をコピー</button>
+    </div>
+  </section>
+  </div>
+</KaizuShell>
+
+<script>
+  type Lang = 'en' | 'ja';
+  const W = window as any;
+  const $ = (id: string) => document.getElementById(id) as any;
+  const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c]);
+  const SET_KEYS = ['size', 'layout', 'place', 'outline', 'weight', 'priority', 'mode'];
+  const state = { ratio: '' };
+  const EMPTY = '選ぶとここに出ます。画風・場所・文字のどれか 1 つからでよい。';
+
+  const styleIds = (): string[] => ['s1', 's2', 's3'].map((id) => $(id).value).filter(Boolean).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
+  function opts() {
+    const o: Record<string, string | null> = {};
+    for (const k of SET_KEYS) o[k] = $('set-' + k).value || null;
+    o.outline_color = $('oc').value.trim() || null;
+    return o;
+  }
+  function addons() {
+    return {
+      framing: { id: $('fr').value, aspect: $('asp').value || null, fit: $('fit').value || null, mode: $('frm').value || 'keep' },
+      light: { id: $('lg').value, mode: $('lgm').value || 'add' },
+      lens: { id: $('ln').value },
+      weather: { id: $('tw').value, season: $('ss').value || null },
+    };
+  }
+  function build(lang: Lang): string | null {
+    const sub = $('sb').value.trim();
+    try {
+      return W.composeAll(styleIds(), state.ratio, $('sc').value, $('lt').value, $('tx').value.trim(), sub === '' ? null : sub, opts(), $('tp').value, lang, addons());
+    } catch (err) { console.warn('kaizu compose', err); return null; }
+  }
+  /** 出来んかった時の理由（どこを直せばよいか） */
+  function why(): string {
+    const xs = styleIds();
+    if ($('asp').value && $('asp').value !== 'keep' && !$('fr').value) return '比率を変える時は、構図も 1 つ選んでください。';
+    if (xs.length >= 2 && !W.mixParse(state.ratio, xs.length)) return `割合は画風の数（${xs.length} つ）に合わせて「${xs.length === 3 ? '5:3:2' : '7:3'}」のように書いてください。`;
+    if ($('lt').value && !$('tx').value.trim()) return '大きい文字を入れると、文字の段が入ります。';
+    return EMPTY;
+  }
+  function render() {
+    const v = build('en');
+    $('out').value = v ?? why();
+  }
+
+  /** 送り口：使った棚ごとに 1 回。edge が受けるのは style・scene・lettering の copy と mix だけ */
+  function track(lang: Lang) {
+    const t = W.kzTrack; if (!t) return;
+    const xs = styleIds();
+    if ($('lt').value && $('tx').value.trim()) t({ ev: 'copy', shelf: 'lettering', id: $('lt').value, lang });
+    if (xs.length === 1) t({ ev: 'copy', shelf: 'style', id: xs[0], lang });
+    else if (xs.length > 1) t({ ev: 'mix', mix: xs.join('+'), ratio: state.ratio, lang });
+    if ($('sc').value) t({ ev: 'copy', shelf: 'scene', id: $('sc').value, lang });
+  }
+  function copy(lang: Lang) {
+    const v = build(lang);
+    if (!v) { W.kzToast?.(why()); return; }
+    track(lang);
+    W.kzCopy(v, `プロンプト（${lang === 'ja' ? '日本語' : '英語'}）`);
+  }
+
+  const loadScript = (src: string) => new Promise<void>((ok, ng) => {
+    const s = document.createElement('script'); s.src = src; s.onload = () => ok(); s.onerror = () => ng(new Error(src));
+    document.head.appendChild(s);
+  });
+
+  async function setup() {
+    const base = (document.querySelector('link[rel=manifest]') as HTMLLinkElement).href.replace(/manifest\.webmanifest$/, '');
+    try {
+      const [sd, cj] = await Promise.all([
+        fetch(`${base}style/mix.json`).then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); }),
+        fetch(`${base}compose.json`).then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); }),
+      ]);
+      // kaizu-compose.js はこの名前のグローバルを読む（Vault の見本ページと同じ約束）
+      Object.assign(W, { SD: sd, D: cj.D, SC: cj.SC, KC: cj.KC, fmtT: (t: string, o: Record<string, unknown>) => t.replace(/\{(\w+)\}/g, (_: string, k: string) => String(o[k] ?? '')) });
+      await loadScript(`${base}kaizu-compose.js`);
+      if (typeof W.composeAll !== 'function') throw new Error('composeAll');
+    } catch (err) {
+      console.warn('kaizu compose load', err);
+      $('out').value = '組み立ての部品を読み込めませんでした。時間をおいて開き直してください。';
+      return;
+    }
+    const { D, SD, SC, KC } = W;
+    const A = KC.addons || {};
+    const none = '<option value="">（なし）</option>';
+    const items = (xs: any[]) => xs.map((it) => `<option value="${esc(it.id)}">${esc(it.number_ja)} ${esc(it.name_ja)}</option>`).join('');
+    const shelfOpts = (sh: any, sec: string) => none + (sh ? items(sh.items.filter((x: any) => x.section === sec)) : '');
+    const optOpts = (o: Record<string, any> | undefined, first?: string) => (first ? `<option value="">${esc(first)}</option>` : '') + Object.entries(o || {}).map(([k, v]) => `<option value="${esc(k)}">${esc(v.label_ja)}</option>`).join('');
+
+    $('tp').innerHTML = none + Object.entries(KC.templates).map(([k, v]: [string, any]) => `<option value="${esc(k)}">${esc(v.label_ja)}</option>`).join('');
+    for (const id of ['s1', 's2', 's3']) $(id).innerHTML = none + items(SD.items);
+    $('sc').innerHTML = none + items(SC.items);
+    $('fr').innerHTML = shelfOpts(A.framing, 'framing');
+    $('asp').innerHTML = optOpts(A.framing?.aspects, '既定（ひな形どおり）');
+    $('fit').innerHTML = optOpts(A.framing?.fits, '既定（背景を広げる）');
+    $('frm').innerHTML = optOpts(A.framing?.modes);
+    $('lg').innerHTML = shelfOpts(A.light, 'light');
+    $('lgm').innerHTML = optOpts(A.light?.modes);
+    $('ln').innerHTML = shelfOpts(A.light, 'lens');
+    $('tw').innerHTML = shelfOpts(A.weather, 'weather');
+    $('ss').innerHTML = optOpts(A.weather?.seasons);
+    $('lt').innerHTML = '<option value="">（文字なし）</option>' + items(D.items);
+    $('sets').innerHTML = SET_KEYS.map((k) => {
+      const s = D.settings[k];
+      return `<div class="row"><label class="lab" for="set-${k}">${esc(s.label_ja)}</label><select id="set-${k}"><option value="">既定（ひな形どおり）</option>${Object.entries(s.options).map(([v, o]: [string, any]) => `<option value="${esc(v)}">${esc(o.label_ja)}</option>`).join('')}</select></div>`;
+    }).join('');
+
+    const q = new URLSearchParams(location.search);
+    const lt = q.get('lt'), main = q.get('main');
+    if (lt && D.items.some((x: any) => x.id === lt)) $('lt').value = lt;
+    if (main && SD.items.some((x: any) => x.id === main)) $('s1').value = main;
+
+    document.querySelectorAll<HTMLElement>('.kz-compose select, .kz-compose input').forEach((el) => {
+      el.addEventListener('input', render); el.addEventListener('change', render);
+    });
+    document.querySelectorAll<HTMLElement>('[data-ratio]').forEach((b) => b.addEventListener('click', () => {
+      state.ratio = b.dataset.ratio ?? ''; $('sr').value = '';
+      document.querySelectorAll('[data-ratio]').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); render();
+    }));
+    $('sr').addEventListener('input', (e: Event) => {
+      state.ratio = (e.target as HTMLInputElement).value.trim();
+      document.querySelectorAll('[data-ratio]').forEach((x) => x.setAttribute('aria-pressed', String(!state.ratio && (x as HTMLElement).dataset.ratio === ''))); render();
+    });
+    $('cen').addEventListener('click', () => copy('en'));
+    $('cja').addEventListener('click', () => copy('ja'));
+    render();
+  }
+  setup();
+</script>

@@ -1,8 +1,8 @@
 ---
 // 海図帳の入口（/prompts/ と /en/prompts/ で共用）。
-// 主役＝画風の棚（見本の絵）。場所の棚は文だけの脇役なので小さく置く。
+// 主役＝画風の棚（見本の絵）。場所の棚・文字の棚・統合モードは脇役なので右に小さく積む。
 import KaizuShell from './KaizuShell.astro';
-import { STYLE, SCENE, kaizuBase, kaizuImg } from '../lib/kaizu';
+import { STYLE, SCENE, LETTERING, kaizuBase, kaizuImg } from '../lib/kaizu';
 
 interface Props { lang?: 'ja' | 'en' }
 const { lang = 'ja' } = Astro.props;
@@ -11,7 +11,7 @@ const picks = ['ST-01', 'ST-05', 'ST-10', 'ST-14', 'ST-18', 'ST-30'].map((id) =>
 const t = en
   ? {
       title: 'Kaizu — Prompt Chart Book for AI image generation | BCNOFNe',
-      desc: 'Kaizu is a free book of prompts for AI image generation, written by BCNOFNe: 30 painting styles you can mix, and 24 places. Copy a prompt and paste it into your image AI.',
+      desc: `Kaizu is a free book of prompts for AI image generation, written by BCNOFNe: 30 painting styles you can mix, 24 places and ${LETTERING.items.length} lettering styles, plus a compose mode for covers and thumbnails. Copy a prompt and paste it into your image AI.`,
       eyebrow: 'Prompt Chart Book',
       h1: 'Kaizu',
       lead: 'A book of prompts for AI image generation. Pick a painting style, copy the prompt, and paste it into your image AI together with your own picture.',
@@ -22,13 +22,19 @@ const t = en
       sceneH: `Places (${SCENE.items.length})`,
       sceneP: 'Text-only prompts for backgrounds and settings: harbors, towns, rooms, nature and strange places.',
       sceneGo: 'Open the places',
-      pageNote: 'The style and place pages are in Japanese. Every prompt is there in both English and Japanese.',
+      letterH: `Lettering (${LETTERING.items.length})`,
+      letterP: 'Prompts that add words to your picture: brush, neon, stencil, embroidery, bubble letters and more. (Japanese page)',
+      letterGo: 'Open the lettering',
+      composeH: 'Compose mode (covers and thumbnails)',
+      composeP: 'Pick a style, a place, light, weather and lettering, and get one prompt shaped for a cover, a thumbnail, a short-video cover or a poster. (Japanese page)',
+      composeGo: 'Open compose mode',
+      pageNote: 'The style, place, lettering and compose pages are in Japanese. Every prompt is there in both English and Japanese.',
       terms: 'You are free to use the prompts for your own image generation, including commercial use. If you can, adding the name "BCNOFNe" when you use them would make us happy (optional). Please do not republish or redistribute the sample pictures. To learn how the book is used, we count only how many times each button is pressed or page is opened (item number and language, including which styles were mixed), by sending it to our own counting server (Cloudflare). We do not send what you type, and we keep no record that identifies you (your IP address is used only briefly in converted form, about 2 minutes, to prevent abuse). Counts are deleted after 90 days at most. We use no cookies or device identifiers.',
       credit: 'BCNOFNe original (no text copied from other sites). The sample pictures were made with AI image generation from one source picture of AYN, our character (the source picture is AI-generated too).',
     }
   : {
       title: '海図帳（かいずちょう）｜AI 画像生成用のプロンプト集 — BCNOFNe',
-      desc: 'BCNOFNe の海図帳は、AI 画像生成用のプロンプト集。混ぜられる画風 30 種と、場所 24 か所。プロンプトをコピーして画像生成 AI に貼るだけ。',
+      desc: `BCNOFNe の海図帳は、AI 画像生成用のプロンプト集。混ぜられる画風 30 種、場所 24 か所、文字 ${LETTERING.items.length} 種と、ジャケ・サムネを組み立てる統合モード。プロンプトをコピーして画像生成 AI に貼るだけ。`,
       eyebrow: 'Prompt Chart Book',
       h1: '海図帳（かいずちょう）',
       lead: 'AI 画像生成用のプロンプト集。画風を選んでプロンプトをコピーし、自分の絵と一緒に画像生成 AI に貼るだけ。',
@@ -39,6 +45,12 @@ const t = en
       sceneH: `場所の棚（${SCENE.items.length} か所）`,
       sceneP: '背景や世界観のためのプロンプト。港と海・街・部屋・自然・不思議な場所。見本の絵はまだなく、文だけ。',
       sceneGo: '場所を見る',
+      letterH: `文字の棚（${LETTERING.items.length} 種）`,
+      letterP: '絵に文字を入れるプロンプト。筆文字・ネオン・ステンシル・刺繍・浮き輪文字など。',
+      letterGo: '文字を見る',
+      composeH: '統合モード（ジャケ・サムネの組み立て）',
+      composeP: '画風・場所・光・天気・文字を選んで、ジャケット・サムネイル・縦ショートの表紙・ポスター用の 1 本にまとめる。',
+      composeGo: '組み立てる',
       pageNote: '',
       terms: 'プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。使われ方を知るため、押されたボタンや開かれたページの番号・言語（混ぜた画風の組み合わせを含む）の回数だけを、当サイトの集計用サーバー（Cloudflare）に送って数えています。入れた文字は送らず、個人を特定する記録も残しません（IP アドレスは、送りすぎを防ぐために変換して 2 分だけ使い、すぐ消えます）。回数は最長 90 日で消え、Cookie や端末の識別子は使いません。',
       credit: '名前・説明・プロンプトの文は BCNOFNe オリジナル（他サイトの文の転載なし）。見本の絵は、BCNOFNe のキャラクター AYN の 1 枚（見本の元絵・これも AI 画像生成で描いた絵）を、AI 画像生成で各画風に描き直したもの。',
@@ -77,11 +89,23 @@ const t = en
       <p>{t.styleP}</p>
       <span class="kz-go">{t.styleGo} →</span>
     </a>
-    <a class="paper kz-shelf" href={`${kaizuBase}/scene/`}>
-      <h2>{t.sceneH}</h2>
-      <p>{t.sceneP}</p>
-      <span class="kz-go">{t.sceneGo} →</span>
-    </a>
+    <div class="kz-shelves__side">
+      <a class="paper kz-shelf" href={`${kaizuBase}/scene/`}>
+        <h2>{t.sceneH}</h2>
+        <p>{t.sceneP}</p>
+        <span class="kz-go">{t.sceneGo} →</span>
+      </a>
+      <a class="paper kz-shelf" href={`${kaizuBase}/lettering/`} hreflang={en ? 'ja' : undefined}>
+        <h2>{t.letterH}</h2>
+        <p>{t.letterP}</p>
+        <span class="kz-go">{t.letterGo} →</span>
+      </a>
+      <a class="paper kz-shelf" href={`${kaizuBase}/compose/`} hreflang={en ? 'ja' : undefined}>
+        <h2>{t.composeH}</h2>
+        <p>{t.composeP}</p>
+        <span class="kz-go">{t.composeGo} →</span>
+      </a>
+    </div>
   </div>
 
   <figure class="paper kz-source">
