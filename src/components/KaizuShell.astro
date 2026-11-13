@@ -64,8 +64,23 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     const el = document.getElementById(b.dataset.copy || '');
     if (!el) return;
     const text = el instanceof HTMLTextAreaElement ? el.value : (el.textContent || '');
+    if (b.dataset.track) { const [shelf, id, lang] = b.dataset.track.split(':'); track({ ev: 'copy', shelf, id, lang }); }
     await (window as any).kzCopy(text.trim(), b.dataset.label || 'プロンプト');
   });
+
+  // 使われ方を数える（どのボタンが押されたか・どのページを開いたかの回数だけ。入れた文字や個人の情報は送らん）。
+  // 送り先は bcnofne-edge の /kaizu/hit。届かん時（オフライン等）はそのまま捨てる
+  const EDGE = 'https://bcnofne-edge.aynbcnofne.workers.dev';
+  function track(p: Record<string, string>) {
+    try {
+      const q = new URLSearchParams(Object.entries(p).filter(([, v]) => v) as [string, string][]).toString();
+      if (navigator.onLine === false) return;
+      navigator.sendBeacon?.(`${EDGE}/kaizu/hit?${q}`);
+    } catch { /* 数えられんでも使う人には影響させん */ }
+  }
+  (window as any).kzTrack = track;
+  const view = document.querySelector<HTMLElement>('[data-view]');
+  if (view) { const [shelf, id] = (view.dataset.view || '').split(':'); track({ ev: 'view', shelf, id }); }
 
   // アプリとして置いた時に、オフラインでも開けるように（/prompts/ の中だけ）
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
