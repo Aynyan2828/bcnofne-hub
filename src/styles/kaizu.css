@@ -92,3 +92,6 @@
 
 .kz-toast { position: fixed; left: 50%; bottom: max(1.2rem, env(safe-area-inset-bottom)); translate: -50% 0; z-index: 60; background: var(--c-ink); color: #fff; padding: 0.6rem 1.1rem; border-radius: 999px; font-size: 0.92rem; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; max-width: calc(100vw - 32px); }
 .kz-toast.on { opacity: 1; }
+
+/* 使ってよい範囲（入口・画風の棚・場所の棚の頭に置く） */
+.kz-terms { margin: 0.9rem 0 0; padding: 0.7rem 0.9rem; border-left: 3px solid var(--c-blue-deep); background: var(--c-mist); border-radius: 0 12px 12px 0; font-size: 0.92rem; }

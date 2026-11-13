@@ -243,6 +243,8 @@ const SOCIAL = [
       avatar={aynOk}
       avatarAlt="AYN giving a thumbs-up"
     >
+      {/* Kaizu (prompt book for AI image generation) — 2026-11-13 */}
+      <p class="kaizu-link"><a href={`${base}/en/prompts/`}>Kaizu — a free prompt book for AI image generation →</a></p>
       <div class="grid2" data-reveal-stagger>
         {shiftwake && (
           <Card
@@ -309,6 +311,10 @@ const SOCIAL = [
 </BaseLayout>
 
 <style>
+  /* Kaizu への入口（紙の上の 1 行リンク・押せる高さ 44px） */
+  .kaizu-link { text-align: center; margin: 0 0 1.2rem; }
+  .kaizu-link a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.1em; border-radius: 999px; background: var(--grad-ink); color: #fff; font-size: 0.95rem; }
+  .kaizu-link a:hover { color: #fff; text-decoration: none; filter: saturate(1.08); }
   .prose { max-width: 40em; margin: 0 auto; font-size: 1.05rem; line-height: 1.8; color: var(--c-ink); text-align: center; }
   .prose--soft { margin-top: 1rem; color: var(--c-ink-soft); font-size: 0.98rem; }
 

@@ -23,7 +23,8 @@ const t = en
       sceneP: 'Text-only prompts for backgrounds and settings: harbors, towns, rooms, nature and strange places.',
       sceneGo: 'Open the places',
       pageNote: 'The style and place pages are in Japanese. Every prompt is there in both English and Japanese.',
-      credit: 'All names, descriptions and prompts are original writing by BCNOFNe. The sample pictures were made with AI image generation from one source picture of AYN, our character (the source picture is AI-generated too).',
+      terms: 'You are free to use the prompts for your own image generation, including commercial use. If you can, adding the name "BCNOFNe" when you use them would make us happy (optional). Please do not republish or redistribute the sample pictures.',
+      credit: 'BCNOFNe original (no text copied from other sites). The sample pictures were made with AI image generation from one source picture of AYN, our character (the source picture is AI-generated too).',
     }
   : {
       title: '海図帳（かいずちょう）｜AI 画像生成用のプロンプト集 — BCNOFNe',
@@ -39,7 +40,8 @@ const t = en
       sceneP: '背景や世界観のためのプロンプト。港と海・街・部屋・自然・不思議な場所。見本の絵はまだなく、文だけ。',
       sceneGo: '場所を見る',
       pageNote: '',
-      credit: '名前・説明・プロンプトの文は、すべて BCNOFNe が書いたオリジナル。見本の絵は、BCNOFNe のキャラクター AYN の 1 枚（見本の元絵・これも AI 画像生成で描いた絵）を、AI 画像生成で各画風に描き直したもの。',
+      terms: 'プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。',
+      credit: '名前・説明・プロンプトの文は BCNOFNe オリジナル（他サイトの文の転載なし）。見本の絵は、BCNOFNe のキャラクター AYN の 1 枚（見本の元絵・これも AI 画像生成で描いた絵）を、AI 画像生成で各画風に描き直したもの。',
     };
 ---
 <KaizuShell
@@ -61,6 +63,7 @@ const t = en
       {t.steps.map(([n, s]) => <li><b>{n}</b>{s}</li>)}
     </ol>
     {t.pageNote && <p class="note">{t.pageNote}</p>}
+    <p class="kz-terms">{t.terms}</p>
   </header>
 
   <div class="kz-shelves">

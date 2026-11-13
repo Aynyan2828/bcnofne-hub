@@ -14,6 +14,7 @@ const moods = SCENE.moods as Record<string, string>;
     <p class="kz-crumb"><a href={`${kaizuBase}/`}>海図帳</a> › 場所の棚</p>
     <h1>場所の棚（{SCENE.items.length} か所）</h1>
     <p class="lead">AI 画像生成用の、背景と世界観のプロンプト。1 本で 1 枚の場所の絵になる。見本の絵はまだなく、文だけ。画風の棚のプロンプトと一緒に使ってもいい。</p>
+    <p class="kz-terms">プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。</p>
     <p class="note">棚：{SCENE.shelves.map((s) => <a href={`#${s.id}`} style="display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;margin-right:0.6em">{s.name_ja}</a>)}</p>
   </header>
 
