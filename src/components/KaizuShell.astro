@@ -1,0 +1,78 @@
+---
+// 海図帳（/prompts/）の外枠。BaseLayout に、アプリとして置く時の設定（manifest・アイコン・service worker）を足す。
+// service worker は /prompts/ の中だけで動く（scope=/prompts/）。サイトのほかのページには効かん。
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from './Footer.astro';
+import LangSwitch from './LangSwitch.astro';
+import '../styles/kaizu.css';
+
+interface Props {
+  title: string;
+  description: string;
+  lang?: 'ja' | 'en';
+  alternates?: { lang: string; path: string }[];
+  /** 言語切替の行き先（'prompts' なら /en/prompts/ と /prompts/ を行き来）。無い時は出さん */
+  langTo?: string;
+}
+const { title, description, lang = 'ja', alternates = [], langTo } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<BaseLayout title={title} description={description} lang={lang} alternates={alternates} appleTouchIcon="/prompts/icons/kaizu-180.png">
+  <link slot="head" rel="manifest" href={`${base}/prompts/manifest.webmanifest`} />
+  <meta slot="head" name="theme-color" content="#1f2540" />
+  <meta slot="head" name="apple-mobile-web-app-capable" content="yes" />
+  <meta slot="head" name="mobile-web-app-capable" content="yes" />
+  <meta slot="head" name="apple-mobile-web-app-title" content="海図帳" />
+  <meta slot="head" name="apple-mobile-web-app-status-bar-style" content="default" />
+  {langTo && <LangSwitch lang={lang} to={langTo} />}
+  <main id="main" class="section kz">
+    <div class="container">
+      <slot />
+    </div>
+  </main>
+  <Footer lang={lang} />
+  <div class="kz-toast" id="kz-toast" role="status" aria-live="polite"></div>
+</BaseLayout>
+
+<script>
+  // コピー: data-copy="<要素の id>" のボタンで、その要素の文字をコピーする
+  const toast = (msg: string) => {
+    const t = document.getElementById('kz-toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('on');
+    clearTimeout((toast as any).h);
+    (toast as any).h = setTimeout(() => t.classList.remove('on'), 1800);
+  };
+  async function copyText(text: string): Promise<boolean> {
+    try { await navigator.clipboard.writeText(text); return true; } catch {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      let ok = false; try { ok = document.execCommand('copy'); } catch { ok = false; }
+      ta.remove(); return ok;
+    }
+  }
+  (window as any).kzToast = toast;
+  (window as any).kzCopy = async (text: string, label: string) => {
+    const ok = await copyText(text);
+    toast(ok ? `${label}をコピーしました` : 'コピーできませんでした。箱の中を長押しで選んでください');
+  };
+  document.addEventListener('click', async (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('[data-copy]');
+    if (!b) return;
+    const el = document.getElementById(b.dataset.copy || '');
+    if (!el) return;
+    const text = el instanceof HTMLTextAreaElement ? el.value : (el.textContent || '');
+    await (window as any).kzCopy(text.trim(), b.dataset.label || 'プロンプト');
+  });
+
+  // アプリとして置いた時に、オフラインでも開けるように（/prompts/ の中だけ）
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+    window.addEventListener('load', () => {
+      const base = (document.querySelector('link[rel=manifest]') as HTMLLinkElement | null)?.href.replace(/manifest\.webmanifest$/, '');
+      if (!base || !('serviceWorker' in navigator)) return;
+      navigator.serviceWorker.register(`${base}sw.js`, { scope: base }).catch((err) => console.warn('kaizu sw', err));
+    });
+  }
+</script>

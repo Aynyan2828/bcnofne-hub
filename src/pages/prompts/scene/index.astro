@@ -1,0 +1,62 @@
+---
+// 海図帳・場所の棚（24 か所）。見本の絵はまだ無いので文だけ。画風の棚より控えめに置く。
+import KaizuShell from '../../../components/KaizuShell.astro';
+import { SCENE, kaizuBase } from '../../../lib/kaizu';
+
+const times = SCENE.times as Record<string, string>;
+const moods = SCENE.moods as Record<string, string>;
+---
+<KaizuShell
+  title="場所の棚（24 か所）｜海図帳 — AI 画像生成用のプロンプト集 — BCNOFNe"
+  description="AI 画像生成用の背景・世界観のプロンプト 24 か所。港と海・街・部屋・自然・不思議な場所。英語と日本語をコピーできる。"
+>
+  <header class="paper">
+    <p class="kz-crumb"><a href={`${kaizuBase}/`}>海図帳</a> › 場所の棚</p>
+    <h1>場所の棚（{SCENE.items.length} か所）</h1>
+    <p class="lead">AI 画像生成用の、背景と世界観のプロンプト。1 本で 1 枚の場所の絵になる。見本の絵はまだなく、文だけ。画風の棚のプロンプトと一緒に使ってもいい。</p>
+    <p class="note">棚：{SCENE.shelves.map((s) => <a href={`#${s.id}`} style="display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;margin-right:0.6em">{s.name_ja}</a>)}</p>
+  </header>
+
+  {SCENE.shelves.map((sh) => (
+    <section class="paper" id={sh.id} aria-labelledby={`h-${sh.id}`}>
+      <h2 class="kz-shelf-title" id={`h-${sh.id}`}>{sh.name_ja}</h2>
+      <div class="kz-scenes">
+        {SCENE.items.filter((it) => it.shelf === sh.id).map((it) => (
+          <article class="kz-scene" id={it.slug}>
+            <h3>{it.number_ja} {it.name_ja}</h3>
+            <ul class="kz-tags"><li>{it.place_ja}</li><li>{times[it.time] ?? it.time}</li><li>{moods[it.mood] ?? it.mood}</li></ul>
+            <p>{it.desc_ja}</p>
+            <details class="kz-prompt">
+              <summary>プロンプトを見る</summary>
+              <pre id={`en-${it.slug}`} lang="en">{it.prompt_en}</pre>
+              <pre id={`ja-${it.slug}`}>{it.prompt_ja}</pre>
+            </details>
+            <div class="kz-btns">
+              <button class="btn" type="button" data-copy={`en-${it.slug}`} data-label={`「${it.name_ja}」の英語のプロンプト`}>英語をコピー</button>
+              <button class="btn btn--line" type="button" data-copy={`ja-${it.slug}`} data-label={`「${it.name_ja}」の日本語のプロンプト`}>日本語をコピー</button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <section class="paper" aria-labelledby="h-addons">
+    <h2 id="h-addons">付け足しの一文</h2>
+    <p class="note" style="margin-top:0">場所のプロンプトの最後に足すと、使い道に合わせられる。</p>
+    <div class="kz-scenes" style="margin-top:0.8rem">
+      {SCENE.addons.map((a) => (
+        <article class="kz-scene">
+          <h3>{a.name_ja}</h3>
+          <pre id={`add-en-${a.id}`} lang="en" style="display:none">{a.prompt_en}</pre>
+          <p>{a.prompt_ja}</p>
+          <div class="kz-btns">
+            <button class="btn" type="button" data-copy={`add-en-${a.id}`} data-label={`「${a.name_ja}」（英語）`}>英語をコピー</button>
+            <button class="btn btn--line" type="button" data-copy={`add-ja-${a.id}`} data-label={`「${a.name_ja}」（日本語）`}>日本語をコピー</button>
+          </div>
+          <span id={`add-ja-${a.id}`} hidden>{a.prompt_ja}</span>
+        </article>
+      ))}
+    </div>
+  </section>
+</KaizuShell>

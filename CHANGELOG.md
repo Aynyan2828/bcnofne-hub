@@ -1,5 +1,13 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-11-13 — 海図帳（AI 画像生成用のプロンプト集）のページ（ブランチ feat/kaizu-catalog・未公開）
+
+- `/prompts/`（入口・日英 `/en/prompts/`）、`/prompts/style/`（画風 30 種の一覧＋混ぜる欄）、`/prompts/style/<英字名>/`（30 ページ・見本の絵・英日のプロンプトのコピー）、`/prompts/scene/`（場所 24 か所・文だけ）
+- データの正本は Vault `03_Knowledge/Image_Prompts/BCNOFNe_画風カタログ/`。`python3 scripts/kaizu_sync.py` で `src/data/kaizu/`・`public/prompts/`（webp 480/1000px・混ぜる部品 mix.json）へ写す。混ぜる決まりは Vault の `tools/style_mix.py` と同じ
+- アプリとして置ける（PWA）：`/prompts/manifest.webmanifest`（名前「海図帳」・start_url `/prompts/style/`・standalone）、自前のアイコン（`public/prompts/icons/kaizu.svg` → `node scripts/kaizu_icons.mjs`）、`/prompts/sw.js`（scope `/prompts/` だけ・ページと一覧用の絵を先読み・オフラインでも開ける）。サイトのほかのページは service worker の外
+- `BaseLayout` に `appleTouchIcon` を足した（既定はいままでのサイトのアイコンのまま。海図帳だけ差し替え）
+- サイトのトップ・ナビからのリンクはまだ付けとらん
+
 ## 2026-11-03 — トップにテーマソングの PV
 
 日本語ページ（/）の一番上の絵のすぐ下に「テーマソング『6弦と僕の船』」の節を足して、YouTube の PV（日本語版 MLVSn8Skckc）を置いた。英語ページ（/en/）には英語版「Six Strings and Me」（KtCwO_7KAJk）。

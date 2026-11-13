@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 海図帳のアイコン：夜の海の地に、開いた海図の本と羅針（BCNOFNe 自前の絵） -->
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a3566"/><stop offset="1" stop-color="#1f2540"/>
+    </linearGradient>
+    <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbfcff"/><stop offset="1" stop-color="#e4ecf8"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#sea)"/>
+  <!-- 白波 -->
+  <path d="M0 430 q64 -22 128 0 t128 0 t128 0 t128 0 V512 H0z" fill="#6aa9e0" opacity=".35"/>
+  <path d="M0 458 q64 -18 128 0 t128 0 t128 0 t128 0 V512 H0z" fill="#8bd3e6" opacity=".35"/>
+  <!-- 開いた本 -->
+  <path d="M256 150 C206 124 140 120 92 132 V376 C140 364 206 368 256 394z" fill="url(#pg)"/>
+  <path d="M256 150 C306 124 372 120 420 132 V376 C372 364 306 368 256 394z" fill="url(#pg)"/>
+  <path d="M256 150 V394" stroke="#9fb6e6" stroke-width="4"/>
+  <!-- 左のページ：航路の点線 -->
+  <path d="M118 330 C150 300 150 250 190 236 S236 200 236 176" fill="none" stroke="#2d5a96" stroke-width="7" stroke-linecap="round" stroke-dasharray="2 16"/>
+  <circle cx="118" cy="330" r="9" fill="#f4a6c4"/>
+  <!-- 右のページ：羅針 -->
+  <g transform="translate(338 258)">
+    <circle r="62" fill="none" stroke="#2d5a96" stroke-width="5"/>
+    <path d="M0 -78 L13 -13 L0 0 L-13 -13z" fill="#d6283a"/>
+    <path d="M0 78 L13 13 L0 0 L-13 13z" fill="#2d5a96"/>
+    <path d="M-78 0 L-13 -13 L0 0 L-13 13z M78 0 L13 -13 L0 0 L13 13z" fill="#6aa9e0"/>
+    <circle r="7" fill="#fbfcff" stroke="#2d5a96" stroke-width="3"/>
+  </g>
+</svg>
