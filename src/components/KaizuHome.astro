@@ -1,13 +1,16 @@
 ---
 // 海図帳の入口（/prompts/ と /en/prompts/ で共用）。
 // 主役＝画風の棚（見本の絵）。場所の棚・文字の棚・統合モードは脇役なので右に小さく積む。
+// 構図・光とレンズ・時間帯と天気の棚は、その下にリンクの並びで 1 枚だけ（さらに小さく）。
 import KaizuShell from './KaizuShell.astro';
-import { STYLE, SCENE, LETTERING, kaizuBase, kaizuImg } from '../lib/kaizu';
+import { STYLE, SCENE, LETTERING, FRAMING, LIGHT, WEATHER, kaizuBase, kaizuImg } from '../lib/kaizu';
 
 interface Props { lang?: 'ja' | 'en' }
 const { lang = 'ja' } = Astro.props;
 const en = lang === 'en';
 const picks = ['ST-01', 'ST-05', 'ST-10', 'ST-14', 'ST-18', 'ST-30'].map((id) => STYLE.items.find((x) => x.id === id)!);
+const nLight = LIGHT.items.filter((x) => x.section === 'light').length;
+const nLens = LIGHT.items.length - nLight;
 const t = en
   ? {
       title: 'Kaizu — Prompt Chart Book for AI image generation | BCNOFNe',
@@ -28,7 +31,10 @@ const t = en
       composeH: 'Compose mode (covers and thumbnails)',
       composeP: 'Pick a style, a place, light, weather and lettering, and get one prompt shaped for a cover, a thumbnail, a short-video cover or a poster. (Japanese page)',
       composeGo: 'Open compose mode',
-      pageNote: 'The style, place, lettering and compose pages are in Japanese. Every prompt is there in both English and Japanese.',
+      moreH: 'More shelves for compose mode',
+      moreP: 'Framing, light and lens, and time of day and weather. Each one opens compose mode. (Japanese pages)',
+      more: [['framing', `Framing (${FRAMING.items.length})`], ['light', `Light (${nLight}) and lens (${nLens})`], ['weather', `Time and weather (${WEATHER.items.length})`]],
+      pageNote: 'The shelf pages (style, place, lettering, framing, light and weather) and compose mode are in Japanese. Every prompt is there in both English and Japanese.',
       terms: 'You are free to use the prompts for your own image generation, including commercial use. If you can, adding the name "BCNOFNe" when you use them would make us happy (optional). Please do not republish or redistribute the sample pictures. To learn how the book is used, we count only how many times each button is pressed or page is opened (item number and language, including which styles were mixed), by sending it to our own counting server (Cloudflare). We do not send what you type, and we keep no record that identifies you (your IP address is used only briefly in converted form, about 2 minutes, to prevent abuse). Counts are deleted after 90 days at most. We use no cookies or device identifiers.',
       credit: 'BCNOFNe original (no text copied from other sites). The sample pictures were made with AI image generation from one source picture of AYN, our character (the source picture is AI-generated too).',
     }
@@ -51,6 +57,9 @@ const t = en
       composeH: '統合モード（ジャケ・サムネの組み立て）',
       composeP: '画風・場所・光・天気・文字を選んで、ジャケット・サムネイル・縦ショートの表紙・ポスター用の 1 本にまとめる。',
       composeGo: '組み立てる',
+      moreH: '統合モードに足す棚',
+      moreP: '構図・光とレンズ・時間帯と天気。選ぶと統合モードへ。',
+      more: [['framing', `構図（${FRAMING.items.length} 種）`], ['light', `光（${nLight} 種）とレンズ（${nLens} 種）`], ['weather', `時間帯と天気（${WEATHER.items.length} 種）`]],
       pageNote: '',
       terms: 'プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。使われ方を知るため、押されたボタンや開かれたページの番号・言語（混ぜた画風の組み合わせを含む）の回数だけを、当サイトの集計用サーバー（Cloudflare）に送って数えています。入れた文字は送らず、個人を特定する記録も残しません（IP アドレスは、送りすぎを防ぐために変換して 2 分だけ使い、すぐ消えます）。回数は最長 90 日で消え、Cookie や端末の識別子は使いません。',
       credit: '名前・説明・プロンプトの文は BCNOFNe オリジナル（他サイトの文の転載なし）。見本の絵は、BCNOFNe のキャラクター AYN の 1 枚（見本の元絵・これも AI 画像生成で描いた絵）を、AI 画像生成で各画風に描き直したもの。',
@@ -105,6 +114,13 @@ const t = en
         <p>{t.composeP}</p>
         <span class="kz-go">{t.composeGo} →</span>
       </a>
+      <nav class="paper kz-shelf" aria-labelledby="kz-more-h">
+        <h2 id="kz-more-h">{t.moreH}</h2>
+        <p>{t.moreP}</p>
+        <ul class="kz-more">
+          {t.more.map(([slug, label]) => <li><a href={`${kaizuBase}/${slug}/`} hreflang={en ? 'ja' : undefined}>{label} →</a></li>)}
+        </ul>
+      </nav>
     </div>
   </div>
 

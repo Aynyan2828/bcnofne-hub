@@ -1,0 +1,25 @@
+---
+// 海図帳・時間帯と天気の棚（16 種）。カードを押すと統合モード（/prompts/compose/?tw=TW-xx）へ。
+import KaizuAddonShelf from '../../../components/KaizuAddonShelf.astro';
+import { WEATHER } from '../../../lib/kaizu';
+
+const n = WEATHER.items.length;
+// 時間帯（JSON の time）→ 絞り込みの名前。並びは 1 日の順
+const TIMES: [string, string][] = [['dawn', '夜明け'], ['morning', '朝'], ['noon', '昼'], ['evening', '夕方'], ['dusk', '日暮れ'], ['night', '夜']];
+const used = new Set(WEATHER.items.map((it) => it.time));
+const chips = TIMES.filter(([k]) => used.has(k)).map(([key, label]) => ({ key, label }));
+const chipOf = Object.fromEntries(WEATHER.items.map((it) => [it.id, it.time ?? '']));
+---
+<KaizuAddonShelf
+  title={`時間帯と天気の棚（${n} 種）｜海図帳 — AI 画像生成用のプロンプト集 — BCNOFNe`}
+  description={`AI 画像生成で絵の時間帯と天気を変えるプロンプト ${n} 種。朝凪の快晴・夕立・霧・雪・月夜など。場所と人はそのままに空・光・空気だけを変える。統合モードで季節・画風・文字と 1 本にまとめられる。`}
+  crumb="時間帯と天気の棚"
+  h1={`時間帯と天気の棚（${n} 種）`}
+  lead="AI 画像生成で、場所と人はそのままに、空・光・空気・地面と水面の様子だけを変えるプロンプト。選ぶと統合モードへ。季節の空気（春・夏・秋・冬）も足せる。"
+  word="時間帯と天気"
+  placeholder="探す：快晴、霧、月夜"
+  groups={[{ id: 'weather', items: WEATHER.items, param: 'tw', noLabel: '空' }]}
+  chips={chips}
+  chipOf={chipOf}
+  chipName={Object.fromEntries(TIMES)}
+/>

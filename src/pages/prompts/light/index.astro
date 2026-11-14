@@ -1,0 +1,22 @@
+---
+// 海図帳・光とレンズの棚（光 16 種・レンズ 10 種）。カードを押すと統合モード（光＝?lg=LG-xx・レンズ＝?ln=LG-xx）へ。
+import KaizuAddonShelf from '../../../components/KaizuAddonShelf.astro';
+import { LIGHT } from '../../../lib/kaizu';
+
+const lights = LIGHT.items.filter((it) => it.section === 'light');
+const lenses = LIGHT.items.filter((it) => it.section === 'lens');
+const T = LIGHT.section_titles;
+---
+<KaizuAddonShelf
+  title={`光とレンズの棚（光 ${lights.length} 種・レンズ ${lenses.length} 種）｜海図帳 — AI 画像生成用のプロンプト集 — BCNOFNe`}
+  description={`AI 画像生成で絵の光とレンズの写りを変えるプロンプト。夜明け・逆光・ネオン・星あかりなどの光 ${lights.length} 種と、広角・望遠・ぼけなどのレンズ ${lenses.length} 種。統合モードで画風・文字と 1 本にまとめられる。`}
+  crumb="光とレンズの棚"
+  h1="光とレンズの棚"
+  lead="AI 画像生成で、絵に当たる光と、レンズの写り（広さ・ぼけ・ゆがみ）を変えるためのプロンプト。光かレンズを選ぶと統合モードへ。光は元の光に足すか置き換えるかを選べる。"
+  word="光やレンズ"
+  placeholder="探す：夜明け、逆光、望遠"
+  groups={[
+    { id: 'light', title: T.light, items: lights, param: 'lg', noLabel: '光' },
+    { id: 'lens', title: T.lens, items: lenses, param: 'ln', noLabel: '光' },
+  ]}
+/>

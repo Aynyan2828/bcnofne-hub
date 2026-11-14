@@ -118,3 +118,15 @@
 /* 入口：画風が主役（左の大きい 1 枚）。場所・文字・統合モードは右に小さく積む */
 .kz-shelves__side { display: grid; gap: 1rem; }
 .kz-shelves__side .kz-shelf h2 { font-size: clamp(1.1rem, 3.2vw, 1.35rem); }
+
+/* 構図・光とレンズ・時間帯と天気の棚：見本の絵がまだの項目と、棚の見出し */
+.kz-card__none { aspect-ratio: 1; display: grid; place-items: center; background: repeating-linear-gradient(135deg, var(--c-mist) 0 14px, rgba(255, 255, 255, 0.7) 14px 28px); color: var(--c-ink-soft); font-size: 0.9rem; }
+.kz-card__none span { background: rgba(251, 252, 255, 0.95); border-radius: 999px; padding: 0.25rem 0.8rem; }
+.kz-addon-group { display: grid; gap: clamp(0.7rem, 2vw, 1.1rem); }
+.kz-addon-group[hidden] { display: none; }
+.paper.kz-addon-title { font-family: var(--font-display); font-size: 1.25rem; margin: 0; color: var(--c-blue-deep); padding: 0.7rem 1.2rem; border-radius: 14px; }
+
+/* 入口：構図・光とレンズ・時間帯と天気（画風の棚より小さく、リンクの並び） */
+.kz-more { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.4rem 0 0; padding: 0; list-style: none; }
+.kz-more a { text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 0.95rem; border-radius: 999px; border: 1.5px solid var(--c-line); background: #fff; color: var(--c-blue-deep); font-size: 0.95rem; }
+.kz-more a:hover { text-decoration: none; border-color: var(--c-blue-deep); }

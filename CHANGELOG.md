@@ -1,5 +1,13 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-11-14 (3) — 海図帳に「構図」「光とレンズ」「時間帯と天気」の棚（ブランチ feat/kaizu-more-shelves・未公開）
+
+- `/prompts/framing/`（構図 12 種）・`/prompts/light/`（光 16 種とレンズ 10 種を見出しで分ける）・`/prompts/weather/`（時間帯と天気 16 種・時間帯で絞り込み）。文字の棚と同じ見た目のカード（見本の絵・番号・名前・一般名・説明）と探す欄。カードは統合モードへ `?fr=CP-xx`・`?lg=LG-xx`・`?ln=LG-xx`・`?tw=TW-xx`。頭に見本の元絵の一言と、文字の棚・統合モードと同じ使ってよい範囲の段落。共通の形は `src/components/KaizuAddonShelf.astro`
+- 見本の絵がまだの項目は「見本はまだ」と出す（今は構図 12/12・光とレンズ 3/26・天気 3/16）。Vault で描けたら `python3 scripts/kaizu_sync.py` を回し直せば埋まる（JSON の sample_image が空でも `images/<棚>/<ID>.png` を拾う。`*_SAME_AS_SOURCE.png`・`*_new.png` は拾わん）
+- 統合モード：`?fr=` `?lg=` `?ln=` `?tw=` で初期値（その棚のその段にある ID だけ。`?lg=` にレンズの ID が来たらレンズの欄へ）。コピーの送り口は今のまま（構図・光・天気は送らん）
+- `scripts/kaizu_sync.py`：3 棚の見本を webp（s/l）に、`src/data/kaizu/framing.json`・`light.json`・`weather.json`（一覧用）を写す。ALIAS_BLOCK も効かせる
+- 入口（日英）：右の列の下に「統合モードに足す棚」の 1 枚（3 つの棚へのリンクの並び）。`sw.js` に 3 ページと描けとる見本（一覧用）、`names.json` に `framing`・`light`・`weather`
+
 ## 2026-11-14 (2) — 海図帳に「文字の棚」と「統合モード」（公開・マスター OK 2026-11-14 11:05）（旧：ブランチだけ・未公開 〜2026-11-14）
 
 - `/prompts/lettering/`（新）：文字 20 種の見本の一覧（画風の一覧と同じ見た目・番号・名前・一般名・説明・絞り込み）。カードは `/prompts/compose/?lt=LT-xx` へ。見本は大きい文字「BCNOFNe」・小さい文字「ぼくのふね」で描いたもの、と明記

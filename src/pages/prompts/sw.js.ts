@@ -1,20 +1,21 @@
 // 海図帳の service worker（scope=/prompts/）。ビルドのたびに版が変わり、古い置き場は消す。
-// - 入れた時：/prompts/ の全ページ・一覧用の見本画像・混ぜる部品・統合モードの部品（compose.json・kaizu-compose.js）・アイコンを先に取っておく
+// - 入れた時：/prompts/ の全ページ・一覧用の見本画像（構図・光とレンズ・時間帯と天気の棚は描けとる物だけ）・混ぜる部品・統合モードの部品（compose.json・kaizu-compose.js）・アイコンを先に取っておく
 //   ページが読む CSS・JS（/_astro/）も、取ったページの中から拾って一緒に取る
 // - ページ：まず通信（新しい方）、つながらん時は取っておいた物
 // - 絵・CSS・JS・フォント：取っておいた物を先に出す（1 種ずつの大きい絵は、開いた時に取っておく。
 //   まだ取っとらん大きい絵は、オフラインの時だけ一覧用の小さい絵で代わりに出す）
 // /prompts/ の外のページから来た通信には関わらん（scope の外は service worker が見ん）。
 import type { APIRoute } from 'astro';
-import { STYLE, LETTERING } from '../../lib/kaizu';
+import { STYLE, LETTERING, FRAMING, LIGHT, WEATHER } from '../../lib/kaizu';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 export const GET: APIRoute = () => {
   const p = `${base}/prompts`;
-  const pages = [`${p}/`, `${p}/style/`, `${p}/scene/`, `${p}/lettering/`, `${p}/compose/`, ...STYLE.items.map((it) => `${p}/style/${it.slug}/`)];
+  const pages = [`${p}/`, `${p}/style/`, `${p}/scene/`, `${p}/lettering/`, `${p}/compose/`, `${p}/framing/`, `${p}/light/`, `${p}/weather/`, ...STYLE.items.map((it) => `${p}/style/${it.slug}/`)];
   const stems = [...STYLE.items.map((it) => it.img), STYLE.source_img, ...STYLE.mix_samples.map((m) => m.img),
-    ...LETTERING.items.map((it) => it.img), ...LETTERING.compose_samples.map((m) => m.img)].filter(Boolean);
+    ...LETTERING.items.map((it) => it.img), ...LETTERING.compose_samples.map((m) => m.img),
+    ...[FRAMING, LIGHT, WEATHER].flatMap((sh) => sh.items.map((it) => it.img))].filter(Boolean);
   const assets = [
     ...stems.map((s) => `${p}/img/${s}-s.webp`),
     `${p}/style/mix.json`,
@@ -26,7 +27,7 @@ export const GET: APIRoute = () => {
     `${p}/icons/logo-192.png`,
     `${p}/icons/logo-512.png`,
   ];
-  const version = `kaizu-${STYLE.version}-${LETTERING.version}-${Date.now()}`;
+  const version = `kaizu-${STYLE.version}-${LETTERING.version}-${FRAMING.version}-${Date.now()}`;
   const js = `/* 海図帳 service worker ${version} */
 const CACHE = ${JSON.stringify(version)};
 const PAGES = ${JSON.stringify(pages)};

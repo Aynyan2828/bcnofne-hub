@@ -1,0 +1,110 @@
+---
+// 海図帳・構図／光とレンズ／時間帯と天気の棚（一覧）の共通の形。文字の棚と同じ見た目のカード。
+// カードを押すと統合モード（/prompts/compose/?fr=… / ?lg=… / ?ln=… / ?tw=…）へ。プロンプトの組み立ては統合モードだけが持つ。
+// 見本の絵がまだ無い項目（img が null）は「見本はまだ」と出す。Vault で描けたら scripts/kaizu_sync.py を回し直せば埋まる。
+import KaizuShell from './KaizuShell.astro';
+import { STYLE, kaizuBase, kaizuImg, composeUrl, type AddonItem } from '../lib/kaizu';
+
+interface Group { id: string; title?: string; items: AddonItem[]; param: 'fr' | 'lg' | 'ln' | 'tw'; noLabel: string }
+interface Chip { key: string; label: string }
+interface Props {
+  title: string;
+  description: string;
+  crumb: string;
+  h1: string;
+  lead: string;
+  word: string; // 「構図」など。見本の説明に使う
+  placeholder: string; // 探す欄の例
+  groups: Group[];
+  chips?: Chip[]; // 絞り込み（data-key で項目を分ける。無ければ探す欄だけ）
+  chipOf?: Record<string, string>; // 項目 ID → chip の key
+  chipName?: Record<string, string>; // chip の key → カードに添える名前
+}
+const { title, description, crumb, h1, lead, word, placeholder, groups, chips = [], chipOf = {}, chipName = {} } = Astro.props;
+const all = groups.flatMap((g) => g.items);
+const have = all.filter((it) => it.img).length;
+let n = 0;
+---
+<KaizuShell title={title} description={description}>
+  <header class="paper">
+    <p class="kz-crumb"><a href={`${kaizuBase}/`}>海図帳</a> › {crumb}</p>
+    <h1>{h1}</h1>
+    <p class="lead">{lead}</p>
+    <p class="note"><a href={composeUrl()} style="display:inline-flex;align-items:center;min-height:44px">統合モード（ジャケ・サムネの組み立て）へ →</a></p>
+    <p class="kz-terms">プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。プロンプトで作った絵の権利や商用の可否は、お使いの画像生成サービスの規約に従います（当サイトが許すのはプロンプトの文までです）。入れる文字に他人の名前・商標・ロゴを無断で使わず、配信ジャケは配信先の決まりもご確認ください。使われ方を知るため、押されたボタンや開かれたページの番号・言語（混ぜた画風の組み合わせを含む）の回数だけを、当サイトの集計用サーバー（Cloudflare）に送って数えています。入れた文字は送らず、個人を特定する記録も残しません（IP アドレスは、送りすぎを防ぐために変換して 2 分だけ使い、すぐ消えます）。回数は最長 90 日で消え、Cookie や端末の識別子は使いません。</p>
+    <figure class="kz-source" style="margin-top:0.9rem">
+      <img src={kaizuImg(STYLE.source_img, 's')} alt="見本の元絵：夜の港の岩場にいる AYN" width="480" height="480" loading="eager" decoding="async" />
+      <figcaption><b>見本の元絵</b><br />下の見本はすべて、画風の棚と同じこの 1 枚（BCNOFNe のキャラクター AYN・これも AI 画像生成で描いた絵）を、その{word}のプロンプトだけで AI 画像生成に描き直させたもの。{have < all.length && `見本の絵はいま描いている途中で、まだの物は「見本はまだ」と出ます（${all.length} のうち ${have}）。`}</figcaption>
+    </figure>
+    {groups.length > 1 && (
+      <p class="note">棚：{groups.map((g) => <a href={`#${g.id}`} style="display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;margin-right:0.6em">{g.title}</a>)}</p>
+    )}
+  </header>
+
+  <section class="paper" aria-label="絞り込み">
+    <div class="kz-filter">
+      <input type="search" id="kz-q" placeholder={placeholder} aria-label={`${word}を探す`} />
+    </div>
+    {chips.length > 0 && (
+      <div class="kz-filter" style="margin-top:0.6rem" id="kz-chips">
+        <button class="kz-chip" type="button" data-key="" aria-pressed="true">すべて</button>
+        {chips.map((c) => <button class="kz-chip" type="button" data-key={c.key} aria-pressed="false">{c.label}</button>)}
+      </div>
+    )}
+    <p class="kz-count" id="kz-count" style="margin-top:0.6rem">{all.length} / {all.length} 種</p>
+  </section>
+
+  {groups.map((g) => (
+    <section class="kz-addon-group" id={g.id} aria-labelledby={g.title ? `h-${g.id}` : undefined} aria-label={g.title ? undefined : h1}>
+      {g.title && <h2 class="paper kz-addon-title" id={`h-${g.id}`}>{g.title}（{g.items.length} 種）</h2>}
+      <div class="kz-grid">
+        {g.items.map((it) => {
+          const i = n++;
+          const tag = chipName[chipOf[it.id] ?? ''];
+          const H = g.title ? 'h3' : 'h2';
+          return (
+            <a class="kz-card" href={composeUrl({ [g.param]: it.id })} data-key={chipOf[it.id] ?? ''}
+               data-hay={[it.name_ja, it.name_en, it.general_ja, it.number_ja, it.desc_ja, tag ?? '', ...it.aliases].join(' ').toLowerCase()}>
+              {it.img
+                ? <img src={kaizuImg(it.img, 's')} alt={`「${it.name_ja}」の見本（AYN の絵を描き直した絵）`} width="480" height="480" loading={i < 4 ? 'eager' : 'lazy'} decoding="async" />
+                : <div class="kz-card__none" role="img" aria-label={`「${it.name_ja}」の見本はまだ`}><span>見本はまだ</span></div>}
+              <div class="kz-card__body">
+                <p class="kz-card__no">{g.noLabel}の{it.number_ja}{tag && `・${tag}`}</p>
+                <H class="kz-card__name">{it.name_ja}</H>
+                <p class="kz-card__gen">{it.general_ja}</p>
+                <p class="kz-card__desc">{it.desc_ja}</p>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  ))}
+  <p class="paper" id="kz-empty" hidden>この条件に合う物はありません。言葉を短くするか「すべて」に戻してください。</p>
+</KaizuShell>
+
+<script>
+  // 絞り込み（文字の棚と同じ動き）。見出しの下が空になった棚は見出しごと隠す
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.kz-addon-group .kz-card'));
+  const groups = Array.from(document.querySelectorAll<HTMLElement>('.kz-addon-group'));
+  const st = { q: '', key: '' };
+  const apply = () => {
+    let n = 0;
+    const words = st.q.toLowerCase().split(/\s+/).filter(Boolean);
+    for (const c of cards) {
+      const ok = (!st.key || c.dataset.key === st.key) && words.every((w) => (c.dataset.hay || '').includes(w));
+      c.hidden = !ok; if (ok) n++;
+    }
+    for (const g of groups) g.hidden = !g.querySelector('.kz-card:not([hidden])');
+    document.getElementById('kz-count')!.textContent = `${n} / ${cards.length} 種`;
+    document.getElementById('kz-empty')!.hidden = n > 0;
+  };
+  document.getElementById('kz-q')!.addEventListener('input', (e) => { st.q = (e.target as HTMLInputElement).value.trim(); apply(); });
+  const box = document.getElementById('kz-chips');
+  box?.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('[data-key]'); if (!b) return;
+    st.key = b.dataset.key || '';
+    box.querySelectorAll('[data-key]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    apply();
+  });
+</script>

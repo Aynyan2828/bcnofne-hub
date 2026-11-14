@@ -1,0 +1,17 @@
+---
+// 海図帳・構図の棚（12 種）。カードを押すと統合モード（/prompts/compose/?fr=CP-xx）へ。
+import KaizuAddonShelf from '../../../components/KaizuAddonShelf.astro';
+import { FRAMING } from '../../../lib/kaizu';
+
+const n = FRAMING.items.length;
+---
+<KaizuAddonShelf
+  title={`構図の棚（${n} 種）｜海図帳 — AI 画像生成用のプロンプト集 — BCNOFNe`}
+  description={`AI 画像生成で絵の構図を組み直すプロンプト ${n} 種。三分割・日の丸・対角線・シンメトリー・額縁・俯瞰・あおり・余白など。統合モードで比率・画風・文字と 1 本にまとめられる。`}
+  crumb="構図の棚"
+  h1={`構図の棚（${n} 種）`}
+  lead="AI 画像生成で、絵の構図（主役の置き場所・カメラの高さ・余白）を組み直すためのプロンプト。構図を選ぶと統合モードへ。比率（正方形・縦長・横長）や画風・文字と一緒に 1 本にまとまる。"
+  word="構図"
+  placeholder="探す：三分割、俯瞰、余白"
+  groups={[{ id: 'framing', items: FRAMING.items, param: 'fr', noLabel: '構図' }]}
+/>

@@ -10,6 +10,8 @@
   - src/data/kaizu/style.json  … ページを作るのに要る所だけ（Astro がビルド時に読む）
   - src/data/kaizu/scene.json
   - src/data/kaizu/lettering.json … 文字の棚の一覧用
+  - src/data/kaizu/framing.json・light.json・weather.json … 構図・光とレンズ・時間帯と天気の棚の一覧用
+    （見本の絵がまだ無い項目は img なし＝ページで「見本はまだ」。描けたら sync し直せば埋まる）
   - public/prompts/style/mix.json … 「混ぜる」欄と統合モードがブラウザで読む画風の部品
   - public/prompts/compose.json   … 統合モードがブラウザで読む部品（D=文字・SC=場所・KC=ひな形と足す棚）
   - public/prompts/kaizu-compose.js … tools/kaizu_compose.js をそのまま写す（中身は変えん）
@@ -44,6 +46,11 @@ COMPOSE_LT_HEAD = ["version", "settings", "prompt_common", "prompt_sections", "p
 COMPOSE_SC_ITEM_KEYS = ["id", "number_ja", "name_ja", "prompt_en", "prompt_ja", "prompt_parts"]
 ADDON_HEAD = ["version", "section_titles", "intro", "aspects", "fits", "modes", "seasons"]
 ADDON_ITEM_KEYS = ["id", "number_ja", "name_ja", "section", "part_keys", "prompt_parts"]
+# 構図・光とレンズ・時間帯と天気の棚（一覧用）。棚の名前 → 見本の置き場（images/<名前>/<ID>.png）
+ADDON_SHELVES = ["framing", "light", "weather"]
+ADDON_LIST_KEYS = ["id", "number_ja", "slug", "section", "name_ja", "name_en", "general_ja", "aliases", "desc_ja", "time"]
+# 見本の置き場にある作業用の絵（元絵と同じ・描き直し中）は拾わん
+SKIP_IMG_SUFFIX = ("_SAME_AS_SOURCE.png", "_new.png")
 SIZES = {"s": 480, "l": 1000}
 # 作家・個人の名前を指す呼び方はサイトに出さん（法務部 2026-11-13。Vault の正本はそのまま）
 ALIAS_BLOCK = ["ミュシャ"]
@@ -73,6 +80,37 @@ def to_webp(src: Path, stem: str, out_dir: Path):
 
 def drop_blocked(aliases):
     return [a for a in aliases if not any(b in a for b in ALIAS_BLOCK)]
+
+
+def addon_sample(v: Path, shelf: str, it: dict):
+    """見本の絵の場所。JSON の sample_image があればそれ、無ければ images/<棚>/<ID>.png。どちらも無ければ None"""
+    cands = []
+    if it.get("sample_image"):
+        cands.append(v / it["sample_image"])
+    cands.append(v / "images" / shelf / f"{it['id']}.png")
+    for c in cands:
+        if c.name.endswith(SKIP_IMG_SUFFIX):
+            continue
+        if c.is_file():
+            return c
+    return None
+
+
+def sync_addon_shelf(v: Path, shelf: str, img_dir: Path):
+    d = load(v / f"{shelf}.json")
+    rows, have = [], 0
+    for it in d["items"]:
+        row = {k: it.get(k) for k in ADDON_LIST_KEYS}
+        row["aliases"] = drop_blocked(row["aliases"] or [])
+        src = addon_sample(v, shelf, it)
+        row["img"] = to_webp(src, it["id"], img_dir) if src else None
+        have += 1 if src else 0
+        rows.append(row)
+    head = {"version": d["version"], "updated": d.get("updated"),
+            "section_titles": d["section_titles"]["ja"]}
+    dump({**head, "items": rows}, REPO / f"src/data/kaizu/{shelf}.json", 1)
+    log.info("%s：%d 項目のうち見本 %d 枚（まだ %d）", shelf, len(rows), have, len(rows) - have)
+    return len(rows), have
 
 
 def compose_shared(v: Path):
@@ -140,6 +178,9 @@ def main():
     lhead = {k: lett[k] for k in ["version", "updated", "families", "sample_text"]}
     dump({**lhead, "compose_samples": compose_samples, "items": lrows}, REPO / "src/data/kaizu/lettering.json", 1)
 
+    # 構図・光とレンズ・時間帯と天気の棚（一覧用）
+    addon_counts = {name: sync_addon_shelf(v, name, img_dir) for name in ADDON_SHELVES}
+
     # 統合モードの部品
     compose = {
         "D": {**{k: lett[k] for k in COMPOSE_LT_HEAD},
@@ -157,7 +198,8 @@ def main():
     shutil.copyfile(v / "tools/kaizu_compose.js", js_dst)
     log.info("写した %s", js_dst.relative_to(REPO))
 
-    log.info("画風 %d 種・場所 %d か所・文字 %d 種・画像 %d 枚", len(items), len(scene["items"]), len(lrows),
+    log.info("画風 %d 種・場所 %d か所・文字 %d 種・%s・画像 %d 枚", len(items), len(scene["items"]), len(lrows),
+             "・".join(f"{k} {n}（見本 {h}）" for k, (n, h) in addon_counts.items()),
              len(list(img_dir.glob("*.webp"))))
 
 

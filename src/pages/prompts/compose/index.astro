@@ -2,7 +2,8 @@
 // 海図帳・統合モード（画風＋場所＋構図・光・天気＋文字＋ひな形を 1 本のプロンプトに）。
 // 組み立ては Vault の tools/kaizu_compose.js をそのまま写した /prompts/kaizu-compose.js の composeAll を使う（ここで組み立て直さん）。
 // 部品：/prompts/style/mix.json（SD＝画風）・/prompts/compose.json（D＝文字・SC＝場所・KC＝ひな形と足す棚）。
-// 初期値：?lt=LT-xx（文字の書体）・?main=ST-xx（画風の主）。何も選んどらん時は案内だけ出す。
+// 初期値：?lt=LT-xx（文字の書体）・?main=ST-xx（画風の主）・?fr=CP-xx（構図）・?lg=LG-xx（光）・?ln=LG-xx（レンズ）・?tw=TW-xx（時間帯と天気）。
+// 何も選んどらん時は案内だけ出す。
 import KaizuShell from '../../../components/KaizuShell.astro';
 import { LETTERING, kaizuBase, kaizuImg } from '../../../lib/kaizu';
 
@@ -16,7 +17,7 @@ const js = LETTERING.compose_samples.find((x) => x.template === 'jacket');
     <p class="kz-crumb"><a href={`${kaizuBase}/`}>海図帳</a> › 統合モード</p>
     <h1>統合モード（ジャケ・サムネの組み立て）</h1>
     <p class="lead">画風・場所・構図・光・天気・文字を選ぶと、AI 画像生成用のプロンプトが 1 本にまとまる。目的のひな形（ジャケット・サムネイル・縦ショートの表紙・ポスター）を選ぶと、比率・文字の用途・切れない余白が決まる。どれか 1 つからでよい。</p>
-    <p class="note"><a href={`${kaizuBase}/style/`}>画風の棚</a>・<a href={`${kaizuBase}/lettering/`}>文字の棚</a>・<a href={`${kaizuBase}/scene/`}>場所の棚</a>で見本を見てから選ぶと早い。</p>
+    <p class="note"><a href={`${kaizuBase}/style/`}>画風の棚</a>・<a href={`${kaizuBase}/lettering/`}>文字の棚</a>・<a href={`${kaizuBase}/scene/`}>場所の棚</a>・<a href={`${kaizuBase}/framing/`}>構図の棚</a>・<a href={`${kaizuBase}/light/`}>光とレンズの棚</a>・<a href={`${kaizuBase}/weather/`}>時間帯と天気の棚</a>で見本を見てから選ぶと早い。</p>
     <p class="kz-terms">プロンプトは、ご自分の画像生成にご自由にお使いください（商用も可）。使う時に「BCNOFNe」の名前を添えてもらえると嬉しいです（任意）。見本の画像の転載・再配布はご遠慮ください。プロンプトで作った絵の権利や商用の可否は、お使いの画像生成サービスの規約に従います（当サイトが許すのはプロンプトの文までです）。入れる文字に他人の名前・商標・ロゴを無断で使わず、配信ジャケは配信先の決まりもご確認ください。使われ方を知るため、押されたボタンや開かれたページの番号・言語（混ぜた画風の組み合わせを含む）の回数だけを、当サイトの集計用サーバー（Cloudflare）に送って数えています。入れた文字は送らず、個人を特定する記録も残しません（IP アドレスは、送りすぎを防ぐために変換して 2 分だけ使い、すぐ消えます）。回数は最長 90 日で消え、Cookie や端末の識別子は使いません。</p>
     {js && (
       <figure class="kz-source" style="margin-top:0.9rem">
@@ -203,6 +204,14 @@ const js = LETTERING.compose_samples.find((x) => x.template === 'jacket');
     const lt = q.get('lt'), main = q.get('main');
     if (lt && D.items.some((x: any) => x.id === lt)) $('lt').value = lt;
     if (main && SD.items.some((x: any) => x.id === main)) $('s1').value = main;
+    // 足す棚：その棚のその段（section）にある ID だけ入れる。光の ID がレンズの段なら、レンズの欄へ
+    const pick = (sh: any, id: string | null, sec: string) => !!id && !!sh && sh.items.some((x: any) => x.id === id && x.section === sec);
+    const fr = q.get('fr'), lg = q.get('lg'), ln = q.get('ln'), tw = q.get('tw');
+    if (pick(A.framing, fr, 'framing')) $('fr').value = fr;
+    if (pick(A.light, lg, 'light')) $('lg').value = lg;
+    else if (pick(A.light, lg, 'lens')) $('ln').value = lg;
+    if (pick(A.light, ln, 'lens')) $('ln').value = ln;
+    if (pick(A.weather, tw, 'weather')) $('tw').value = tw;
 
     document.querySelectorAll<HTMLElement>('.kz-compose select, .kz-compose input').forEach((el) => {
       el.addEventListener('input', render); el.addEventListener('change', render);
