@@ -207,7 +207,8 @@ const js = LETTERING.compose_samples.find((x) => x.template === 'jacket');
     // 足す棚：その棚のその段（section）にある ID だけ入れる。光の ID がレンズの段なら、レンズの欄へ
     const pick = (sh: any, id: string | null, sec: string) => !!id && !!sh && sh.items.some((x: any) => x.id === id && x.section === sec);
     const fr = q.get('fr'), lg = q.get('lg'), ln = q.get('ln'), tw = q.get('tw');
-    if (pick(A.framing, fr, 'framing')) $('fr').value = fr;
+    // 構図の棚から来た時は、見本と同じく「構図を変えてよい」にする（2026-11-14）
+    if (pick(A.framing, fr, 'framing')) { $('fr').value = fr; $('frm').value = 'reframe'; }
     if (pick(A.light, lg, 'light')) $('lg').value = lg;
     else if (pick(A.light, lg, 'lens')) $('ln').value = lg;
     if (pick(A.light, ln, 'lens')) $('ln').value = ln;
