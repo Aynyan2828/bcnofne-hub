@@ -971,3 +971,4 @@ All notable changes to this project.
   まばたき・呼吸・髪揺れ、タップで一言喋る(吹き出し＋口パク)。JS 無効/`prefers-reduced-motion`/読み込み失敗時は従来の静止画。
 - 素材の更新: `~/bcnofne/ayn-jarvis` で `scripts/build_rig.py --size 640 --format webp --no-psd --out ~/bcnofne/bcnofne-hub/public/ayn-rig`
   ＋ `cp hud/rig.js public/ayn-rig/`。
+- 2026-11-14 海図帳：構図・光・天気の棚を検品の指摘で直した（レンズの番号の呼び方・数えん棚の断り・CP-11 の言い回し・CP-08 に胸元の防止文）
