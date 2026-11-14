@@ -1,6 +1,6 @@
 # CHANGELOG — bcnofne-hub
 
-## 2026-11-14 (2) — 海図帳に「文字の棚」と「統合モード」（ブランチ feat/kaizu-lettering-compose・未公開）
+## 2026-11-14 (2) — 海図帳に「文字の棚」と「統合モード」（公開・マスター OK 2026-11-14 11:05）（旧：ブランチだけ・未公開 〜2026-11-14）
 
 - `/prompts/lettering/`（新）：文字 20 種の見本の一覧（画風の一覧と同じ見た目・番号・名前・一般名・説明・絞り込み）。カードは `/prompts/compose/?lt=LT-xx` へ。見本は大きい文字「BCNOFNe」・小さい文字「ぼくのふね」で描いたもの、と明記
 - `/prompts/compose/`（新・統合モード）：ひな形（ジャケット・サムネ・縦ショートの表紙・ポスター）・画風（主・副・3 つ目・割合）・場所・構図・比率・合わせ方・構図の扱い・光・光の扱い・レンズ・時間帯と天気・季節・文字の書体・大きい／小さい文字・文字の設定 7 つ・縁取りの色を選んで、英語／日本語をコピー。`?lt=` `?main=` で初期値。組み立ては Vault の `tools/kaizu_compose.js` をそのまま写した `/prompts/kaizu-compose.js` の `composeAll`（Python の `kaizu_compose.py` と一字一句同じ出力を確認）。コピーの送り口は文字＝shelf=lettering、画風 1 つ＝shelf=style、2〜3＝ev=mix、場所＝shelf=scene（構図・光・天気は送らん）
