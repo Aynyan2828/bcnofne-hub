@@ -972,3 +972,4 @@ All notable changes to this project.
 - 素材の更新: `~/bcnofne/ayn-jarvis` で `scripts/build_rig.py --size 640 --format webp --no-psd --out ~/bcnofne/bcnofne-hub/public/ayn-rig`
   ＋ `cp hud/rig.js public/ayn-rig/`。
 - 2026-11-14 海図帳：構図・光・天気の棚を検品の指摘で直した（レンズの番号の呼び方・数えん棚の断り・CP-11 の言い回し・CP-08 に胸元の防止文）
+- 2026-11-15 海図帳：数える仕組みの説明文を、言い切らないふつうのサイトの書き方に差し替え（Cloudflare Web Analytics と Cloudflare のプライバシーポリシーを明記・マスター OK 09:56）
