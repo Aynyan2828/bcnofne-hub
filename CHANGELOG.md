@@ -1,5 +1,9 @@
 # CHANGELOG — bcnofne-hub
 
+## 2026-11-22 — シングル棚に G04「狐火」「星喰いの夜」（ブランチ feat/single-g04・未公開）
+
+- `src/content/music/single-kitsunebi.md`・`single-hoshikui-no-yoru.md`（released: 2026-11-22・同じ日なので order 1/2 で狐火が左）とジャケ webp 600px。日本語曲なので英語ページの棚には出さん。`/new` は初雪リフレインのまま
+
 ## 2026-11-14 (3) — 海図帳に「構図」「光とレンズ」「時間帯と天気」の棚（ブランチ feat/kaizu-more-shelves・未公開）
 
 - `/prompts/framing/`（構図 12 種）・`/prompts/light/`（光 16 種とレンズ 10 種を見出しで分ける）・`/prompts/weather/`（時間帯と天気 16 種・時間帯で絞り込み）。文字の棚と同じ見た目のカード（見本の絵・番号・名前・一般名・説明）と探す欄。カードは統合モードへ `?fr=CP-xx`・`?lg=LG-xx`・`?ln=LG-xx`・`?tw=TW-xx`。頭に見本の元絵の一言と、文字の棚・統合モードと同じ使ってよい範囲の段落。共通の形は `src/components/KaizuAddonShelf.astro`
