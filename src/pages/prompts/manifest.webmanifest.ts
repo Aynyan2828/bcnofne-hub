@@ -10,7 +10,7 @@ export const GET: APIRoute = () => {
     id: `${p}/`,
     name: '海図帳 — AI 画像生成用のプロンプト集',
     short_name: '海図帳',
-    description: 'BCNOFNe の、AI 画像生成用のプロンプト集。画風 30 種と場所 24 か所。',
+    description: 'BCNOFNe の、AI 画像生成用のプロンプト集。画風 31 種と場所 24 か所。',
     lang: 'ja',
     start_url: `${p}/style/`,
     scope: `${p}/`,
