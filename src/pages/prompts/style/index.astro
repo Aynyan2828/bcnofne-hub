@@ -1,5 +1,5 @@
 ---
-// 海図帳・画風の棚（30 種の一覧＋混ぜる欄）。
+// 海図帳・画風の棚（31 種の一覧＋混ぜる欄）。
 // 視線の順: 見出し → 見本の絵の並び → 名前 → （下の）混ぜる欄。
 // 混ぜる決まりは Vault の tools/style_mix.py と同じ（部品は public/prompts/style/mix.json を読む）。
 import KaizuShell from '../../../components/KaizuShell.astro';
@@ -10,8 +10,8 @@ const mixSample = STYLE.mix_samples[0];
 const nameOf = (id: string) => STYLE.items.find((x) => x.id === id)?.name_ja ?? id;
 ---
 <KaizuShell
-  title="画風の棚（30 種）｜海図帳 — AI 画像生成用のプロンプト集 — BCNOFNe"
-  description="AI 画像生成用の画風プロンプト 30 種。切り絵・版画・ドット絵・セル画・金屏風など。添付した絵をその画風で描き直す。3 つまで混ぜられる。"
+  title="画風の棚（31 種）｜海図帳 — AI 画像生成用のプロンプト集 — BCNOFNe"
+  description="AI 画像生成用の画風プロンプト 31 種。切り絵・版画・ドット絵・セル画・金屏風など。添付した絵をその画風で描き直す。3 つまで混ぜられる。"
 >
   <header class="paper">
     <p class="kz-crumb"><a href={`${kaizuBase}/`}>海図帳</a> › 画風の棚</p>
